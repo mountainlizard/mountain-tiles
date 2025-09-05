@@ -1,3 +1,3 @@
 # mountain-tiles
 
-Tile and palette based map editor
+Tile and palette based map editor.
