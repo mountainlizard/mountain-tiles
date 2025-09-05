@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="8" height="8" tilewidth="8" tileheight="8" infinite="0" backgroundcolor="#323232" nextlayerid="6" nextobjectid="1">
+ <tileset firstgid="1" source="mountain-tiles.tsx"/>
+ <tileset firstgid="257" source="mountain-tiles-extra.tsx"/>
+ <layer id="1" name="no_tint" width="8" height="8">
+  <data encoding="csv">
+6,2684354566,3221225478,1610612742,2147483654,3758096390,1073741830,536870918,
+2684354817,536871169,2684354817,536871169,2684354817,536871169,2684354817,536871169,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0
+</data>
+ </layer>
+ <layer id="2" name="red" width="8" height="8" tintcolor="#ff0000">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+66,67,68,69,70,71,72,73,
+257,258,259,260,261,262,263,264,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0
+</data>
+ </layer>
+ <layer id="3" name="opacity-0.5" width="8" height="8" opacity="0.5">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,241,242,243,244,245,246,247,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0
+</data>
+ </layer>
+ <layer id="4" name="blue-opacity-0.25" width="8" height="8" opacity="0.25" tintcolor="#0000ff">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,241,242,243,244,245,246,247,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0
+</data>
+ </layer>
+ <layer id="5" name="green-alpha-0.75" width="8" height="8" tintcolor="#bf00ff00">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,241,242,243,244,245,246,247,
+0,0,0,0,0,0,0,0
+</data>
+ </layer>
+</map>

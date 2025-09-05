@@ -1,0 +1,302 @@
+on: [push, pull_request, workflow_dispatch]
+
+name: CI
+
+env:
+  # --cfg=web_sys_unstable_apis is required to enable the web_sys clipboard API which egui_web uses
+  # https://rustwasm.github.io/wasm-bindgen/api/web_sys/struct.Clipboard.html
+  # https://rustwasm.github.io/docs/wasm-bindgen/web-sys/unstable-apis.html
+  RUSTFLAGS: -D warnings --cfg=web_sys_unstable_apis
+  RUSTDOCFLAGS: -D warnings
+  # Store all generated artifacts here, so we can archive. In particular this overrides the behaviour
+  # of using a temporary directory for `cargo install`
+  CARGO_TARGET_DIR: cargo_target
+
+jobs:
+  test:
+    name: cargo check, test, fmt, clippy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+          # For check target wasm32 - currently fails, needs work
+          # targets: wasm32-unknown-unknown
+
+      # Cache contents of cargo and target dirs, by runner os, arch and hash of `Cargo.lock`.
+      # For some reason the examples just use `runner.os`, but we build for multiple architectures
+      # so we include `runner.arch`.
+      # This caches the overridden cargo target dir as well, to store results of any cargo install
+      # See https://docs.github.com/en/actions/tutorials/build-and-test-code/rust#caching-dependencies
+      # and https://docs.github.com/en/actions/reference/workflows-and-actions/dependency-caching#example-using-the-cache-action
+      # Note this doesn't install cargo-packager, so we use a separate cache with "cargo-test"
+      - name: Cache cargo and target
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+            cargo_target
+          key: ${{ runner.os }}-${{ runner.arch }}-cargo-test-${{ hashFiles('**/Cargo.lock') }}
+
+      - run: sudo apt-get install libxcb-render0-dev libxcb-shape0-dev libxcb-xfixes0-dev libxkbcommon-dev libssl-dev
+      - run: cargo check --all-features
+      - run: cargo test --all-features
+      - run: cargo fmt --all -- --check
+      - run: cargo clippy -- -D warnings
+      # For check target wasm32 - currently fails, needs work
+      # - run: cargo check --all-features --lib --target wasm32-unknown-unknown
+
+  build-matrix:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # This is x64
+          - os: ubuntu-latest
+
+          # This is arm64 (public repo only)
+          # - os: ubuntu-24.04-arm
+
+          # This is intel
+          - os: macos-13
+
+          # This is arm64
+          - os: macos-latest
+
+          # This is x64
+          - os: windows-latest
+
+          # This is arm64 (public repo only)
+          # - os: windows-11-arm
+
+    steps:
+      - name: Building ${{ matrix.os }}
+        run: echo "${{ matrix.os }}"
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # This requires that the certificate p12 file contains an ID matching `signing-identity` in `Cargo.toml`
+      - name: Install the Apple certificate and provisioning profile
+        if: contains(runner.os, 'macOS')
+        env:
+          BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
+          P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+          # App Store Connect API Key
+          API_KEY_P8_BASE64: ${{ secrets.API_KEY_P8_BASE64 }}
+          # skip provisioning profile
+          # BUILD_PROVISION_PROFILE_BASE64: ${{ secrets.BUILD_PROVISION_PROFILE_BASE64 }}
+        run: |
+          # create variables
+          CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
+          KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+          # Our Apple Store Connect API Key private key file path, for notarization
+          # We use this to decode to, it will be used later by cargo-packager
+          APPLE_API_KEY_PATH=$RUNNER_TEMP/api_key.p8
+          # skip provisioning profile
+          # PP_PATH=$RUNNER_TEMP/build_pp.mobileprovision
+
+          # import certificate from secrets
+          echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode -o $CERTIFICATE_PATH
+          # import API Key from secrets
+          echo -n "$API_KEY_P8_BASE64" | base64 --decode -o $APPLE_API_KEY_PATH          
+          # skip provisioning profile
+          # echo -n "$BUILD_PROVISION_PROFILE_BASE64" | base64 --decode -o $PP_PATH
+
+          # create temporary keychain
+          security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+          security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+
+          # import certificate to keychain
+          security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
+          security set-key-partition-list -S apple-tool:,apple: -k "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+          security list-keychain -d user -s $KEYCHAIN_PATH
+
+          # Skip provisioning profile
+          # apply provisioning profile
+          # mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          # cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
+
+      - name: Install toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      # Cache contents of cargo and target dirs, by runner os, arch and hash of `Cargo.lock`.
+      # For some reason the examples just use `runner.os`, but we build for multiple architectures
+      # so we include `runner.arch`.
+      # This caches the overridden cargo target dir as well, to store results of cargo install
+      # See https://docs.github.com/en/actions/tutorials/build-and-test-code/rust#caching-dependencies
+      # and https://docs.github.com/en/actions/reference/workflows-and-actions/dependency-caching#example-using-the-cache-action
+      - name: Cache cargo and target
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+            cargo_target
+          key: ${{ runner.os }}-${{ runner.arch }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Install cargo-packager
+        run: |
+          cargo install cargo-packager --locked --git https://github.com/mountainlizard/cargo-packager.git --branch fix-nsis-file-associations
+
+      - name: Build and package
+        env:
+          # Only used on macos, for cargo-packager notarisation
+          APPLE_API_ISSUER: ${{ secrets.APPLE_API_ISSUER }}
+          APPLE_API_KEY: ${{ secrets.APPLE_API_KEY }}
+          APPLE_API_KEY_PATH: ${{ runner.temp }}/api_key.p8
+        run: |
+          cargo build --release
+          cargo packager --release
+
+      - name: Archive NSIS installer
+        if: contains(runner.os, 'Windows')
+        uses: actions/upload-artifact@v4
+        with:
+          name: nsis-installer-windows-${{ runner.arch }}
+          path: |
+            cargo_target/release/*setup.exe
+          if-no-files-found: error
+
+      - name: Archive exe
+        if: contains(runner.os, 'Windows')
+        uses: actions/upload-artifact@v4
+        with:
+          name: exe-windows-${{ runner.arch }}
+          path: |
+            cargo_target/release/*.exe
+            !cargo_target/release/*setup.exe
+          if-no-files-found: error
+
+      - name: Archive macOS .dmg
+        if: contains(runner.os, 'macOS')
+        uses: actions/upload-artifact@v4
+        with:
+          name: dmg-installer-macos-${{ runner.arch }}
+          path: |
+            cargo_target/release/*.dmg
+          if-no-files-found: error
+
+      - name: Archive linux .deb
+        if: contains(runner.os, 'Linux')
+        uses: actions/upload-artifact@v4
+        with:
+          name: deb-installer-linux-${{ runner.arch }}
+          path: |
+            cargo_target/release/*.deb
+          if-no-files-found: error
+
+      - name: Archive linux .AppImage
+        if: contains(runner.os, 'Linux')
+        uses: actions/upload-artifact@v4
+        with:
+          name: appimage-linux-${{ runner.arch }}
+          path: |
+            cargo_target/release/*.AppImage
+          if-no-files-found: error
+
+      - name: Archive linux .tar.gz
+        if: contains(runner.os, 'Linux')
+        uses: actions/upload-artifact@v4
+        with:
+          name: tar-gz-linux-${{ runner.arch }}
+          path: |
+            cargo_target/release/*.tar.gz
+          if-no-files-found: error
+
+  # trunk:
+  #   name: trunk
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: actions-rs/toolchain@v1
+  #       with:
+  #         profile: minimal
+  #         toolchain: 1.76.0
+  #         target: wasm32-unknown-unknown
+  #         override: true
+  #     - name: Download and install Trunk binary
+  #       run: wget -qO- https://github.com/thedodd/trunk/releases/latest/download/trunk-x86_64-unknown-linux-gnu.tar.gz | tar -xzf-
+  #     - name: Build
+  #       run: ./trunk build
+
+  # build:
+  #   runs-on: ${{ matrix.os }}
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       include:
+  #         # - os: macos-latest
+  #         #   TARGET: aarch64-apple-darwin
+
+  #         # - os: ubuntu-latest
+  #         #   TARGET: aarch64-unknown-linux-gnu
+
+  #         # - os: ubuntu-latest
+  #         #   TARGET: armv7-unknown-linux-gnueabihf
+
+  #         # - os: ubuntu-latest
+  #         #   TARGET: x86_64-unknown-linux-gnu
+
+  #         - os: windows-latest
+  #           TARGET: x86_64-pc-windows-msvc
+  #           EXTENSION: .exe
+
+  #   steps:
+  #     - name: Building ${{ matrix.TARGET }}
+  #       run: echo "${{ matrix.TARGET }}"
+
+  #     - uses: actions/checkout@v4
+  #     - uses: dtolnay/rust-toolchain@stable
+
+  #     - run: cargo install cargo-packager --locked
+  #     - run: cargo build --release
+  #     - run: cargo packager --release
+
+  #     # - uses: actions/checkout@master
+  #     # - name: Install build dependencies - Rustup
+  #     #   run: |
+  #     #     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --default-toolchain stable --profile default --target ${{ matrix.TARGET }} -y
+  #     #     echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+
+  #     # # For linux, it's necessary to use cross from the git repository to avoid glibc problems
+  #     # # Ref: https://github.com/cross-rs/cross/issues/1510
+  #     # - name: Install cross for linux
+  #     #   if: contains(matrix.TARGET, 'linux')
+  #     #   run: |
+  #     #     cargo install cross --git https://github.com/cross-rs/cross --rev 1b8cf50d20180c1a394099e608141480f934b7f7
+
+  #     # - name: Install cross for mac and windows
+  #     #   if: ${{ !contains(matrix.TARGET, 'linux') }}
+  #     #   run: |
+  #     #     cargo install cross
+
+  #     # - name: Build
+  #     #   run: |
+  #     #     cross build --verbose --release --target=${{ matrix.TARGET }}
+
+  #     # - name: Rename
+  #     #   run: cp target/${{ matrix.TARGET }}/release/eframe_template${{ matrix.EXTENSION }} eframe_template-${{ matrix.TARGET }}${{ matrix.EXTENSION }}
+
+  #     # - uses: actions/upload-artifact@master
+  #     #   with:
+  #     #     name: eframe_template-${{ matrix.TARGET }}${{ matrix.EXTENSION }}
+  #     #     path: eframe_template-${{ matrix.TARGET }}${{ matrix.EXTENSION }}
+
+  #     # - uses: svenstaro/upload-release-action@v2
+  #     #   name: Upload binaries to release
+  #     #   if: ${{ github.event_name == 'push' }}
+  #     #   with:
+  #     #     repo_token: ${{ secrets.GITHUB_TOKEN }}
+  #     #     file: eframe_template-${{ matrix.TARGET }}${{ matrix.EXTENSION }}
+  #     #     asset_name: eframe_template-${{ matrix.TARGET }}${{ matrix.EXTENSION }}
+  #     #     tag: ${{ github.ref }}
+  #     #     prerelease: ${{ !startsWith(github.ref, 'refs/tags/') }}
+  #     #     overwrite: true
