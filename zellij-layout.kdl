@@ -1,0 +1,14 @@
+layout {
+    pane command="hx"
+    pane split_direction="vertical" {
+        pane command="bacon" {
+          args "clippy"
+        }
+        pane command="bacon" {
+          args "run"
+        }
+    }
+    pane size=2 borderless=true {
+        plugin location="zellij:status-bar"
+    }
+}
