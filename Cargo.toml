@@ -24,7 +24,11 @@ eframe = { version = "0.32", default-features = false, features = [
     "wayland",     # To support Linux (and CI)
     "x11",         # To support older Linux distributions (restores one of the default features)
 ] }
-egui_extras = { version = "0.32", features = ["all_loaders"] }
+
+# We only use egui extras for file and svg loaders, we implement
+# image loading for jpeg, png, gif (non-animated) and webp ourselves
+egui_extras = { version = "0.32", features = ["file", "svg"] }
+image = { version = "0.25.6", features = ["jpeg", "png", "gif", "webp"] }
 
 # egui has default features of wgpu disabled (see egui cargo.toml), 
 # so we need to add back in our required backends for each platform.
@@ -54,7 +58,6 @@ eyre = "0.6"
 camino = { version = "1.1.9", features = ["serde1"] }
 quick-xml = { version = "0.37.5", features = ["serialize"] }
 pathdiff = { version = "0.2.3", features = ["camino"] }
-image = "0.25.6"
 sanitize-filename = "0.6.0"
 
 interprocess = "2.2.3"

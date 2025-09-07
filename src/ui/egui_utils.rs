@@ -4,7 +4,11 @@ use egui::{
 };
 
 use crate::{
-    data::tiles::tile_color::UserColor, ui::color_edit::color_edit_button, ui::theme::DEFAULT_THEME,
+    data::tiles::tile_color::UserColor,
+    ui::{
+        color_edit::color_edit_button, theme::DEFAULT_THEME,
+        tileset_image_loader::TilesetImageLoader,
+    },
 };
 
 pub fn replace_fonts(ctx: &egui::Context) {
@@ -100,4 +104,11 @@ pub fn user_color_edit_button(
 ) -> Response {
     // ui.color_edit_button_srgba_unmultiplied(color.slice_mut())
     color_edit_button(ui, color, as_text)
+}
+
+pub fn install_image_loaders(ctx: &egui::Context) {
+    if !ctx.is_loader_installed(TilesetImageLoader::ID) {
+        ctx.add_image_loader(std::sync::Arc::new(TilesetImageLoader::default()));
+        log::trace!("installed TilesetImageLoader");
+    }
 }

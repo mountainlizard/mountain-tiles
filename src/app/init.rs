@@ -39,6 +39,11 @@ impl App {
         // `cc.egui_ctx.set_visuals` and `cc.egui_ctx.set_fonts`.
         egui_extras::install_image_loaders(&cc.egui_ctx);
 
+        // We also install our own image loaders - this replaces the `image`
+        // loader feature in egui_extras, so we can use additional parts
+        // of the url to handle transparent color setting etc.
+        egui_utils::install_image_loaders(&cc.egui_ctx);
+
         // Restore data from eframe storage
         let mut data: App = match (USE_STORAGE, cc.storage) {
             (true, Some(storage)) => {

@@ -55,6 +55,38 @@ fn is_supported_mime(mime: &str) -> bool {
     ImageFormat::from_mime_type(mime).is_some_and(|format| format.reading_enabled())
 }
 
+/// Load a (non-svg) image.
+///
+/// You must also opt-in to the image formats you need with e.g.
+/// `image = { version = "0.25", features = ["jpeg", "png"] }`.
+///
+/// # Errors
+/// On invalid image or unsupported image format.
+pub fn load_image_bytes(image_bytes: &[u8]) -> Result<egui::ColorImage, egui::load::LoadError> {
+    let image = image::load_from_memory(image_bytes).map_err(|err| match err {
+        image::ImageError::Unsupported(err) => match err.kind() {
+            image::error::UnsupportedErrorKind::Format(format) => {
+                egui::load::LoadError::FormatNotSupported {
+                    detected_format: Some(format.to_string()),
+                }
+            }
+            _ => egui::load::LoadError::Loading(err.to_string()),
+        },
+        err => egui::load::LoadError::Loading(err.to_string()),
+    })?;
+    let size = [image.width() as _, image.height() as _];
+    let image_buffer = image.to_rgba8();
+    let pixels = image_buffer.as_flat_samples();
+
+    // TODO(emilk): if this is a PNG, looks for DPI info to calculate the source size,
+    // e.g. for screenshots taken on a high-DPI/retina display.
+
+    Ok(egui::ColorImage::from_rgba_unmultiplied(
+        size,
+        pixels.as_slice(),
+    ))
+}
+
 impl ImageLoader for TilesetImageLoader {
     fn id(&self) -> &str {
         Self::ID
@@ -65,6 +97,8 @@ impl ImageLoader for TilesetImageLoader {
         // 1. URI extension (only done for files)
         // 2. Mime from `BytesPoll::Ready`
         // 3. image::guess_format (used internally by image::load_from_memory)
+
+        println!("TIL load uri {}", uri);
 
         // TODO(lucasmerlin): Egui currently changes all URIs for webp and gif files to include
         // the frame index (#0), which breaks if the animated image loader is disabled.
@@ -98,7 +132,7 @@ impl ImageLoader for TilesetImageLoader {
                     let bytes = bytes.clone();
                     move || {
                         log::trace!("ImageLoader - started loading {uri:?}");
-                        let result = egui_extras::image::load_image_bytes(&bytes)
+                        let result = load_image_bytes(&bytes)
                             .map(Arc::new)
                             .map_err(|err| err.to_string());
                         log::trace!("ImageLoader - finished loading {uri:?}");
