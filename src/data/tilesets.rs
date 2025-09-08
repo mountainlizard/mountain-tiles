@@ -421,3 +421,24 @@ impl Tilesets {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn json() -> eyre::Result<()> {
+        let mode = TilesetMode::Direct;
+        let json = serde_json::to_string(&mode)?;
+        assert_eq!(json, "\"Direct\"");
+        let mode = TilesetMode::TransparentBackground {
+            background: UserColor::WHITE,
+        };
+        let json = serde_json::to_string(&mode)?;
+        assert_eq!(
+            json,
+            "{\"TransparentBackground\":{\"background\":[255,255,255,255]}}"
+        );
+        Ok(())
+    }
+}

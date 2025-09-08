@@ -25,9 +25,9 @@ eframe = { version = "0.32", default-features = false, features = [
     "x11",         # To support older Linux distributions (restores one of the default features)
 ] }
 
-# We only use egui extras for file and svg loaders, we implement
-# image loading for jpeg, png, gif (non-animated) and webp ourselves
-egui_extras = { version = "0.32", features = ["file", "svg"] }
+egui_extras = { version = "0.32", features = ["all_loaders"] }
+
+# Enable image types directly, since we have our own image loader for tilesets.
 image = { version = "0.25.6", features = ["jpeg", "png", "gif", "webp"] }
 
 # egui has default features of wgpu disabled (see egui cargo.toml), 
