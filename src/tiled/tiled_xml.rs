@@ -2,6 +2,7 @@ use std::fmt::Display;
 use std::io::BufWriter;
 use std::{fs::File, io::BufReader, num::ParseIntError};
 
+use crate::data::tilesets::TilesetMode;
 use crate::{
     app::maps::MapEditing,
     data::palette::{Palette, PaletteIndex},
@@ -649,6 +650,8 @@ impl TilesetXml {
             path,
             tile_size,
             size_in_tiles,
+            // TODO: Base on whether we have a transparent color in Tiled tileset
+            TilesetMode::Direct,
             None,
             background,
             prefer_relative_path,

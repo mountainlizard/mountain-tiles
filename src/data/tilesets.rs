@@ -35,6 +35,15 @@ impl Default for TilesetId {
     }
 }
 
+#[derive(Debug, Clone, serde::Deserialize, serde::Serialize, PartialEq, Eq, Hash, Default)]
+pub enum TilesetMode {
+    #[default]
+    Direct,
+    TransparentBackground {
+        background: UserColor,
+    },
+}
+
 #[derive(Debug, Clone, serde::Deserialize, serde::Serialize, PartialEq, Eq, Hash)]
 pub struct Tileset {
     id: TilesetId,
@@ -61,6 +70,12 @@ pub struct Tileset {
     /// This is used to produce UV coordinates to use parts of the
     /// tileset image as tile textures.
     pub size_in_tiles: U32Size2,
+
+    /// The mode for the tileset - this determines how the tileset is
+    /// used and processed, for example by treating a particular color
+    /// as transparent.
+    #[serde(default)]
+    pub mode: TilesetMode,
 
     /// The foreground color to use when displaying this tileset directly -
     /// has no effect on tiles when used in a map.
@@ -92,6 +107,7 @@ impl Default for Tileset {
             path: Utf8PathBuf::new(),
             tile_size: u32size2(8, 8),
             size_in_tiles: u32size2(16, 16),
+            mode: TilesetMode::Direct,
             foreground: None,
             background: None,
             prefer_relative_path: true,
@@ -128,6 +144,7 @@ impl Tileset {
         path: Utf8PathBuf,
         tile_size: U32Size2,
         size_in_tiles: U32Size2,
+        mode: TilesetMode,
         foreground: Option<UserColor>,
         background: Option<UserColor>,
         prefer_relative_path: bool,
@@ -138,17 +155,20 @@ impl Tileset {
             path,
             tile_size,
             size_in_tiles,
+            mode,
             foreground,
             background,
             prefer_relative_path,
         }
     }
 
+    #[allow(clippy::too_many_arguments)]
     pub fn new_with_default_id(
         name: String,
         path: Utf8PathBuf,
         tile_size: U32Size2,
         size_in_tiles: U32Size2,
+        mode: TilesetMode,
         foreground: Option<UserColor>,
         background: Option<UserColor>,
         prefer_relative_path: bool,
@@ -159,6 +179,7 @@ impl Tileset {
             path,
             tile_size,
             size_in_tiles,
+            mode,
             foreground,
             background,
             prefer_relative_path,
@@ -222,6 +243,7 @@ impl Tilesets {
                 path: "mountain-tiles".into(),
                 tile_size: u32size2(8, 8),
                 size_in_tiles: u32size2(16, 16),
+                mode: TilesetMode::Direct,
                 foreground: Some(UserColor::WHITE),
                 background: Some(UserColor::BLACK),
                 prefer_relative_path: false,
@@ -272,6 +294,7 @@ impl Tilesets {
         path: Utf8PathBuf,
         tile_size: U32Size2,
         size_in_tiles: U32Size2,
+        mode: TilesetMode,
         foreground: Option<UserColor>,
         background: Option<UserColor>,
         prefer_relative_path: bool,
@@ -284,6 +307,7 @@ impl Tilesets {
             path,
             tile_size,
             size_in_tiles,
+            mode,
             foreground,
             background,
             prefer_relative_path,
@@ -298,6 +322,7 @@ impl Tilesets {
         path: Utf8PathBuf,
         tile_size: U32Size2,
         size_in_tiles: U32Size2,
+        mode: TilesetMode,
         foreground: Option<UserColor>,
         background: Option<UserColor>,
         prefer_relative_path: bool,
@@ -312,6 +337,7 @@ impl Tilesets {
                 path,
                 tile_size,
                 size_in_tiles,
+                mode,
                 foreground,
                 background,
                 prefer_relative_path,
