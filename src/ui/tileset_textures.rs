@@ -1,6 +1,6 @@
 use std::fmt::Display;
 
-use crate::data::tilesets::Tileset;
+use crate::data::tilesets::{Tileset, TilesetMode};
 use camino::Utf8PathBuf;
 use egui::{
     emath::OrderedFloat,
@@ -143,8 +143,10 @@ impl TilesetTextures {
         }
     }
 
-    pub fn uri_for_path(path: &Utf8PathBuf) -> String {
-        format!("file://{}", path)
+    pub fn uri_for_path(path: &Utf8PathBuf, mode: &TilesetMode) -> String {
+        // TODO: Actually return error on failure to encode mode?
+        let mode_json = serde_json::to_string(mode).unwrap_or("\"Direct\"".to_string());
+        format!("tileset://{}//file://{}", mode_json, path)
     }
 
     pub fn path_for_tileset(&self, tileset: &Tileset) -> Option<Utf8PathBuf> {
@@ -175,7 +177,7 @@ impl TilesetTextures {
                 }),
             TextureSource::File { base_dir } => {
                 let path = self.path_for_tileset_from_base_dir(base_dir, tileset);
-                let uri = Self::uri_for_path(&path);
+                let uri = Self::uri_for_path(&path, &tileset.mode);
 
                 ctx.try_load_texture(&uri, TextureOptions::NEAREST, Self::SIZE_HINT)
                     .map_err(|load_error| {
@@ -231,7 +233,7 @@ impl TilesetTextures {
             TextureSource::Builtin => {}
             TextureSource::File { base_dir } => {
                 let path = self.path_for_tileset_from_base_dir(base_dir, tileset);
-                let uri = Self::uri_for_path(&path);
+                let uri = Self::uri_for_path(&path, &tileset.mode);
                 ctx.forget_image(&uri);
             }
         }
