@@ -53,6 +53,13 @@ impl TilesetMode {
             TilesetMode::TransparentBackground { .. } => "Use transparent color",
         }
     }
+
+    pub fn default_transparent_background(&self) -> UserColor {
+        match self {
+            TilesetMode::Direct => UserColor::BLACK,
+            TilesetMode::TransparentBackground { background } => *background,
+        }
+    }
 }
 
 #[derive(Debug, Clone, serde::Deserialize, serde::Serialize, PartialEq, Eq, Hash)]

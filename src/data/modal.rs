@@ -83,6 +83,8 @@ pub enum ModalState {
         default_foreground_as_text: String,
         default_background: UserColor,
         default_background_as_text: String,
+        default_transparent: UserColor,
+        default_transparent_as_text: String,
         result: ModalResult,
     },
     Layer {
@@ -166,8 +168,10 @@ impl ModalState {
     }
 
     pub fn tileset(tileset: Tileset, operation: TilesetOperation) -> ModalState {
+        let transparent = tileset.mode.default_transparent_background();
         let mut tilesets = Tilesets::new();
         tilesets.push_tileset(tileset);
+
         ModalState::Tileset {
             tilesets,
             operation,
@@ -175,6 +179,8 @@ impl ModalState {
             default_foreground_as_text: String::new(),
             default_background: UserColor::BLACK,
             default_background_as_text: String::new(),
+            default_transparent: transparent,
+            default_transparent_as_text: transparent.as_css_string(),
             result: ModalResult::Init,
         }
     }

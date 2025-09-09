@@ -14,7 +14,7 @@ use crate::{
         theme::DEFAULT_THEME,
         tiles::{tiles, Overlay},
         tileset::tileset_message,
-        utils::optional_color_ui,
+        utils::{optional_color_ui, user_color_edit_button},
     },
 };
 
@@ -32,6 +32,8 @@ pub fn tileset_modal_ui(ui: &mut Ui, app: &mut App) {
         ref mut default_foreground_as_text,
         ref mut default_background,
         ref mut default_background_as_text,
+        ref mut default_transparent,
+        ref mut default_transparent_as_text,
         ref mut result,
     } = app.edit.modal
     {
@@ -84,7 +86,7 @@ pub fn tileset_modal_ui(ui: &mut Ui, app: &mut App) {
                     let selected_text = tileset.mode.description();
                     let direct = TilesetMode::Direct;
                     let transparent = TilesetMode::TransparentBackground {
-                        background: UserColor::BLACK,
+                        background: *default_transparent,
                     };
                     egui::ComboBox::from_id_salt("tileset_mode")
                         .selected_text(selected_text)
@@ -99,6 +101,14 @@ pub fn tileset_modal_ui(ui: &mut Ui, app: &mut App) {
                                 transparent.description(),
                             );
                         });
+
+                    match tileset.mode {
+                        TilesetMode::Direct => {}
+                        TilesetMode::TransparentBackground { ref mut background } => {
+                            user_color_edit_button(ui, background, default_transparent_as_text);
+                            *default_transparent = *background;
+                        }
+                    }
 
                     ui.add_space(DEFAULT_THEME.modal_spacing);
 
