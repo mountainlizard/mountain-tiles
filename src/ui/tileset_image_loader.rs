@@ -88,9 +88,6 @@ fn load_image_bytes(
 
     let pixels = image_buffer.as_flat_samples();
 
-    // TODO(emilk): if this is a PNG, looks for DPI info to calculate the source size,
-    // e.g. for screenshots taken on a high-DPI/retina display.
-
     Ok(egui::ColorImage::from_rgba_unmultiplied(
         size,
         pixels.as_slice(),
