@@ -64,6 +64,7 @@ pub fn render_tiles<T: Tiles>(
         for tileset in tilesets.iter() {
             let tile_set_size = tileset.size_in_tiles;
             let tile_size = tileset.tile_size;
+            let mode = tileset.mode;
 
             for grid_pos in tiles.map_positions() {
                 if let Some(ref tile) = tiles.tile(layer_index, grid_pos) {
@@ -110,6 +111,8 @@ pub fn render_tiles<T: Tiles>(
                                 }
 
                                 let mut src = tile_source_image.get_pixel(sx, sy);
+
+                                mode.transform_color_slice(&mut src.0);
 
                                 for (s, c) in src.0.iter_mut().zip(color.iter()) {
                                     let mut v: u32 = *s as u32;

@@ -60,6 +60,17 @@ impl TilesetMode {
             TilesetMode::TransparentBackground { background } => *background,
         }
     }
+
+    pub fn transform_color_slice(&self, color: &mut [u8; 4]) {
+        match self {
+            TilesetMode::Direct => {}
+            TilesetMode::TransparentBackground { background } => {
+                if *color == background.as_slice() {
+                    *color = [0, 0, 0, 0];
+                }
+            }
+        }
+    }
 }
 
 #[derive(Debug, Clone, serde::Deserialize, serde::Serialize, PartialEq, Eq, Hash)]
