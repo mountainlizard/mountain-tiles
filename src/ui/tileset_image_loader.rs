@@ -82,15 +82,8 @@ fn load_image_bytes(
     let size = [image.width() as _, image.height() as _];
     let mut image_buffer = image.to_rgba8();
 
-    match mode {
-        TilesetMode::Direct => {}
-        TilesetMode::TransparentBackground { background } => {
-            for (_, _, pixel) in image_buffer.enumerate_pixels_mut() {
-                if pixel.0 == background.as_slice() {
-                    pixel.0 = [0, 0, 0, 0];
-                }
-            }
-        }
+    for (_, _, pixel) in image_buffer.enumerate_pixels_mut() {
+        mode.transform_color_slice(&mut pixel.0);
     }
 
     let pixels = image_buffer.as_flat_samples();
