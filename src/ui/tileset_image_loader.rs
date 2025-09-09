@@ -110,8 +110,6 @@ impl ImageLoader for TilesetImageLoader {
         // 2. Mime from `BytesPoll::Ready`
         // 3. image::guess_format (used internally by image::load_from_memory)
 
-        println!("TIL load uri {}", uri);
-
         // We will cache via the full uri, so retain it
         let full_uri = uri;
 
@@ -126,8 +124,6 @@ impl ImageLoader for TilesetImageLoader {
         // Parse the mode
         let mode: TilesetMode =
             serde_json::from_str(mode_json).map_err(|_| LoadError::NotSupported)?;
-
-        println!("TIL mode {:?}", mode);
 
         // (1)
         if uri.starts_with("file://") && !is_supported_uri(uri) {
