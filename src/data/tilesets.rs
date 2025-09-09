@@ -35,13 +35,24 @@ impl Default for TilesetId {
     }
 }
 
-#[derive(Debug, Clone, serde::Deserialize, serde::Serialize, PartialEq, Eq, Hash, Default)]
+#[derive(
+    Debug, Copy, Clone, serde::Deserialize, serde::Serialize, PartialEq, Eq, Hash, Default,
+)]
 pub enum TilesetMode {
     #[default]
     Direct,
     TransparentBackground {
         background: UserColor,
     },
+}
+
+impl TilesetMode {
+    pub fn description(&self) -> &str {
+        match self {
+            TilesetMode::Direct => "Use image directly",
+            TilesetMode::TransparentBackground { .. } => "Use transparent color",
+        }
+    }
 }
 
 #[derive(Debug, Clone, serde::Deserialize, serde::Serialize, PartialEq, Eq, Hash)]

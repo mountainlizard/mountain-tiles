@@ -2,16 +2,20 @@ use egui::{Color32, Id, Modal, Slider, Ui};
 
 use crate::{
     app::App,
-    data::tiles::{tile_color::UserColor, tileset_tiles::TilesetTiles, Tiles},
     data::{
         action::Action,
         modal::{ModalResult, ModalState, TilesetOperation},
+        tiles::{tile_color::UserColor, tileset_tiles::TilesetTiles, Tiles},
+        tilesets::TilesetMode,
     },
     geom::u32size2::U32Size2,
-    ui::file_dialog,
-    ui::theme::DEFAULT_THEME,
-    ui::tiles::{tiles, Overlay},
-    ui::{tileset::tileset_message, utils::optional_color_ui},
+    ui::{
+        file_dialog,
+        theme::DEFAULT_THEME,
+        tiles::{tiles, Overlay},
+        tileset::tileset_message,
+        utils::optional_color_ui,
+    },
 };
 
 const PREVIEW_SIZE: f32 = 256.0;
@@ -77,6 +81,27 @@ pub fn tileset_modal_ui(ui: &mut Ui, app: &mut App) {
 
                     ui.add_space(DEFAULT_THEME.modal_spacing);
 
+                    let selected_text = tileset.mode.description();
+                    let direct = TilesetMode::Direct;
+                    let transparent = TilesetMode::TransparentBackground {
+                        background: UserColor::BLACK,
+                    };
+                    egui::ComboBox::from_id_salt("tileset_mode")
+                        .selected_text(selected_text)
+                        .truncate()
+                        .width(ui.available_width())
+                        .height(DEFAULT_THEME.control_height)
+                        .show_ui(ui, |ui| {
+                            ui.selectable_value(&mut tileset.mode, direct, direct.description());
+                            ui.selectable_value(
+                                &mut tileset.mode,
+                                transparent,
+                                transparent.description(),
+                            );
+                        });
+
+                    ui.add_space(DEFAULT_THEME.modal_spacing);
+
                     ui.label("Tile width (in pixels)");
                     ui.add(
                         Slider::new(&mut tileset.tile_size.w, 4..=32)
@@ -90,7 +115,6 @@ pub fn tileset_modal_ui(ui: &mut Ui, app: &mut App) {
                     );
 
                     ui.add_space(DEFAULT_THEME.modal_spacing);
-
                     optional_color_ui(
                         ui,
                         &mut tileset.foreground,

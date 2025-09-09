@@ -63,7 +63,10 @@ fn is_supported_mime(mime: &str) -> bool {
 ///
 /// # Errors
 /// On invalid image or unsupported image format.
-fn load_image_bytes(image_bytes: &[u8]) -> Result<egui::ColorImage, egui::load::LoadError> {
+fn load_image_bytes(
+    image_bytes: &[u8],
+    mode: &TilesetMode,
+) -> Result<egui::ColorImage, egui::load::LoadError> {
     let image = image::load_from_memory(image_bytes).map_err(|err| match err {
         image::ImageError::Unsupported(err) => match err.kind() {
             image::error::UnsupportedErrorKind::Format(format) => {
@@ -79,11 +82,16 @@ fn load_image_bytes(image_bytes: &[u8]) -> Result<egui::ColorImage, egui::load::
     let size = [image.width() as _, image.height() as _];
     let mut image_buffer = image.to_rgba8();
 
-    // for (_, _, pixel) in image_buffer.enumerate_pixels_mut() {
-    //     if pixel.0 == [0, 0, 0, 255] {
-    //         pixel.0 = [0, 0, 0, 0];
-    //     }
-    // }
+    match mode {
+        TilesetMode::Direct => {}
+        TilesetMode::TransparentBackground { background } => {
+            for (_, _, pixel) in image_buffer.enumerate_pixels_mut() {
+                if pixel.0 == background.as_slice() {
+                    pixel.0 = [0, 0, 0, 0];
+                }
+            }
+        }
+    }
 
     let pixels = image_buffer.as_flat_samples();
 
@@ -138,6 +146,7 @@ impl ImageLoader for TilesetImageLoader {
         fn load_image(
             ctx: &egui::Context,
             full_uri: &str,
+            mode: TilesetMode,
             cache: &Arc<Mutex<HashMap<String, Entry>>>,
             bytes: &Bytes,
         ) -> ImageLoadResult {
@@ -155,7 +164,7 @@ impl ImageLoader for TilesetImageLoader {
                     let bytes = bytes.clone();
                     move || {
                         log::trace!("ImageLoader - started loading {full_uri:?}");
-                        let result = load_image_bytes(&bytes)
+                        let result = load_image_bytes(&bytes, &mode)
                             .map(Arc::new)
                             .map_err(|err| err.to_string());
                         log::trace!("ImageLoader - finished loading {full_uri:?}");
@@ -177,12 +186,13 @@ impl ImageLoader for TilesetImageLoader {
         fn load_image(
             _ctx: &egui::Context,
             full_uri: &str,
+            mode: &TilesetMode,
             cache: &Arc<Mutex<HashMap<String, Entry>>>,
             bytes: &Bytes,
         ) -> ImageLoadResult {
             let mut cache_lock = cache.lock();
             log::trace!("started loading {full_uri:?}");
-            let result = load_image_bytes(bytes)
+            let result = load_image_bytes(bytes, &mode)
                 .map(Arc::new)
                 .map_err(|err| err.to_string());
             log::trace!("finished loading {full_uri:?}");
@@ -211,7 +221,7 @@ impl ImageLoader for TilesetImageLoader {
                             });
                         }
                     }
-                    load_image(ctx, full_uri, &self.cache, &bytes)
+                    load_image(ctx, full_uri, mode, &self.cache, &bytes)
                 }
                 Ok(BytesPoll::Pending { size }) => Ok(ImagePoll::Pending { size }),
                 Err(err) => Err(err),
