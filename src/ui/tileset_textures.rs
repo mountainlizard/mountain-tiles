@@ -144,7 +144,6 @@ impl TilesetTextures {
     }
 
     pub fn uri_for_path(path: &Utf8PathBuf, mode: &TilesetMode) -> String {
-        // TODO: Actually return error on failure to encode mode?
         let mode_json = serde_json::to_string(mode).unwrap_or("\"Direct\"".to_string());
         format!("tileset://{}//file://{}", mode_json, path)
     }
