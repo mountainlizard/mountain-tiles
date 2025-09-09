@@ -2,6 +2,7 @@ use std::fmt::Display;
 use std::io::BufWriter;
 use std::{fs::File, io::BufReader, num::ParseIntError};
 
+use crate::data::tilesets::TilesetMode;
 use crate::{
     app::maps::MapEditing,
     data::palette::{Palette, PaletteIndex},
@@ -644,11 +645,20 @@ impl TilesetXml {
         // it is added to the base path, so we have the full path to the image
         path.push(self.image.source.clone());
 
+        let mode = self
+            .image
+            .trans
+            .map(|color| TilesetMode::TransparentBackground {
+                background: color.into(),
+            })
+            .unwrap_or_default();
+
         let tileset = Tileset::new_with_default_id(
             self.name.clone(),
             path,
             tile_size,
             size_in_tiles,
+            mode,
             None,
             background,
             prefer_relative_path,

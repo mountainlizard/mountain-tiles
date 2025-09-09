@@ -62,6 +62,7 @@ pub mod ui {
     pub mod tile_mesh;
     pub mod tiles;
     pub mod tileset;
+    pub mod tileset_image_loader;
     pub mod tileset_textures;
     pub mod utils;
 }
