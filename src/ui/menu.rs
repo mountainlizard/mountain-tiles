@@ -55,7 +55,7 @@ fn add_file_menu(ui: &mut Ui, app: &mut App) {
             }
 
             if ui.button("󰋺 Import Tiled...").clicked() {
-                app.check_data_loss_then_pick_tiled_file_to_import();
+                app.pick_tiled_file_to_import();
             }
 
             if ui.button("󰈇 Export Tiled...").clicked() {
