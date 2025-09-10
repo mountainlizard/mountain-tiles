@@ -1,5 +1,7 @@
 # MountainTiles
 
+<img src="example-render.jpg" alt="Mountain Tiles example map, rendered with a CRT effect" width="590"/>
+
 A tile based map/image editor using egui.
 
 This project was created using the [eframe template](https://github.com/emilk/eframe_template/)
