@@ -59,7 +59,7 @@ jobs:
           - os: ubuntu-latest
 
           # This is arm64 (public repo only)
-          # - os: ubuntu-24.04-arm
+          - os: ubuntu-24.04-arm
 
           # This is intel
           - os: macos-13
@@ -71,7 +71,7 @@ jobs:
           - os: windows-latest
 
           # This is arm64 (public repo only)
-          # - os: windows-11-arm
+          - os: windows-11-arm
 
     steps:
       - name: Building ${{ matrix.os }}
