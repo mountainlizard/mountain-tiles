@@ -57,7 +57,7 @@ To notarize on macOS (to remove/reduce warnings when users use the packaged app)
 
 ## Signing and Notarizing on CI
 
-See main readme for the CI setup - for signing we essentially we just have to export the Developer Certificate as a .p12, then encode as base64 (`base64 -i BUILD_CERTIFICATE.p12 | pbcopy`), and provide that base64 encoding plus the .p12 file's password as secrets.
+See main `README.md` in this project for the CI setup - for signing we essentially we just have to export the Developer Certificate as a .p12, then encode as base64 (`base64 -i BUILD_CERTIFICATE.p12 | pbcopy`), and provide that base64 encoding plus the .p12 file's password as secrets.
 
 For notarisation, we want to use an API key, specifically an "App Store Connect API key", to avoid having to put an account password in github, even as a secret, since the password can be used for more than notarising applications.
 
