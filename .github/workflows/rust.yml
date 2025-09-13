@@ -77,6 +77,11 @@ jobs:
       - name: Building ${{ matrix.os }}
         run: echo "${{ matrix.os }}"
 
+      - name: Update linux
+        if: contains(runner.os, 'Linux')
+        run: |
+          sudo apt-get update
+
       - name: Checkout repository
         uses: actions/checkout@v4
 
