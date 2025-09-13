@@ -57,9 +57,13 @@ jobs:
         include:
           # This is x64
           - os: ubuntu-latest
+            RUST_TARGET: x86_64-unknown-linux-gnu
+            ZIG_TARGET: x86_64-unknown-linux-gnu.2.17
 
           # This is arm64 (public repo only)
           - os: ubuntu-24.04-arm
+            RUST_TARGET: aarch64-unknown-linux-gnu
+            ZIG_TARGET: aarch64-unknown-linux-gnu.2.17
 
           # This is intel
           - os: macos-13
@@ -76,6 +80,24 @@ jobs:
     steps:
       - name: Building ${{ matrix.os }}
         run: echo "${{ matrix.os }}"
+
+        # On Linux, we'll use cargo-zigbuild to target an older glibc version
+        # for better compatibility
+      - name: Install Zig
+        if: contains(runner.os, 'Linux')
+        uses: mlugg/setup-zig@v1
+
+      - name: Install Rust and cargo-zigbuild on Linux
+        if: contains(runner.os, 'Linux')
+        run: |
+          rustup update --no-self-update stable
+          rustup default stable
+          rustup target add ${{matrix.RUST_TARGET}}
+          cargo install --locked cargo-zigbuild
+
+      - name: Install Rust on non-Linux
+        if: contains(runner.os, 'Linux') == false
+        uses: dtolnay/rust-toolchain@stable
 
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -123,9 +145,6 @@ jobs:
           # mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           # cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
 
-      - name: Install toolchain
-        uses: dtolnay/rust-toolchain@stable
-
       # Cache contents of cargo and target dirs, by runner os, arch and hash of `Cargo.lock`.
       # For some reason the examples just use `runner.os`, but we build for multiple architectures
       # so we include `runner.arch`.
@@ -146,14 +165,23 @@ jobs:
         run: |
           cargo install cargo-packager --locked --git https://github.com/mountainlizard/cargo-packager.git --branch fix-nsis-file-associations
 
-      - name: Build and package
+      - name: Build on non-Linux
+        if: contains(runner.os, 'Linux') == false
+        run: |
+          cargo build --release
+
+      - name: Build with zigbuild on Linux
+        if: contains(runner.os, 'Linux')
+        run: |
+          cargo zigbuild --target ${{matrix.ZIG_TARGET}} --release
+
+      - name: Package
         env:
           # Only used on macos, for cargo-packager notarisation
           APPLE_API_ISSUER: ${{ secrets.APPLE_API_ISSUER }}
           APPLE_API_KEY: ${{ secrets.APPLE_API_KEY }}
           APPLE_API_KEY_PATH: ${{ runner.temp }}/api_key.p8
         run: |
-          cargo build --release
           cargo packager --release
 
       - name: Archive NSIS installer
@@ -190,7 +218,7 @@ jobs:
         with:
           name: deb-installer-linux-${{ runner.arch }}
           path: |
-            cargo_target/release/*.deb
+            cargo_target/${{matrix.RUST_TARGET}}/release/*.deb
           if-no-files-found: error
 
       - name: Archive linux .AppImage
@@ -199,7 +227,7 @@ jobs:
         with:
           name: appimage-linux-${{ runner.arch }}
           path: |
-            cargo_target/release/*.AppImage
+            cargo_target/${{matrix.RUST_TARGET}}/release/*.AppImage
           if-no-files-found: error
 
       - name: Archive linux .tar.gz
@@ -208,7 +236,7 @@ jobs:
         with:
           name: tar-gz-linux-${{ runner.arch }}
           path: |
-            cargo_target/release/*.tar.gz
+            cargo_target/${{matrix.RUST_TARGET}}/release/*.tar.gz
           if-no-files-found: error
 
   # trunk:
