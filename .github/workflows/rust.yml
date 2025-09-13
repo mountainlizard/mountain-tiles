@@ -53,6 +53,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
+
+      # See https://doc.rust-lang.org/beta/rustc/platform-support.html for targets
       matrix:
         include:
           - os: ubuntu-latest
@@ -125,6 +127,8 @@ jobs:
 
       - name: Install toolchain
         uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{matrix.TARGET}}
 
       # Cache contents of cargo and target dirs, by runner os, arch and hash of `Cargo.lock`.
       # For some reason the examples just use `runner.os`, but we build for multiple architectures
