@@ -85,7 +85,7 @@ jobs:
         # for better compatibility
       - name: Install Zig
         if: contains(runner.os, 'Linux')
-        uses: mlugg/setup-zig@v1
+        uses: mlugg/setup-zig@v2
 
       - name: Install Rust and cargo-zigbuild on Linux
         if: contains(runner.os, 'Linux')
