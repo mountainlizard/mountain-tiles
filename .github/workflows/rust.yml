@@ -55,27 +55,27 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # This is x64
           - os: ubuntu-latest
+            TARGET: x86_64-unknown-linux-musl
 
-          # This is arm64 (public repo only)
           - os: ubuntu-24.04-arm
+            TARGET: aarch64-unknown-linux-musl
 
-          # This is intel
           - os: macos-13
+            TARGET: x86_64-apple-darwin
 
-          # This is arm64
           - os: macos-latest
+            TARGET: aarch64-apple-darwin
 
-          # This is x64
           - os: windows-latest
+            TARGET: x86_64-pc-windows-msvc
 
-          # This is arm64 (public repo only)
           - os: windows-11-arm
+            TARGET: aarch64-pc-windows-msvc
 
     steps:
-      - name: Building ${{ matrix.os }}
-        run: echo "${{ matrix.os }}"
+      - name: Building ${{ matrix.TARGET }}
+        run: echo "${{ matrix.TARGET }}"
 
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -140,7 +140,7 @@ jobs:
             ~/.cargo/git
             target
             cargo_target
-          key: ${{ runner.os }}-${{ runner.arch }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.os }}-${{ runner.arch }}-${{matrix.TARGET}}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Install cargo-packager
         run: |
@@ -153,8 +153,8 @@ jobs:
           APPLE_API_KEY: ${{ secrets.APPLE_API_KEY }}
           APPLE_API_KEY_PATH: ${{ runner.temp }}/api_key.p8
         run: |
-          cargo build --release
-          cargo packager --release
+          cargo build --release --target=${{ matrix.TARGET }}
+          cargo packager --release --target=${{ matrix.TARGET }}
 
       - name: Archive NSIS installer
         if: contains(runner.os, 'Windows')
