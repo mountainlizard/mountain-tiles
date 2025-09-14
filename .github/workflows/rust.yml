@@ -255,7 +255,7 @@ jobs:
 
   release:
     name: Release with artifacts
-    if: startsWith(github.ref, '/ref/tags/v') && github.event_name == 'push'
+    if: startsWith(github.ref, '/refs/tags/v') && github.event_name == 'push'
     needs: [test, build-matrix]
     runs-on: ubuntu-latest
     steps:
