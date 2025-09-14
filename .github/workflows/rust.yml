@@ -255,22 +255,17 @@ jobs:
 
   release:
     name: Release with artifacts
-    # if: ${{ startsWith(github.ref, '/refs/tags/v') && github.event_name == 'push' }}
+    if: startsWith(github.ref, 'refs/tags/v') && github.event_name == 'push'
     needs: [test, build-matrix]
     runs-on: ubuntu-latest
     steps:
-      - name: Checking for release
-        run: echo "ref '${{github.ref}}', event '${{github.event_name}}', should release? '${{ startsWith(github.ref, '/refs/tags/v') && github.event_name == 'push' }}'"
-
       - name: Download all artifacts
-        if: ${{ startsWith(github.ref, '/refs/tags/v') && github.event_name == 'push' }}
         uses: actions/download-artifact@v5
 
       - name: Upload artifacts to release
-        if: ${{ startsWith(github.ref, '/refs/tags/v') && github.event_name == 'push' }}
         uses: svenstaro/upload-release-action@v2
         with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          repo_token: ${{ secrets.RELEASE_TOKEN }}
           file: "*"
           tag: ${{ github.ref }}
           overwrite: true
