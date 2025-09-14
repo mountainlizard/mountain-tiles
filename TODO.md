@@ -4,10 +4,8 @@
 
 - [ ] Brief look at how to set up file association on linux - seems like no great way to do automatically, maybe appimage or deb have something? Otherwise users can just do it.
 - [ ] Clear out random todos, notes etc.
-- [ ] Transfer to public repo and make sure CI is running
 - [ ] Reenable test job with added caching.
 - [ ] Fix missing icon and window title on Ubuntu
-- [ ] Try [zigbuild](https://hansott.codes/blog/cross-compiling-rust-with-zig-for-older-glibc-47) for compiling linux versions against older glibc.
 
 ## Nice to have
 
@@ -43,6 +41,8 @@
 
 ## Done
 
+- [x] Transfer to public repo and make sure CI is running
+- [x] Try [zigbuild](https://hansott.codes/blog/cross-compiling-rust-with-zig-for-older-glibc-47) for compiling linux versions against older glibc.
 - [x] Windows / linux file association, open file in new or existing app instance. This should be possible since it should just start the application with a command line parameter for the file - we'll need to look at code / a crate to handle the case where there's already an instance of the application open. E.g. [windows example using mutex and named pipe](https://www.autoitconsulting.com/site/development/single-instance-winform-app-csharp-mutex-named-pipes/). There's an [oldish crate `single-instance`](https://crates.io/crates/single-instance) that does the locking part, but not the pipe. There's [cargo code](https://github.com/rust-lang/cargo/blob/03bc66b55c290324bd46eb22e369c8fae1908f91/src/cargo/util/flock.rs#L277) for locking with a file. [Discussion on Reddit](https://www.reddit.com/r/rust/comments/14hlx8u/a_rusty_way_to_check_if_another_instance_is/). There's a [tauri plugin](https://v2.tauri.app/plugin/single-instance/) for the same thing, using dbus on linux?
 - [x] Transparency color for tilesets
 - [x] Change file extension, .mtm seems to be too common, check on list of extensions or use .mountaintiles.
