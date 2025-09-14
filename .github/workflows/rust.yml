@@ -111,6 +111,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Get Metadata from Cargo.toml
+        id: metadata
+        uses: nicolaiunrein/cargo-get@master
+
       # This requires that the certificate p12 file contains an ID matching `signing-identity` in `Cargo.toml`
       - name: Install the Apple certificate and provisioning profile
         if: contains(runner.os, 'macOS')
@@ -187,7 +191,7 @@ jobs:
           # the arch we're running on, we still get a target output named by arch
           # Cargo packager expects it to be in the default target dir, so we copy
           # the binary across
-          cp ./cargo_target/${{matrix.RUST_TARGET}}/release/mountain-tiles ./cargo_target/release/mountain-tiles
+          cp ./cargo_target/${{matrix.RUST_TARGET}}/release/${{steps.metadata.outputs.package_name}} ./cargo_target/release/${{steps.metadata.outputs.package_name}}
 
       - name: Package
         env:
@@ -207,14 +211,17 @@ jobs:
             cargo_target/release/*setup.exe
           if-no-files-found: error
 
+      - name: Rename windows exe
+        if: contains(runner.os, 'Windows')
+        run: |
+          cp cargo_target/release/${{steps.metadata.outputs.package_name}}.exe cargo_target/release/${{steps.metadata.outputs.package_name}}_${{ steps.metadata.outputs.package_version}}_${{ runner.arch }}.exe
+
       - name: Archive exe
         if: contains(runner.os, 'Windows')
         uses: actions/upload-artifact@v4
         with:
           name: exe-windows-${{ runner.arch }}
-          path: |
-            cargo_target/release/*.exe
-            !cargo_target/release/*setup.exe
+          path: cargo_target/release/${{steps.metadata.outputs.package_name}}_${{ steps.metadata.outputs.package_version}}_${{ runner.arch }}.exe
           if-no-files-found: error
 
       - name: Archive macOS .dmg
@@ -270,93 +277,3 @@ jobs:
           tag: ${{ github.ref }}
           overwrite: true
           file_glob: true
-
-  # trunk:
-  #   name: trunk
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - uses: actions-rs/toolchain@v1
-  #       with:
-  #         profile: minimal
-  #         toolchain: 1.76.0
-  #         target: wasm32-unknown-unknown
-  #         override: true
-  #     - name: Download and install Trunk binary
-  #       run: wget -qO- https://github.com/thedodd/trunk/releases/latest/download/trunk-x86_64-unknown-linux-gnu.tar.gz | tar -xzf-
-  #     - name: Build
-  #       run: ./trunk build
-
-  # build:
-  #   runs-on: ${{ matrix.os }}
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       include:
-  #         # - os: macos-latest
-  #         #   TARGET: aarch64-apple-darwin
-
-  #         # - os: ubuntu-latest
-  #         #   TARGET: aarch64-unknown-linux-gnu
-
-  #         # - os: ubuntu-latest
-  #         #   TARGET: armv7-unknown-linux-gnueabihf
-
-  #         # - os: ubuntu-latest
-  #         #   TARGET: x86_64-unknown-linux-gnu
-
-  #         - os: windows-latest
-  #           TARGET: x86_64-pc-windows-msvc
-  #           EXTENSION: .exe
-
-  #   steps:
-  #     - name: Building ${{ matrix.TARGET }}
-  #       run: echo "${{ matrix.TARGET }}"
-
-  #     - uses: actions/checkout@v4
-  #     - uses: dtolnay/rust-toolchain@stable
-
-  #     - run: cargo install cargo-packager --locked
-  #     - run: cargo build --release
-  #     - run: cargo packager --release
-
-  #     # - uses: actions/checkout@master
-  #     # - name: Install build dependencies - Rustup
-  #     #   run: |
-  #     #     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --default-toolchain stable --profile default --target ${{ matrix.TARGET }} -y
-  #     #     echo "$HOME/.cargo/bin" >> $GITHUB_PATH
-
-  #     # # For linux, it's necessary to use cross from the git repository to avoid glibc problems
-  #     # # Ref: https://github.com/cross-rs/cross/issues/1510
-  #     # - name: Install cross for linux
-  #     #   if: contains(matrix.TARGET, 'linux')
-  #     #   run: |
-  #     #     cargo install cross --git https://github.com/cross-rs/cross --rev 1b8cf50d20180c1a394099e608141480f934b7f7
-
-  #     # - name: Install cross for mac and windows
-  #     #   if: ${{ !contains(matrix.TARGET, 'linux') }}
-  #     #   run: |
-  #     #     cargo install cross
-
-  #     # - name: Build
-  #     #   run: |
-  #     #     cross build --verbose --release --target=${{ matrix.TARGET }}
-
-  #     # - name: Rename
-  #     #   run: cp target/${{ matrix.TARGET }}/release/eframe_template${{ matrix.EXTENSION }} eframe_template-${{ matrix.TARGET }}${{ matrix.EXTENSION }}
-
-  #     # - uses: actions/upload-artifact@master
-  #     #   with:
-  #     #     name: eframe_template-${{ matrix.TARGET }}${{ matrix.EXTENSION }}
-  #     #     path: eframe_template-${{ matrix.TARGET }}${{ matrix.EXTENSION }}
-
-  #     # - uses: svenstaro/upload-release-action@v2
-  #     #   name: Upload binaries to release
-  #     #   if: ${{ github.event_name == 'push' }}
-  #     #   with:
-  #     #     repo_token: ${{ secrets.GITHUB_TOKEN }}
-  #     #     file: eframe_template-${{ matrix.TARGET }}${{ matrix.EXTENSION }}
-  #     #     asset_name: eframe_template-${{ matrix.TARGET }}${{ matrix.EXTENSION }}
-  #     #     tag: ${{ github.ref }}
-  #     #     prerelease: ${{ !startsWith(github.ref, 'refs/tags/') }}
-  #     #     overwrite: true
