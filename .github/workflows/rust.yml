@@ -67,15 +67,23 @@ jobs:
 
           # This is intel
           - os: macos-13
+            RUST_TARGET: default
+            ZIG_TARGET: default
 
           # This is arm64
           - os: macos-latest
+            RUST_TARGET: default
+            ZIG_TARGET: default
 
           # This is x64
           - os: windows-latest
+            RUST_TARGET: default
+            ZIG_TARGET: default
 
           # This is arm64 (public repo only)
           - os: windows-11-arm
+            RUST_TARGET: default
+            ZIG_TARGET: default
 
     steps:
       - name: Building ${{ matrix.os }}
@@ -159,7 +167,7 @@ jobs:
             ~/.cargo/git
             target
             cargo_target
-          key: ${{ runner.os }}-${{ runner.arch }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.os }}-${{ runner.arch }}-${{matrix.RUST_TARGET}}-${{matrix.ZIG_TARGET}}-v0-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Install cargo-packager
         run: |
@@ -218,7 +226,7 @@ jobs:
         with:
           name: deb-installer-linux-${{ runner.arch }}
           path: |
-            cargo_target/${{matrix.RUST_TARGET}}/release/*.deb
+            cargo_target/release/*.deb
           if-no-files-found: error
 
       - name: Archive linux .AppImage
@@ -227,7 +235,7 @@ jobs:
         with:
           name: appimage-linux-${{ runner.arch }}
           path: |
-            cargo_target/${{matrix.RUST_TARGET}}/release/*.AppImage
+            cargo_target/release/*.AppImage
           if-no-files-found: error
 
       - name: Archive linux .tar.gz
@@ -236,7 +244,7 @@ jobs:
         with:
           name: tar-gz-linux-${{ runner.arch }}
           path: |
-            cargo_target/${{matrix.RUST_TARGET}}/release/*.tar.gz
+            cargo_target/release/*.tar.gz
           if-no-files-found: error
 
   # trunk:
