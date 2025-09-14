@@ -182,6 +182,11 @@ jobs:
         if: contains(runner.os, 'Linux')
         run: |
           cargo zigbuild --target ${{matrix.ZIG_TARGET}} --release
+          # Note that we are building to a specific architecture - even if this matches
+          # the arch we're running on, we still get a target output named by arch
+          # Cargo packager expects it to be in the default target dir, so we copy
+          # the binary across
+          cp ./cargo_target/${{matrix.RUST_TARGET}}/release/mountain-tiles ./cargo_target/release/mountain-tiles
 
       - name: Package
         env:
