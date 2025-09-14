@@ -117,6 +117,10 @@ We've omitted the following secrets from the how-to, since we don't build mobile
 
 Note that if the name of the developer changes, the `signing-identity` in `Cargo.toml` will need to be updated - this should be the name of the certificate in the .p12 file stored as a secret.
 
+In order to perform a release, you also need:
+
+- `RELEASE_TOKEN` contains a github personal access token with permissions to read and write contents, this is used to create a release and attach assets.
+
 ## References
 
 - [Helpful guide on signing and notarizing on macOS](https://scriptingosx.com/2021/07/notarize-a-command-line-tool-with-notarytool/)

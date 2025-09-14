@@ -266,7 +266,7 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.RELEASE_TOKEN }}
-          file: "*"
+          file: "**/*"
           tag: ${{ github.ref }}
           overwrite: true
           file_glob: true
