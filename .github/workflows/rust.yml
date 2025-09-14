@@ -167,7 +167,7 @@ jobs:
             ~/.cargo/git
             target
             cargo_target
-          key: ${{ runner.os }}-${{ runner.arch }}-${{matrix.RUST_TARGET}}-${{matrix.ZIG_TARGET}}-v0-cargo-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.os }}-${{ runner.arch }}-${{matrix.RUST_TARGET}}-${{matrix.ZIG_TARGET}}-v1-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Install cargo-packager
         run: |
