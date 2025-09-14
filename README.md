@@ -4,6 +4,8 @@
 
 A tile based map/image editor using egui.
 
+Note that this project is developed on [Codeberg](https://codeberg.org/mountainlizard/mountain-tiles) and mirrored to [Github](https://github.com/mountainlizard/mountain-tiles). Please use the [Codeberg repo](https://codeberg.org/mountainlizard/mountain-tiles) for issues, pull requests etc. since the Github repo is just a mirror.
+
 This project was created using the [eframe template](https://github.com/emilk/eframe_template/)
 
 Please see `CONTRIBUTING.md` if you wish to contribute to the project.
@@ -120,6 +122,15 @@ Note that if the name of the developer changes, the `signing-identity` in `Cargo
 In order to perform a release, you also need:
 
 - `RELEASE_TOKEN` contains a github personal access token with permissions to read and write contents, this is used to create a release and attach assets.
+
+To trigger a release, make sure you are on main branch and on the correct commit (most likely the head), then add a tag to the repo starting with `v`, e.g.:
+
+```bash
+git tag -a "v0.1.6" -m "Release v0.1.6"
+git push --tags "origin"
+```
+
+This will trigger the `rust.yml` workflow, and since the event is a `push` and the ref starts with `refs/tags/v` this will also run the `release` job, which creates a release named after the tag, and uploads all artifacts to the release.
 
 ## References
 
