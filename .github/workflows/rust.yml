@@ -91,6 +91,7 @@ jobs:
 
         # On Linux, we'll use cargo-zigbuild to target an older glibc version
         # for better compatibility
+        # See https://hansott.codes/blog/cross-compiling-rust-with-zig-for-older-glibc-47
       - name: Install Zig
         if: contains(runner.os, 'Linux')
         uses: mlugg/setup-zig@v2
