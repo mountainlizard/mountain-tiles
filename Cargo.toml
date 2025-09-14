@@ -108,7 +108,6 @@ opt-level = 2
 # eframe = { path = "../egui/crates/eframe" }
 
 [package.metadata.packager]
-before-packaging-command = "cargo build --release"
 product-name = "MountainTiles"
 identifier = "com.mountainlizard.mountain-tiles"
 icons = ["icon.ico", "icon.icns", "icon.png"]

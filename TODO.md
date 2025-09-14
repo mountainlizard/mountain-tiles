@@ -4,7 +4,7 @@
 
 - [ ] Brief look at how to set up file association on linux - seems like no great way to do automatically, maybe appimage or deb have something? Otherwise users can just do it.
 - [ ] Clear out random todos, notes etc.
-- [ ] Transfer to public repo and make sure CI is running, reenable test job with added caching.
+- [ ] Reenable test job with added caching.
 - [ ] Fix missing icon and window title on Ubuntu
 
 ## Nice to have
@@ -13,7 +13,7 @@
 - [ ] Option when creating a new map to duplicate selected map (or maybe three options - one to duplicate map completely, one to just create matching layers but empty, one to create a map with just a default empty layer)
 - [ ] Support multiple files open? Copy/paste may be interesting, need to translate tilesets by looking up in source project, and seeing if there is a matching file path in the target - maybe start from full absolute path match, then if not check for file name match, then tileset name match, if none match or there are multiple (since names don't have to be unique) prompt user.
 - [ ] Intelligent squashing of color layers when importing a Tiled file with expected properties. Might be best to be relatively lax - just use the first layer with each Tiled property layer name as a target to squash all layers with this property layer name into it. For Tiled layers with no property, squash into a new layer called "Default"? This should give a perfect round trip when exporting Tiled then immediately reimporting, and will still do something fairly useful if layers are edited in Tiled.
-- [ ] TilesetMode with bg/fg colors. Will need to move to new struct to pass to loader, which specifies that one color will be set to white and everything else transparent. Then we can do a single layer with bg/fg colors for ascii art type stuff. "ForegroundAndBackgroundColor" will accept two colors, and will process images to a pair of textures - the fg texture will have the fg color replaced with white and everything else set to transparent, the bg texture will do the same with the bg color. It's expected that images will only have these two colors, probably as black and white, but other images will work. When used, the tile will draw two quads, one using fg texture with one (fg) tint color, and one with bg texture and tint. This will need adding a new optional color to tiles for the bg (main color is used for fg), this color is only used when combined with a tileset with required color handling). 
+- [ ] TilesetMode with bg/fg colors. Will need to move to new struct to pass to loader, which specifies that one color will be set to white and everything else transparent. Then we can do a single layer with bg/fg colors for ascii art type stuff. "ForegroundAndBackgroundColor" will accept two colors, and will process images to a pair of textures - the fg texture will have the fg color replaced with white and everything else set to transparent, the bg texture will do the same with the bg color. It's expected that images will only have these two colors, probably as black and white, but other images will work. When used, the tile will draw two quads, one using fg texture with one (fg) tint color, and one with bg texture and tint. This will need adding a new optional color to tiles for the bg (main color is used for fg), this color is only used when combined with a tileset with required color handling).
 - [ ] Use +/- shortcuts for zoom, move tileset selection shortcuts elsewhere?
 - [ ] Make layer shortcuts cycle from last to first and vice versa.
 - [ ] Make layer selection shortcuts work when all layers are selected - select first layer for "up" and last layer for "down" instead of doing nothing. Allows shortcut-only toggling between one layer and all layers.
@@ -41,6 +41,8 @@
 
 ## Done
 
+- [x] Transfer to public repo and make sure CI is running
+- [x] Try [zigbuild](https://hansott.codes/blog/cross-compiling-rust-with-zig-for-older-glibc-47) for compiling linux versions against older glibc.
 - [x] Windows / linux file association, open file in new or existing app instance. This should be possible since it should just start the application with a command line parameter for the file - we'll need to look at code / a crate to handle the case where there's already an instance of the application open. E.g. [windows example using mutex and named pipe](https://www.autoitconsulting.com/site/development/single-instance-winform-app-csharp-mutex-named-pipes/). There's an [oldish crate `single-instance`](https://crates.io/crates/single-instance) that does the locking part, but not the pipe. There's [cargo code](https://github.com/rust-lang/cargo/blob/03bc66b55c290324bd46eb22e369c8fae1908f91/src/cargo/util/flock.rs#L277) for locking with a file. [Discussion on Reddit](https://www.reddit.com/r/rust/comments/14hlx8u/a_rusty_way_to_check_if_another_instance_is/). There's a [tauri plugin](https://v2.tauri.app/plugin/single-instance/) for the same thing, using dbus on linux?
 - [x] Transparency color for tilesets
 - [x] Change file extension, .mtm seems to be too common, check on list of extensions or use .mountaintiles.

@@ -57,25 +57,56 @@ jobs:
         include:
           # This is x64
           - os: ubuntu-latest
+            RUST_TARGET: x86_64-unknown-linux-gnu
+            ZIG_TARGET: x86_64-unknown-linux-gnu.2.17
 
           # This is arm64 (public repo only)
           - os: ubuntu-24.04-arm
+            RUST_TARGET: aarch64-unknown-linux-gnu
+            ZIG_TARGET: aarch64-unknown-linux-gnu.2.17
 
           # This is intel
           - os: macos-13
+            RUST_TARGET: default
+            ZIG_TARGET: default
 
           # This is arm64
           - os: macos-latest
+            RUST_TARGET: default
+            ZIG_TARGET: default
 
           # This is x64
           - os: windows-latest
+            RUST_TARGET: default
+            ZIG_TARGET: default
 
           # This is arm64 (public repo only)
           - os: windows-11-arm
+            RUST_TARGET: default
+            ZIG_TARGET: default
 
     steps:
       - name: Building ${{ matrix.os }}
         run: echo "${{ matrix.os }}"
+
+        # On Linux, we'll use cargo-zigbuild to target an older glibc version
+        # for better compatibility
+        # See https://hansott.codes/blog/cross-compiling-rust-with-zig-for-older-glibc-47
+      - name: Install Zig
+        if: contains(runner.os, 'Linux')
+        uses: mlugg/setup-zig@v2
+
+      - name: Install Rust and cargo-zigbuild on Linux
+        if: contains(runner.os, 'Linux')
+        run: |
+          rustup update --no-self-update stable
+          rustup default stable
+          rustup target add ${{matrix.RUST_TARGET}}
+          cargo install --locked cargo-zigbuild
+
+      - name: Install Rust on non-Linux
+        if: contains(runner.os, 'Linux') == false
+        uses: dtolnay/rust-toolchain@stable
 
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -123,9 +154,6 @@ jobs:
           # mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           # cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
 
-      - name: Install toolchain
-        uses: dtolnay/rust-toolchain@stable
-
       # Cache contents of cargo and target dirs, by runner os, arch and hash of `Cargo.lock`.
       # For some reason the examples just use `runner.os`, but we build for multiple architectures
       # so we include `runner.arch`.
@@ -140,20 +168,34 @@ jobs:
             ~/.cargo/git
             target
             cargo_target
-          key: ${{ runner.os }}-${{ runner.arch }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.os }}-${{ runner.arch }}-${{matrix.RUST_TARGET}}-${{matrix.ZIG_TARGET}}-v1-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Install cargo-packager
         run: |
           cargo install cargo-packager --locked --git https://github.com/mountainlizard/cargo-packager.git --branch fix-nsis-file-associations
 
-      - name: Build and package
+      - name: Build on non-Linux
+        if: contains(runner.os, 'Linux') == false
+        run: |
+          cargo build --release
+
+      - name: Build with zigbuild on Linux
+        if: contains(runner.os, 'Linux')
+        run: |
+          cargo zigbuild --target ${{matrix.ZIG_TARGET}} --release
+          # Note that we are building to a specific architecture - even if this matches
+          # the arch we're running on, we still get a target output named by arch
+          # Cargo packager expects it to be in the default target dir, so we copy
+          # the binary across
+          cp ./cargo_target/${{matrix.RUST_TARGET}}/release/mountain-tiles ./cargo_target/release/mountain-tiles
+
+      - name: Package
         env:
           # Only used on macos, for cargo-packager notarisation
           APPLE_API_ISSUER: ${{ secrets.APPLE_API_ISSUER }}
           APPLE_API_KEY: ${{ secrets.APPLE_API_KEY }}
           APPLE_API_KEY_PATH: ${{ runner.temp }}/api_key.p8
         run: |
-          cargo build --release
           cargo packager --release
 
       - name: Archive NSIS installer
