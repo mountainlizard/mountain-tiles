@@ -87,7 +87,7 @@ jobs:
 
     steps:
       - name: Building ${{ matrix.os }}
-        run: echo "${{ matrix.os }}"
+        run: echo "${{ matrix.os }} on ref ${{github.ref}} for event ${{github.event_name}}"
 
         # On Linux, we'll use cargo-zigbuild to target an older glibc version
         # for better compatibility
@@ -252,6 +252,24 @@ jobs:
           path: |
             cargo_target/release/*.tar.gz
           if-no-files-found: error
+
+  release:
+    name: Release with artifacts
+    if: startsWith(github.ref, '/ref/tags/v') && github.event_name == 'push'
+    needs: [test, build-matrix]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v5
+
+      - name: Upload artifacts to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: "*"
+          tag: ${{ github.ref }}
+          overwrite: true
+          file_glob: true
 
   # trunk:
   #   name: trunk
