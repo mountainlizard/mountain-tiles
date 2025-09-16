@@ -2,7 +2,6 @@
 
 - [ ] Brief look at how to set up file association on linux - seems like no great way to do automatically, maybe appimage or deb have something? Otherwise users can just do it.
 - [ ] Clear out random todos, notes etc.
-- [ ] Fix missing icon and window title on Ubuntu
 - [ ] Look at publishing releases to crates.io to allow cargo install, e.g. [see this discussion](https://users.rust-lang.org/t/does-anyone-use-github-actions-to-run-cargo-publish/92374/4)
 - [ ] Automated release notes, see [release drafter](https://github.com/marketplace/actions/release-drafter), [this discussion](https://users.rust-lang.org/t/does-anyone-use-github-actions-to-run-cargo-publish/92374/4)].
 - [ ] Update README, look at moving web stuff to separate doc, add installation instructions with link to github releases, when crate is published add instructions for installing with cargo.
@@ -37,3 +36,5 @@
 - [ ] [Taffy](https://github.com/PPakalns/egui_taffy/)?
 
 ## Done
+
+- [x] Fix missing icon and window title on Ubuntu - added app id named to match desktop file (which is named after binary, which is named after crate). This fixes the issue at least on Bazzite using a ubuntu box, although it does require copying the .desktop file to `/var/~/.local/share/applications`, since it looks like boxbuddy/distro-box don't do this for you.
