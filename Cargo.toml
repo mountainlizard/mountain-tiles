@@ -110,7 +110,7 @@ opt-level = 2
 [package.metadata.packager]
 product-name = "MountainTiles"
 category = "GraphicsAndDesign"
-identifier = "com.mountainlizard.mountain-tiles"
+identifier = "com.mountainlizard.mountain_tiles"
 icons = ["icon.ico", "icon.icns", "icon.png"]
 description = "Tile map editor"
 

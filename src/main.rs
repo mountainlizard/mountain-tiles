@@ -14,7 +14,7 @@ use std::process::exit;
 // When compiling natively:
 #[cfg(not(target_arch = "wasm32"))]
 fn main() -> eframe::Result {
-    use mountain_tiles::app::{App, UNIQUE_ID};
+    use mountain_tiles::app::{App, APP_ID, APP_NAME};
 
     env_logger::init(); // Log to stderr (if you run with `RUST_LOG=debug`).
 
@@ -25,34 +25,36 @@ fn main() -> eframe::Result {
 
     // Handle instance startup - if this returns true we should
     // exit without error
-    if instance_startup(UNIQUE_ID) {
+    if instance_startup(APP_ID) {
         println!("Application is already running - will exit.");
         exit(0);
     }
 
     let mut viewport = egui::ViewportBuilder::default()
         .with_inner_size([400.0, 300.0])
-        .with_min_inner_size([300.0, 220.0]);
+        .with_min_inner_size([300.0, 220.0])
+        .with_app_id(APP_ID)
+        .with_title(APP_NAME);
 
     match eframe::icon_data::from_png_bytes(&include_bytes!("../assets/icon-256.png")[..]) {
         Ok(icon) => viewport = viewport.with_icon(icon),
         Err(e) => log::warn!("Failed to load icon {}", e),
     }
 
-    let is_macos = cfg!(target_os = "macos");
-    if is_macos {
-        viewport = viewport
-            .with_title_shown(false)
-            .with_titlebar_shown(false)
-            .with_fullsize_content_view(true);
-    }
+    // let is_macos = cfg!(target_os = "macos");
+    // if is_macos {
+    //     viewport = viewport
+    //         .with_title_shown(false)
+    //         .with_titlebar_shown(false)
+    //         .with_fullsize_content_view(true);
+    // }
 
     let native_options = eframe::NativeOptions {
         viewport,
         ..Default::default()
     };
     eframe::run_native(
-        "MountainTiles",
+        APP_NAME,
         native_options,
         Box::new(|cc| Ok(Box::new(App::new(cc)))),
     )

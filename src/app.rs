@@ -24,7 +24,8 @@ mod tiled;
 mod tilesets;
 mod undoredo;
 
-pub const UNIQUE_ID: &str = "com.mountainlizard.mountain-tiles";
+pub const APP_NAME: &str = "MountainTiles";
+pub const APP_ID: &str = "com.mountainlizard.mountain-tiles";
 pub const USE_STORAGE: bool = true;
 
 /// We derive Deserialize/Serialize so we can persist app state on shutdown.

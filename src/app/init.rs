@@ -6,11 +6,13 @@ use egui::ThemePreference;
 use crate::{
     app::{
         files::{OpenContext, StateSource},
-        App, UNIQUE_ID, USE_STORAGE,
+        App, APP_ID, USE_STORAGE,
     },
     instance::create_ipc_listener,
-    ui::egui_utils,
-    ui::theme::{self, DEFAULT_THEME},
+    ui::{
+        egui_utils,
+        theme::{self, DEFAULT_THEME},
+    },
 };
 
 impl App {
@@ -26,7 +28,7 @@ impl App {
         let ipc_listener = if is_macos {
             None
         } else {
-            match create_ipc_listener(UNIQUE_ID, cc.egui_ctx.clone()) {
+            match create_ipc_listener(APP_ID, cc.egui_ctx.clone()) {
                 Ok(ipc_listener) => Some(ipc_listener),
                 Err(e) => {
                     log::error!("Failed to create IPC listener: {}", e);
