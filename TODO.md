@@ -1,14 +1,10 @@
 # TODO
 
-## For first release
-
 - [ ] Brief look at how to set up file association on linux - seems like no great way to do automatically, maybe appimage or deb have something? Otherwise users can just do it.
 - [ ] Clear out random todos, notes etc.
-- [ ] Reenable test job with added caching.
-- [ ] Fix missing icon and window title on Ubuntu
-
-## Nice to have
-
+- [ ] Look at publishing releases to crates.io to allow cargo install, e.g. [see this discussion](https://users.rust-lang.org/t/does-anyone-use-github-actions-to-run-cargo-publish/92374/4)
+- [ ] Automated release notes, see [release drafter](https://github.com/marketplace/actions/release-drafter), [this discussion](https://users.rust-lang.org/t/does-anyone-use-github-actions-to-run-cargo-publish/92374/4)].
+- [ ] Update README, look at moving web stuff to separate doc, add installation instructions with link to github releases, when crate is published add instructions for installing with cargo.
 - [ ] Fix missing file icon, dependent on [this issue](https://github.com/crabnebula-dev/cargo-packager/issues/372). That covers macOS and Windows, not sure on Linux?
 - [ ] Option when creating a new map to duplicate selected map (or maybe three options - one to duplicate map completely, one to just create matching layers but empty, one to create a map with just a default empty layer)
 - [ ] Support multiple files open? Copy/paste may be interesting, need to translate tilesets by looking up in source project, and seeing if there is a matching file path in the target - maybe start from full absolute path match, then if not check for file name match, then tileset name match, if none match or there are multiple (since names don't have to be unique) prompt user.
@@ -41,18 +37,4 @@
 
 ## Done
 
-- [x] Transfer to public repo and make sure CI is running
-- [x] Try [zigbuild](https://hansott.codes/blog/cross-compiling-rust-with-zig-for-older-glibc-47) for compiling linux versions against older glibc.
-- [x] Windows / linux file association, open file in new or existing app instance. This should be possible since it should just start the application with a command line parameter for the file - we'll need to look at code / a crate to handle the case where there's already an instance of the application open. E.g. [windows example using mutex and named pipe](https://www.autoitconsulting.com/site/development/single-instance-winform-app-csharp-mutex-named-pipes/). There's an [oldish crate `single-instance`](https://crates.io/crates/single-instance) that does the locking part, but not the pipe. There's [cargo code](https://github.com/rust-lang/cargo/blob/03bc66b55c290324bd46eb22e369c8fae1908f91/src/cargo/util/flock.rs#L277) for locking with a file. [Discussion on Reddit](https://www.reddit.com/r/rust/comments/14hlx8u/a_rusty_way_to_check_if_another_instance_is/). There's a [tauri plugin](https://v2.tauri.app/plugin/single-instance/) for the same thing, using dbus on linux?
-- [x] Transparency color for tilesets
-- [x] Change file extension, .mtm seems to be too common, check on list of extensions or use .mountaintiles.
-- [x] Support multiple maps in one "project"? Makes copy/paste easy since we have the same palette and tilesets for all maps.
-- [x] Rewrite signing stuff to be neater and straight to the point.
-- [x] Check commit signing is working.
-- [x] Work out why we get data loss message after: Starting -> creating new map -> quitting -> starting -> quitting
-- [x] Default new tileset dialog to same tile size as map
-- [x] Display help screen on key press (with permanent notice of this in UI) - this should be a cheat sheet of shortcuts, and a quick run through basic editing process as screenshots.
-- [x] Add layer alpha, import from Tiled `layer.opacity`
-- [x] Fix import of tiled colors in #AARRGGBB format. Use a custom serializer and deserializer, since it seems like #RRGGBB and #AARRGGBB are the only formats Tiled uses.
-- [x] Add name for tilesets, default to filename with extension removed?
-- [x] Export Tiled maps - will need to split into layers by palette... Base .tsx filenames on tileset name (with significant characters removed - /, \ etc.), and check that we don't have duplicates on export. If we do, show an error recommending editing tilesets to change names.
+- [x] Fix missing icon and window title on Ubuntu - added app id named to match desktop file (which is named after binary, which is named after crate). This fixes the issue at least on Bazzite using a ubuntu box, although it does require copying the .desktop file to `/var/~/.local/share/applications`, since it looks like boxbuddy/distro-box don't do this for you.
