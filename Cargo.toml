@@ -1,6 +1,6 @@
 [package]
 name = "mountain-tiles"
-version = "0.1.7"
+version = "0.2.0"
 authors = ["Ben Webster (b@rebeam.org)"]
 edition = "2021"
 include = ["LICENSE-APACHE", "LICENSE-MIT", "**/*.rs", "Cargo.toml"]
