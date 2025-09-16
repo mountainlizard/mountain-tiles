@@ -32,7 +32,16 @@ fn main() -> eframe::Result {
 
     let mut viewport = egui::ViewportBuilder::default()
         .with_inner_size([400.0, 300.0])
-        .with_min_inner_size([300.0, 220.0]);
+        .with_min_inner_size([300.0, 220.0])
+        // Set app id for wayland so it matches the desktop file, which is named after
+        // our binary, which is named after our crate.
+        // At some point it would be nice to use `com.mountainlizard.mountain_tiles` since
+        // this follows the freedesktop.org spec, but this would require a change to
+        // cargo-packager, and looks like it might interact with other naming (e.g. in AppImage),
+        // so for now we just assume that `mountain-tiles` is unusual enough that it's
+        // unlikely to be used as the app id of an unrelated application.
+        .with_app_id("mountain-tiles")
+        .with_title("MountainTiles");
 
     match eframe::icon_data::from_png_bytes(&include_bytes!("../assets/icon-256.png")[..]) {
         Ok(icon) => viewport = viewport.with_icon(icon),
@@ -52,7 +61,9 @@ fn main() -> eframe::Result {
         ..Default::default()
     };
     eframe::run_native(
-        "MountainTiles",
+        // Use the app id for app name, just in case it does end up getting used by wayland,
+        // see `.with_app_id` call above for why we use this value.
+        "mountain-tiles",
         native_options,
         Box::new(|cc| Ok(Box::new(App::new(cc)))),
     )
