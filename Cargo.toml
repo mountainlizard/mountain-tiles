@@ -1,6 +1,6 @@
 [package]
 name = "mountain-tiles"
-version = "0.2.0"
+version = "0.2.1"
 authors = ["Ben Webster (b@rebeam.org)"]
 edition = "2021"
 include = ["LICENSE-APACHE", "LICENSE-MIT", "**/*.rs", "Cargo.toml"]
@@ -24,6 +24,12 @@ eframe = { version = "0.32", default-features = false, features = [
     "wayland",     # To support Linux (and CI)
     "x11",         # To support older Linux distributions (restores one of the default features)
 ] }
+
+# Enable the adwaita-like SCTK frame, this is needed for wayland client-side decorations (CSD)
+# to be drawn nicely. Otherwise it seems to fall back to a minimal window frame with no title
+# text and very basic buttons, at least on Ubuntu default desktop.
+# See https://docs.rs/crate/sctk-adwaita/0.10.1
+winit = { version = "*", features = ["wayland-csd-adwaita"] }
 
 egui_extras = { version = "0.32", features = ["all_loaders"] }
 
