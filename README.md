@@ -135,11 +135,12 @@ This will trigger the `rust.yml` workflow, and since the event is a `push` and t
 ## Debian (.deb) packaging
 
 See `Cargo.toml` file, in the `[package.metadata.packager.deb]` section.
-This includes additional files for the .deb package - these are relative to the root of the project, this is why we have the `usr` and `DEBIAN` directories in the project.
-In summary, the `usr` directory contains contents to be placed in the mime packages dir on installation, which are then used to register mime types. `DEBIAN` then provides a `postinst` script that runs after installation to:
+This includes additional files for the .deb package - the `files` field is a map, where each key is the file path relative to the root of the project, and each value is the location in the resulting .deb package. All source files are in the `deb` directory of the project.
+
+In summary, there is an xml file with our mime types, and a `postinst` script that runs after installation to:
 
 1. Update the desktop database using the contents of our `.desktop` file, as created by `cargo-packager` automatically.
-2. Update the mime database using our `x-mountain-tiles.xml` file from the `usr/share/mime/packages` directory.
+2. Update the mime database using our `x-mountain-tiles.xml` file, which is installed to the `usr/share/mime/packages` directory on the user's system.
 
 For more details, see [freedesktop docs](https://specifications.freedesktop.org/shared-mime-info-spec/latest/ar01s02.html), we also used existing deb files as a reference.
 

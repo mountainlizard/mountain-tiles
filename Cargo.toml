@@ -128,7 +128,8 @@ name = "MountainTiles document"
 role = "editor"
 
 [package.metadata.packager.deb]
-files = ["DEBIAN/postinst", "usr/share/mime/packages/x-mountain-tiles.xml"]
+files."deb/postinst" = "DEBIAN/postinst"
+files."deb/x-mountain-tiles.xml" = "usr/share/mime/packages/x-mountain-tiles.xml"
 
 [package.metadata.packager.macos]
 signing-identity = "Developer ID Application: Ben Webster (289VK6N2L6)"
