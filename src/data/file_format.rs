@@ -5,13 +5,47 @@ use eyre::eyre;
 
 use crate::data::state::State;
 
+/// The mime type for mountain tiles data files
+pub const MIME_TYPE: &str = "application/x-mountain-tiles";
+
+#[cfg(not(target_os = "windows"))]
+/// The display name for mountain tiles data files
+/// On non-Windows OSs the dialog (usually?) doesn't display
+/// the extension directly alongside the filter name, so we
+/// add it for clarity
+pub const NAME: &str = "MountainTiles Map (.mnp)";
+
+#[cfg(target_os = "windows")]
+/// The display name for mountain tiles data files
+/// On Windows the dialog displays the extension alongside
+/// the filter name, so we don't have to
+pub const NAME: &str = "MountainTiles Map";
+
+/// The filename extension for mountain tiles data files
+pub const EXTENSION: &str = "mnp";
+
+/// The different file formats supported in a mountain tiles data file.
+/// While all files should have the same [`MIME_TYPE`] and [`EXTENSION`],
+/// the contents may differ in format. All contents match the
+/// [`MinimalFileContents`] struct by having at least the `format` field,
+/// and this must be a value from this [`FileFormat`] enum, which is used
+/// to identify the rest of the contents to allow decoding as the appropriate
+/// struct.
+/// This allows for both incompatible changes to the version of the file, and
+/// possibly for files with different contents in future. Currently only
+/// [`FileContents`] is supported.
 #[derive(serde::Deserialize, serde::Serialize, Clone, PartialEq)]
 pub enum FileFormat {
+    /// A mountain tiles file containing a [`FileContents`] struct
+    /// encoded in json. This in turn contains this [`FileFormat`]
+    /// itself as a `format` field, and a [`State`] containing
+    /// resources, maps etc.
     #[serde(rename = "mountainlizard.com/mountain-tiles/v0")]
     MountainLizardComMountainTilesV0,
 }
 
 impl FileFormat {
+    /// The current main file format, bumped when we have a new version.
     pub const CURRENT: FileFormat = FileFormat::MountainLizardComMountainTilesV0;
 }
 
