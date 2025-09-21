@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mime-info xmlns='http://www.freedesktop.org/standards/shared-mime-info'>
+  <mime-type
+    type="application/x-mountain-tiles">
+    <comment>MountainTiles document</comment>
+    <icon name="mountain-tiles" />
+    <glob pattern="*.mnp" />
+  </mime-type>
+</mime-info>

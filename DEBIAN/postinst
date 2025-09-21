@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+# Install the desktop entry
+if hash update-desktop-database 2>/dev/null; then
+        update-desktop-database
+fi
+
+# Update mimetype database to pickup workspace mimetype
+if hash update-mime-database 2>/dev/null; then
+        update-mime-database /usr/share/mime
+fi

@@ -132,6 +132,17 @@ git push --tags "origin"
 
 This will trigger the `rust.yml` workflow, and since the event is a `push` and the ref starts with `refs/tags/v` this will also run the `release` job, which creates a release named after the tag, and uploads all artifacts to the release.
 
+## Debian (.deb) packaging
+
+See `Cargo.toml` file, in the `[package.metadata.packager.deb]` section.
+This includes additional files for the .deb package - these are relative to the root of the project, this is why we have the `usr` and `DEBIAN` directories in the project.
+In summary, the `usr` directory contains contents to be placed in the mime packages dir on installation, which are then used to register mime types. `DEBIAN` then provides a `postinst` script that runs after installation to:
+
+1. Update the desktop database using the contents of our `.desktop` file, as created by `cargo-packager` automatically.
+2. Update the mime database using our `x-mountain-tiles.xml` file from the `usr/share/mime/packages` directory.
+
+For more details, see [freedesktop docs](https://specifications.freedesktop.org/shared-mime-info-spec/latest/ar01s02.html), we also used existing deb files as a reference.
+
 ## References
 
 - [Helpful guide on signing and notarizing on macOS](https://scriptingosx.com/2021/07/notarize-a-command-line-tool-with-notarytool/)

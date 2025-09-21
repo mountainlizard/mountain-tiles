@@ -118,13 +118,17 @@ product-name = "MountainTiles"
 identifier = "com.mountainlizard.mountain-tiles"
 icons = ["icon.ico", "icon.icns", "icon.png"]
 description = "Tile map editor"
+category = "GraphicsAndDesign"
 
 [[package.metadata.packager.file-associations]]
-description = "MountainTiles Map"
+description = "MountainTiles document"
 extensions = ["mnp"]
-mimeType = "application/json"
-name = "MountainTiles Map"
+mimeType = "application/x-mountain-tiles"
+name = "MountainTiles document"
 role = "editor"
+
+[package.metadata.packager.deb]
+files = ["DEBIAN/postinst", "usr/share/mime/packages/x-mountain-tiles.xml"]
 
 [package.metadata.packager.macos]
 signing-identity = "Developer ID Application: Ben Webster (289VK6N2L6)"
