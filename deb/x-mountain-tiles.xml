@@ -4,6 +4,7 @@
     type="application/x-mountain-tiles">
     <comment>MountainTiles document</comment>
     <icon name="mountain-tiles" />
+    <generic-icon name="image-x-generic" />
     <glob pattern="*.mnp" />
   </mime-type>
 </mime-info>
