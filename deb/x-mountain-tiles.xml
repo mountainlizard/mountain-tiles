@@ -3,7 +3,7 @@
   <mime-type
     type="application/x-mountain-tiles">
     <comment>MountainTiles document</comment>
-    <icon name="mountain-tiles" />
+    <icon name="mountain-tiles-document" />
     <generic-icon name="image-x-generic" />
     <glob pattern="*.mnp" />
   </mime-type>
