@@ -3,7 +3,6 @@ use std::path::PathBuf;
 use camino::Utf8PathBuf;
 use eyre::Context;
 
-#[cfg(not(target_os = "windows"))]
 use crate::data::file_format;
 
 pub const MOUNTAIN_TILES_MAP_NAME: &str = file_format::NAME;
