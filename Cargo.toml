@@ -139,13 +139,13 @@ role = "editor"
 
 [package.metadata.packager.deb]
 files."deb/x-mountain-tiles.xml" = "usr/share/mime/packages/x-mountain-tiles.xml"
-files."deb/mountain-tiles-document-16.png" = "/usr/share/icons/hicolor/16x16/mimetypes/mountain-tiles-document.png"
-files."deb/mountain-tiles-document-24.png" = "/usr/share/icons/hicolor/24x24/mimetypes/mountain-tiles-document.png"
-files."deb/mountain-tiles-document-32.png" = "/usr/share/icons/hicolor/32x32/mimetypes/mountain-tiles-document.png"
-files."deb/mountain-tiles-document-48.png" = "/usr/share/icons/hicolor/48x48/mimetypes/mountain-tiles-document.png"
-files."deb/mountain-tiles-document-64.png" = "/usr/share/icons/hicolor/64x64/mimetypes/mountain-tiles-document.png"
-files."deb/mountain-tiles-document-128.png" = "/usr/share/icons/hicolor/128x128/mimetypes/mountain-tiles-document.png"
-files."deb/mountain-tiles-document-512.png" = "/usr/share/icons/hicolor/512x512/mimetypes/mountain-tiles-document.png"
+files."deb/application-x-mountain-tiles-16.png" = "/usr/share/icons/hicolor/16x16/mimetypes/application-x-mountain-tiles.png"
+files."deb/application-x-mountain-tiles-24.png" = "/usr/share/icons/hicolor/24x24/mimetypes/application-x-mountain-tiles.png"
+files."deb/application-x-mountain-tiles-32.png" = "/usr/share/icons/hicolor/32x32/mimetypes/application-x-mountain-tiles.png"
+files."deb/application-x-mountain-tiles-48.png" = "/usr/share/icons/hicolor/48x48/mimetypes/application-x-mountain-tiles.png"
+files."deb/application-x-mountain-tiles-64.png" = "/usr/share/icons/hicolor/64x64/mimetypes/application-x-mountain-tiles.png"
+files."deb/application-x-mountain-tiles-128.png" = "/usr/share/icons/hicolor/128x128/mimetypes/application-x-mountain-tiles.png"
+files."deb/application-x-mountain-tiles-512.png" = "/usr/share/icons/hicolor/512x512/mimetypes/application-x-mountain-tiles.png"
 
 [package.metadata.packager.macos]
 signing-identity = "Developer ID Application: Ben Webster (289VK6N2L6)"
