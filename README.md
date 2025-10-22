@@ -123,7 +123,7 @@ In order to perform a release, you also need:
 
 - `RELEASE_TOKEN` contains a github personal access token with permissions to read and write contents, this is used to create a release and attach assets.
 
-To trigger a release, make sure you are on main branch and on the correct commit (most likely the head), then add a tag to the repo starting with `v`, e.g.:
+To trigger a release, make sure you are on main branch and on the correct commit (most likely the head), and that the `Cargo.toml` package version in that commit matches the version number of the release, then add a tag to the repo starting with `v`, then the version number, e.g.:
 
 ```bash
 git tag -a "v0.1.6" -m "Release v0.1.6"
