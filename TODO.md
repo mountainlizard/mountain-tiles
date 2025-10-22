@@ -1,5 +1,6 @@
 # TODO
 
+- [ ] Layer merge button should only be active when possible (i.e. multiple layers are selected).
 - [ ] Brief look at how to set up file association on linux - seems like no great way to do automatically, maybe appimage or deb have something? Otherwise users can just do it. Does [this spec](https://specifications.freedesktop.org/shared-mime-info-spec/latest/ar01s02.html) cover it?
 - [ ] Clear out random todos, notes etc.
 - [ ] Look at publishing releases to crates.io to allow cargo install, e.g. [see this discussion](https://users.rust-lang.org/t/does-anyone-use-github-actions-to-run-cargo-publish/92374/4)
