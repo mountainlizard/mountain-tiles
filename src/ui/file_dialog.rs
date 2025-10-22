@@ -3,18 +3,10 @@ use std::path::PathBuf;
 use camino::Utf8PathBuf;
 use eyre::Context;
 
-#[cfg(not(target_os = "windows"))]
-/// Name for mnp file type - on non-Windows OSs the dialog (usually?)
-/// doesn't display the extension directly alongside the filter name,
-/// so we add it for clarity
-pub const MOUNTAIN_TILES_MAP_NAME: &str = "MountainTiles Map (.mnp)";
+use crate::data::file_format;
 
-#[cfg(target_os = "windows")]
-/// Name for mnp file type - on Windows the dialog displays
-/// the extension alongside the filter name, so we don't have to
-pub const MOUNTAIN_TILES_MAP_NAME: &str = "MountainTiles Map";
-
-pub const MOUNTAIN_TILES_MAP_EXTENSION: &str = "mnp";
+pub const MOUNTAIN_TILES_MAP_NAME: &str = file_format::NAME;
+pub const MOUNTAIN_TILES_MAP_EXTENSION: &str = file_format::EXTENSION;
 
 #[cfg(not(target_os = "windows"))]
 pub const PNG_NAME: &str = "PNG Image (.png)";

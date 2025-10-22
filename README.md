@@ -123,7 +123,7 @@ In order to perform a release, you also need:
 
 - `RELEASE_TOKEN` contains a github personal access token with permissions to read and write contents, this is used to create a release and attach assets.
 
-To trigger a release, make sure you are on main branch and on the correct commit (most likely the head), then add a tag to the repo starting with `v`, e.g.:
+To trigger a release, make sure you are on main branch and on the correct commit (most likely the head), and that the `Cargo.toml` package version in that commit matches the version number of the release, then add a tag to the repo starting with `v`, then the version number, e.g.:
 
 ```bash
 git tag -a "v0.1.6" -m "Release v0.1.6"
@@ -131,6 +131,18 @@ git push --tags "origin"
 ```
 
 This will trigger the `rust.yml` workflow, and since the event is a `push` and the ref starts with `refs/tags/v` this will also run the `release` job, which creates a release named after the tag, and uploads all artifacts to the release.
+
+## Debian (.deb) packaging
+
+See `Cargo.toml` file, in the `[package.metadata.packager.deb]` section.
+This includes additional files for the .deb package - the `files` field is a map, where each key is the file path relative to the root of the project, and each value is the location in the resulting .deb package. All source files are in the `deb` directory of the project.
+
+In summary, there is an xml file with our mime types, and a `postinst` script that runs after installation to:
+
+1. Update the desktop database using the contents of our `.desktop` file, as created by `cargo-packager` automatically.
+2. Update the mime database using our `x-mountain-tiles.xml` file, which is installed to the `usr/share/mime/packages` directory on the user's system.
+
+For more details, see [freedesktop docs](https://specifications.freedesktop.org/shared-mime-info-spec/latest/ar01s02.html), we also used existing deb files as a reference.
 
 ## References
 

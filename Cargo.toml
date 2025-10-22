@@ -1,6 +1,6 @@
 [package]
 name = "mountain-tiles"
-version = "0.2.1"
+version = "0.2.2"
 authors = ["Ben Webster (b@rebeam.org)"]
 edition = "2021"
 include = ["LICENSE-APACHE", "LICENSE-MIT", "**/*.rs", "Cargo.toml"]
@@ -116,15 +116,41 @@ opt-level = 2
 [package.metadata.packager]
 product-name = "MountainTiles"
 identifier = "com.mountainlizard.mountain-tiles"
-icons = ["icon.ico", "icon.icns", "icon.png"]
+icons = [
+    "icon.ico",
+    "icon.icns",
+    "icon.png",
+    "icon-16.png",
+    "icon-24.png",
+    "icon-32.png",
+    "icon-48.png",
+    "icon-64.png",
+    "icon-128.png",
+]
 description = "Tile map editor"
+category = "GraphicsAndDesign"
 
 [[package.metadata.packager.file-associations]]
-description = "MountainTiles Map"
+description = "MountainTiles document"
 extensions = ["mnp"]
-mimeType = "application/json"
-name = "MountainTiles Map"
+mimeType = "application/x-mountain-tiles"
+name = "MountainTiles document"
 role = "editor"
+
+[package.metadata.packager.deb]
+files."deb/x-mountain-tiles.xml" = "usr/share/mime/packages/x-mountain-tiles.xml"
+# Note we include icons for the `application/x-mountain-tiles mime` type, these
+# are expected to be named after the mime type, with `/` replaced by `-`,
+# see the icon section of the following specification for details:
+# https://specifications.freedesktop.org/shared-mime-info-spec/latest/ar01s02.html
+# These don't seem to be used on Ubuntu 24.04, they may be used on other systems?
+files."deb/application-x-mountain-tiles-16.png" = "/usr/share/icons/hicolor/16x16/mimetypes/application-x-mountain-tiles.png"
+files."deb/application-x-mountain-tiles-24.png" = "/usr/share/icons/hicolor/24x24/mimetypes/application-x-mountain-tiles.png"
+files."deb/application-x-mountain-tiles-32.png" = "/usr/share/icons/hicolor/32x32/mimetypes/application-x-mountain-tiles.png"
+files."deb/application-x-mountain-tiles-48.png" = "/usr/share/icons/hicolor/48x48/mimetypes/application-x-mountain-tiles.png"
+files."deb/application-x-mountain-tiles-64.png" = "/usr/share/icons/hicolor/64x64/mimetypes/application-x-mountain-tiles.png"
+files."deb/application-x-mountain-tiles-128.png" = "/usr/share/icons/hicolor/128x128/mimetypes/application-x-mountain-tiles.png"
+files."deb/application-x-mountain-tiles-512.png" = "/usr/share/icons/hicolor/512x512/mimetypes/application-x-mountain-tiles.png"
 
 [package.metadata.packager.macos]
 signing-identity = "Developer ID Application: Ben Webster (289VK6N2L6)"
