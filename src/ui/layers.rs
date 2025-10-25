@@ -155,13 +155,13 @@ pub fn layers_ui(ui: &mut Ui, app: &mut App) {
                 operations.push(LayerOperation::Action(Action::AddLayer { map_id }));
             }
 
-            if square_button(ui, "󰍴").clicked() {
+            if enabled_square_button(ui, me.can_delete_selected_layers(), "󰍴").clicked() {
                 operations.push(LayerOperation::Action(Action::DeleteSelectedLayers {
                     map_id,
                 }));
             }
 
-            if square_button(ui, "󰘭 Merge").clicked() {
+            if enabled_square_button(ui, me.can_merge_selected_layers(), "󰘭 Merge").clicked() {
                 operations.push(LayerOperation::Action(Action::MergeSelectedLayers {
                     map_id,
                 }));
