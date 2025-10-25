@@ -246,6 +246,14 @@ impl<'a> MapEditing<'a> {
     fn reset_zoom(&mut self) {
         self.edit.scene_rect = self.map.tiles.screen_rect();
     }
+
+    pub fn can_delete_selected_layers(&self) -> bool {
+        !self.selected_layer_indices().is_empty()
+    }
+
+    pub(crate) fn can_merge_selected_layers(&self) -> bool {
+        self.selected_layer_indices().len() > 1
+    }
 }
 
 impl App {

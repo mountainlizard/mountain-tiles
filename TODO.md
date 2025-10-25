@@ -1,7 +1,5 @@
 # TODO
 
-- [ ] Layer merge button should only be active when possible (i.e. multiple layers are selected).
-- [ ] Brief look at how to set up file association on linux - seems like no great way to do automatically, maybe appimage or deb have something? Otherwise users can just do it. Does [this spec](https://specifications.freedesktop.org/shared-mime-info-spec/latest/ar01s02.html) cover it?
 - [ ] Clear out random todos, notes etc.
 - [ ] Look at publishing releases to crates.io to allow cargo install, e.g. [see this discussion](https://users.rust-lang.org/t/does-anyone-use-github-actions-to-run-cargo-publish/92374/4)
 - [ ] Automated release notes, see [release drafter](https://github.com/marketplace/actions/release-drafter), [this discussion](https://users.rust-lang.org/t/does-anyone-use-github-actions-to-run-cargo-publish/92374/4)].
@@ -38,4 +36,6 @@
 
 ## Done
 
+- [x] Brief look at how to set up file association on linux - implemented for deb installer, this now creates a mime type corresponding to the one referenced in the desktop file.
+- [x] Layer merge button should only be active when possible (i.e. multiple layers are selected).
 - [x] Fix missing icon and window title on Ubuntu - added app id named to match desktop file (which is named after binary, which is named after crate). This fixes the issue at least on Bazzite using a ubuntu box, although it does require copying the .desktop file to `/var/~/.local/share/applications`, since it looks like boxbuddy/distro-box don't do this for you.
