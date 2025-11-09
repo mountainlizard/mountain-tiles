@@ -211,7 +211,7 @@ impl TileColor {
         Self::Palette { index }
     }
 
-    pub fn as_foreground_color32_premultiplied(&self, palette: &Palette) -> Color32 {
+    pub fn as_premultiplied_foreground_color32(&self, palette: &Palette) -> Color32 {
         self.as_foreground_user_color(palette)
             .as_premultiplied_color32()
     }
