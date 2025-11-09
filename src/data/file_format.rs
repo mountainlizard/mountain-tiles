@@ -1,7 +1,8 @@
-use std::{fs::File, io::BufReader};
+use std::{fmt::Display, fs::File, io::BufReader};
 
 use camino::Utf8PathBuf;
 use eyre::eyre;
+use serde_json::Value;
 
 use crate::data::state::State;
 
@@ -40,13 +41,41 @@ pub enum FileFormat {
     /// encoded in json. This in turn contains this [`FileFormat`]
     /// itself as a `format` field, and a [`State`] containing
     /// resources, maps etc.
+    /// This uses the original data model for the [`State`].
     #[serde(rename = "mountainlizard.com/mountain-tiles/v0")]
     MountainLizardComMountainTilesV0,
+
+    /// Identical to [`FileFormat::MountainLizardComMountainTilesV0`], except
+    /// for the following change to the data in [`State`]:
+    ///
+    /// 1. [`crate::data::tiles::tile_color::TileColor`] has a new variant
+    ///    for foreground + background color
+    ///
+    /// All [`FileFormat::MountainLizardComMountainTilesV0`] files can be read as
+    /// [`FileFormat::MountainLizardComMountainTilesV1`], but any
+    /// [`FileFormat::MountainLizardComMountainTilesV1`] files using the new variant
+    /// can't be read in older software. Incrementing the file format prevents older
+    /// software trying and failing to read the new variant.
+    #[serde(rename = "mountainlizard.com/mountain-tiles/v1")]
+    MountainLizardComMountainTilesV1,
+}
+
+impl Display for FileFormat {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            FileFormat::MountainLizardComMountainTilesV0 => {
+                write!(f, "mountainlizard.com mountain-tiles file format v0")
+            }
+            FileFormat::MountainLizardComMountainTilesV1 => {
+                write!(f, "mountainlizard.com mountain-tiles file format v1")
+            }
+        }
+    }
 }
 
 impl FileFormat {
     /// The current main file format, bumped when we have a new version.
-    pub const CURRENT: FileFormat = FileFormat::MountainLizardComMountainTilesV0;
+    pub const CURRENT: FileFormat = FileFormat::MountainLizardComMountainTilesV1;
 }
 
 /// Contents of file - we only need the data version in files, so we
@@ -67,11 +96,8 @@ pub struct MinimalFileContents {
 
 /// Confirm that a file is in a supported format, which is
 /// any JSON file containing an object with a field `format`
-/// containing the value [`FileFormat::CURRENT`].
-/// When more formats (either entirely different formats, or
-/// new versions) are implemented, this can be made to accept
-/// whichever ones are currently supported, and will return the
-/// recognised [`FileFormat`].
+/// containing the value [`FileFormat::CURRENT`], or an acceptable
+/// older [`FileFormat`].
 /// Note that this is intended to be quicker than trying to open
 /// the entire file as a given format, and possibly failing, since
 /// it only tries to read a single field, `format`, as a string.
@@ -79,15 +105,21 @@ pub fn confirm_format(path: Utf8PathBuf) -> eyre::Result<FileFormat> {
     let file = File::open(path.clone())?;
     let buf_reader = BufReader::new(file);
     let file_contents: MinimalFileContents = serde_json::from_reader(buf_reader)?;
-    let expected_format = serde_json::to_string(&FileFormat::CURRENT)?;
-    if expected_format == format!("\"{}\"", file_contents.format) {
-        Ok(FileFormat::CURRENT)
-    } else if file_contents
-        .format
-        .starts_with("mountainlizard.com/mountain-tiles/")
-    {
-        Err(eyre!("Unsupported file version - please update software"))
-    } else {
+    let format = file_contents.format;
+
+    // First check basic format id - if it doesn't start with
+    // our URL, then it can't be from a valid mountain-tiles file,
+    // even a future version, and there's no point recommending upgrading
+    if !format.starts_with("mountainlizard.com/mountain-tiles/") {
         Err(eyre!("Unsupported file format"))
+
+    // Now try to parse the format id as a known [`FileFormat`]
+    } else {
+        // Encode the format as JSON (e.g. adding quotes), so we can attempt
+        // to decode it as a JSON-encoded [`FileFormat`]. We could use strum but
+        // might as well reuse JSON parsing since we need it anyway.
+        let format_json = Value::String(format).to_string();
+        serde_json::from_str(&format_json)
+            .map_err(|_e| eyre!("Unsupported file version - please update software"))
     }
 }

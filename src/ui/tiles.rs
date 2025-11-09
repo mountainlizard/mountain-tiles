@@ -111,11 +111,11 @@ fn tiles_ui<T: Tiles>(
                                 let color = match opacity {
                                     Some(opacity) => tile
                                         .color
-                                        .as_user_color(palette)
+                                        .as_foreground_user_color(palette)
                                         .with_opacity(opacity)
                                         .as_premultiplied_color32(),
                                     // TODO: Rename to as_premultiplied_color32
-                                    None => tile.color.as_color32_premultiplied(palette),
+                                    None => tile.color.as_foreground_color32_premultiplied(palette),
                                 };
 
                                 mesh.add_rect_with_transform(

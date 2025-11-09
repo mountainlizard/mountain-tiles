@@ -4,6 +4,7 @@ use std::{
 };
 
 use camino::Utf8PathBuf;
+use log::info;
 
 use crate::{
     data::palette::Palette,
@@ -126,7 +127,12 @@ impl State {
     pub fn from_path(path: Utf8PathBuf) -> eyre::Result<State> {
         // First confirm file has correct format - this will give better errors
         // on unsupported files than trying to load as [`FileContents`] directly
-        confirm_format(path.clone())?;
+        let format = confirm_format(path.clone())?;
+
+        // Note that in future we might need to adapt loading for format, at the moment
+        // we can read all formats using the current data model (e.g. v1 only adds
+        // possible enum values to v0, so we can load v0 JSON as v1 data model)
+        info!("Loading format '{}'", format);
 
         let file = File::open(path.clone())?;
         let buf_reader = BufReader::new(file);

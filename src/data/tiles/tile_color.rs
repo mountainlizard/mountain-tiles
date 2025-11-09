@@ -180,13 +180,29 @@ impl From<csscolorparser::Color> for UserColor {
     }
 }
 
+/// Specifies the color of a tile.
+/// This is used to process the underlying tile image by multiplying red, green and blue
+/// components of each pixel of the image by the tile color components. In addition, the
+/// image pixel alpha values are multiplied by the tile color alpha.
 #[derive(Default, Debug, Clone, Copy, serde::Deserialize, serde::Serialize, PartialEq)]
 pub enum TileColor {
+    /// The default color for a tile, this should be the tileset image with
+    /// no tint or processing. This should be equivalent to using a tile
+    /// color of opaque white (full value for each of red, green, blue
+    /// and alpha components)
     #[default]
     Default,
-    Palette {
-        index: PaletteIndex,
-    },
+    /// The tile color is taken from the relevant palette for the tile,
+    /// using the given index.
+    Palette { index: PaletteIndex },
+    /// The tile color is taken from the relevant palette for the tile,
+    /// using an index for the foreground (`fg`) and the background (`bg`).
+    /// If this tile has foreground and background areas, then they are colored
+    /// according to the specified palette colors, if the tile does not have
+    /// such areas then the entire tile uses the foreground color, making this
+    /// equivalent to [`TileColor::Palette`] with `index` equal to `fg`.
+    PaletteFgBg { fg: PaletteIndex, bg: PaletteIndex },
+    /// The tile color is specified directly by a [`UserColor`]
     UserColor(UserColor),
 }
 
@@ -195,21 +211,25 @@ impl TileColor {
         Self::Palette { index }
     }
 
-    pub fn as_color32_premultiplied(&self, palette: &Palette) -> Color32 {
-        self.as_user_color(palette).as_premultiplied_color32()
+    pub fn as_foreground_color32_premultiplied(&self, palette: &Palette) -> Color32 {
+        self.as_foreground_user_color(palette)
+            .as_premultiplied_color32()
     }
 
-    pub fn as_user_color(&self, palette: &Palette) -> UserColor {
+    pub fn as_foreground_user_color(&self, palette: &Palette) -> UserColor {
         match self {
             TileColor::Default => UserColor::WHITE,
             TileColor::Palette { index } => palette
                 .color_option(*index)
                 .unwrap_or(UserColor::PLACEHOLDER),
+            TileColor::PaletteFgBg { fg, bg: _ } => {
+                palette.color_option(*fg).unwrap_or(UserColor::PLACEHOLDER)
+            }
             TileColor::UserColor(color) => *color,
         }
     }
 
-    pub fn as_slice(&self, palette: &Palette) -> [u8; 4] {
-        self.as_user_color(palette).0
+    pub fn as_foreground_slice(&self, palette: &Palette) -> [u8; 4] {
+        self.as_foreground_user_color(palette).0
     }
 }

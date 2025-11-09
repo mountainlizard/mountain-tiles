@@ -173,6 +173,7 @@ impl Palette {
         match color {
             TileColor::Default => true,
             TileColor::Palette { index } => index.index() < self.len(),
+            TileColor::PaletteFgBg { fg, bg } => fg.index() < self.len() && bg.index() < self.len(),
             TileColor::UserColor(_user_color) => true,
         }
     }

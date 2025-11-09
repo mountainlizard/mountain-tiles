@@ -74,7 +74,7 @@ pub fn render_tiles<T: Tiles>(
                             .ok_or(eyre!("Cannot export, map uses an invalid tileset"))?;
                         let color = tile
                             .color
-                            .as_user_color(palette)
+                            .as_foreground_user_color(palette)
                             .with_optional_opacity(opacity)
                             .as_slice();
                         let tile_pos =
