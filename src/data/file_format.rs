@@ -46,14 +46,17 @@ pub enum FileFormat {
     MountainLizardComMountainTilesV0,
 
     /// Identical to [`FileFormat::MountainLizardComMountainTilesV0`], except
-    /// for the following change to the data in [`State`]:
+    /// for the following changes to the data in [`State`]:
     ///
     /// 1. [`crate::data::tiles::tile_color::TileColor`] has a new variant
     ///    for foreground + background color
     ///
+    /// 2. [`crate::data::tilesets::TilesetMode`] has a new variant
+    ///    for foreground + background, defined by background color
+    ///
     /// All [`FileFormat::MountainLizardComMountainTilesV0`] files can be read as
     /// [`FileFormat::MountainLizardComMountainTilesV1`], but any
-    /// [`FileFormat::MountainLizardComMountainTilesV1`] files using the new variant
+    /// [`FileFormat::MountainLizardComMountainTilesV1`] files using the new variants
     /// can't be read in older software. Incrementing the file format prevents older
     /// software trying and failing to read the new variant.
     #[serde(rename = "mountainlizard.com/mountain-tiles/v1")]
