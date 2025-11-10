@@ -76,6 +76,9 @@ pub fn tileset_settings_ui(ui: &mut Ui, app: &mut App) {
             let transparent = TilesetMode::TransparentBackground {
                 background: *default_transparent,
             };
+            let foreground_background = TilesetMode::ForegroundBackground {
+                background: *default_transparent,
+            };
             egui::ComboBox::from_id_salt("tileset_mode")
                 .selected_text(selected_text)
                 .truncate()
@@ -84,11 +87,20 @@ pub fn tileset_settings_ui(ui: &mut Ui, app: &mut App) {
                 .show_ui(ui, |ui| {
                     ui.selectable_value(&mut tileset.mode, direct, direct.description());
                     ui.selectable_value(&mut tileset.mode, transparent, transparent.description());
+                    ui.selectable_value(
+                        &mut tileset.mode,
+                        foreground_background,
+                        foreground_background.description(),
+                    );
                 });
 
             match tileset.mode {
                 TilesetMode::Direct => {}
                 TilesetMode::TransparentBackground { ref mut background } => {
+                    user_color_edit_button(ui, background, default_transparent_as_text);
+                    *default_transparent = *background;
+                }
+                TilesetMode::ForegroundBackground { ref mut background } => {
                     user_color_edit_button(ui, background, default_transparent_as_text);
                     *default_transparent = *background;
                 }

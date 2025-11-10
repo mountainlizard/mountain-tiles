@@ -39,11 +39,25 @@ impl Default for TilesetId {
     Debug, Copy, Clone, serde::Deserialize, serde::Serialize, PartialEq, Eq, Hash, Default,
 )]
 pub enum TilesetMode {
+    /// Tileset image is used directly
     #[default]
     Direct,
-    TransparentBackground {
-        background: UserColor,
-    },
+
+    /// Tileset image is processed so that all pixels with exactly the
+    /// background color become fully transparent (alpha 0), regardless of
+    /// actual alpha channel.
+    TransparentBackground { background: UserColor },
+
+    /// Tileset image is processed so that all pixels with exactly the
+    /// background color are treated as background, and the remaining
+    /// pixels are treated as foreground.
+    /// This is then used with the [crate::data::tiles::tile_color::TileColor]
+    /// to determine tile appearance - if the tile color includes a
+    /// foreground and background color, these are applied to the
+    /// relevant sections of the tile.
+    /// If the tile color includes only a foreground color, then the
+    /// background becomes fully transparent (alpha 0)
+    ForegroundBackground { background: UserColor },
 }
 
 impl TilesetMode {
@@ -51,6 +65,7 @@ impl TilesetMode {
         match self {
             TilesetMode::Direct => "Use image directly",
             TilesetMode::TransparentBackground { .. } => "Use transparent color",
+            TilesetMode::ForegroundBackground { .. } => "Use background color",
         }
     }
 
@@ -58,6 +73,7 @@ impl TilesetMode {
         match self {
             TilesetMode::Direct => UserColor::BLACK,
             TilesetMode::TransparentBackground { background } => *background,
+            TilesetMode::ForegroundBackground { background } => *background,
         }
     }
 
@@ -65,6 +81,11 @@ impl TilesetMode {
         match self {
             TilesetMode::Direct => {}
             TilesetMode::TransparentBackground { background } => {
+                if *color == background.as_slice() {
+                    *color = [0, 0, 0, 0];
+                }
+            }
+            TilesetMode::ForegroundBackground { background } => {
                 if *color == background.as_slice() {
                     *color = [0, 0, 0, 0];
                 }
