@@ -46,6 +46,23 @@ fn add_file_menu(ui: &mut Ui, app: &mut App) {
                 app.show_save_as_document_modal();
             }
 
+            ui.menu_button("󱋡 Recent files...", |ui| {
+                let mut path_to_open = None;
+                for (index, path) in app.recent_paths.iter().enumerate() {
+                    let name = format!(
+                        "{}. {}",
+                        index + 1,
+                        path.file_name().unwrap_or(path.as_str())
+                    );
+                    if ui.button(name).on_hover_text(path.as_str()).clicked() {
+                        path_to_open = Some(path.clone());
+                    }
+                }
+                if let Some(path_to_open) = path_to_open {
+                    app.check_data_loss_then_open_document_from_file_argument(path_to_open);
+                }
+            });
+
             if ui.button("󰋺 Import Palette...").clicked() {
                 app.show_import_palette_modal();
             }

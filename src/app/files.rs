@@ -30,14 +30,26 @@ pub enum OpenContext {
 }
 
 impl App {
+    pub const MAXIMUM_RECENT_PATHS: usize = 10;
+
+    pub fn push_recent_file_path(&mut self, path: Utf8PathBuf) {
+        self.recent_paths.retain(|p| p != &path);
+        self.recent_paths.push_front(path);
+        while self.recent_paths.len() > Self::MAXIMUM_RECENT_PATHS {
+            self.recent_paths.pop_back();
+        }
+    }
+
     pub fn on_open(&mut self, path: Utf8PathBuf) {
         self.save_path = Some(path.clone());
+        self.push_recent_file_path(path.clone());
         self.mark_current_state_as_saved();
         self.update_texture_base_dir_from_file_path(Some(path));
     }
 
     pub fn on_save(&mut self, path: Utf8PathBuf) {
         self.save_path = Some(path.clone());
+        self.push_recent_file_path(path.clone());
         self.act(Action::OnSave { path: path.clone() });
         self.update_texture_base_dir_from_file_path(Some(path));
     }
