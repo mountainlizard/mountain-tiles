@@ -1,3 +1,5 @@
+use std::collections::VecDeque;
+
 use camino::Utf8PathBuf;
 
 use crate::data::edit_state::EditState;
@@ -36,6 +38,12 @@ pub struct App {
     /// attempt to re-open the file when starting the application.
     /// This is the only state that is persisted when app is closed.
     pub save_path: Option<Utf8PathBuf>,
+
+    /// Store the most recent n paths data was loaded from/saved to,
+    /// to allow display of recent documents list
+    /// These are in order of last access, with the most recently
+    /// loaded/saved earliest in the list.
+    pub recent_paths: VecDeque<Utf8PathBuf>,
 
     /// Global, persistent settings for the app
     pub settings: Settings,
