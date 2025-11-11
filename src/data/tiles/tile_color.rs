@@ -184,26 +184,40 @@ impl From<csscolorparser::Color> for UserColor {
 /// This is used to process the underlying tile image by multiplying red, green and blue
 /// components of each pixel of the image by the tile color components. In addition, the
 /// image pixel alpha values are multiplied by the tile color alpha.
+///
+/// Note that the colors assigned to a pixel of a tile can vary according to whether
+/// that pixel is treated as foreground or background. By default, all pixels of a tile
+/// are considered to be foreground, but if a tileset provides data on foreground and background
+/// then this will be used by any [`TileColor`] that is documented to rely on this. If this
+/// is not documented, then [`TileColor`]s will be applied equally to foreground and background.
+///
 #[derive(Default, Debug, Clone, Copy, serde::Deserialize, serde::Serialize, PartialEq)]
 pub enum TileColor {
-    /// The default color for a tile, this should be the tileset image with
-    /// no tint or processing. This should be equivalent to using a tile
+    /// The default color for a tile, this is the tileset image with
+    /// no tint or processing. This is equivalent to using a tile
     /// color of opaque white (full value for each of red, green, blue
-    /// and alpha components)
+    /// and alpha components).
+    /// The foreground uses this color, and the background is not drawn.
     #[default]
     Default,
+
     /// The tile color is taken from the relevant palette for the tile,
     /// using the given index.
+    /// The foreground uses this color, and the background is not drawn.
     Palette { index: PaletteIndex },
-    /// The tile color is taken from the relevant palette for the tile,
-    /// using an index for the foreground (`fg`) and the background (`bg`).
-    /// If this tile has foreground and background areas, then they are colored
-    /// according to the specified palette colors, if the tile does not have
-    /// such areas then the entire tile uses the foreground color, making this
-    /// equivalent to [`TileColor::Palette`] with `index` equal to `fg`.
-    PaletteFgBg { fg: PaletteIndex, bg: PaletteIndex },
+
     /// The tile color is specified directly by a [`UserColor`]
+    /// The foreground uses this color, and the background is not drawn.
     UserColor(UserColor),
+
+    /// The tile colors are taken from the relevant palette for the tile,
+    /// using an index for the foreground (`fg`) and one for the background (`bg`).
+    PaletteFgBg { fg: PaletteIndex, bg: PaletteIndex },
+
+    /// The tile color is taken from the relevant palette for the tile,
+    /// using an index for the background (`bg`) only, the foreground is
+    /// not drawn.
+    PaletteBg { bg: PaletteIndex },
 }
 
 impl TileColor {
@@ -227,9 +241,5 @@ impl TileColor {
             }
             TileColor::UserColor(color) => *color,
         }
-    }
-
-    pub fn as_foreground_slice(&self, palette: &Palette) -> [u8; 4] {
-        self.as_foreground_user_color(palette).0
     }
 }
