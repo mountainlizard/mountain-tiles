@@ -11,8 +11,8 @@ all-features = true
 targets = ["x86_64-unknown-linux-gnu", "wasm32-unknown-unknown"]
 
 [dependencies]
-egui = "0.32"
-eframe = { version = "0.32", default-features = false, features = [
+egui = "0.33.3"
+eframe = { version = "0.33.3", default-features = false, features = [
     "accesskit",     # Make egui compatible with screen readers. NOTE: adds a lot of dependencies.
     "default_fonts", # Embed the default egui fonts.
     "glow",          # Choose the rendering backend. Alternatives: "glow" and "wgpu".
@@ -31,7 +31,7 @@ eframe = { version = "0.32", default-features = false, features = [
 # See https://docs.rs/crate/sctk-adwaita/0.10.1
 winit = { version = "*", features = ["wayland-csd-adwaita"] }
 
-egui_extras = { version = "0.32", features = ["all_loaders"] }
+egui_extras = { version = "0.33.3", features = ["all_loaders"] }
 
 # Enable image types directly, since we have our own image loader for tilesets.
 image = { version = "0.25.6", features = ["jpeg", "png", "gif", "webp"] }
@@ -51,7 +51,7 @@ wgpu = { version = "*", features = [
     "webgpu",
 ] }
 
-csscolorparser = { version = "0.7.0", features = ["serde"] }
+csscolorparser = { version = "0.8.1", features = ["serde"] }
 log = "0.4"
 
 # You only need serde if you want app persistence:
@@ -62,7 +62,7 @@ color-eyre = "0.6"
 eyre = "0.6"
 
 camino = { version = "1.1.9", features = ["serde1"] }
-quick-xml = { version = "0.37.5", features = ["serialize"] }
+quick-xml = { version = "0.38.4", features = ["serialize"] }
 pathdiff = { version = "0.2.3", features = ["camino"] }
 sanitize-filename = "0.6.0"
 
