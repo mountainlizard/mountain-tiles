@@ -25,6 +25,14 @@ pub const TMX_NAME: &str = "Tiled Map XML";
 pub const TMX_EXTENSION: &str = "tmx";
 pub const TSX_EXTENSION: &str = "tsx";
 
+#[cfg(not(target_os = "windows"))]
+pub const RS_NAME: &str = "Rust codegen (.rs)";
+
+#[cfg(target_os = "windows")]
+pub const RS_NAME: &str = "Rust codegen";
+
+pub const RS_EXTENSION: &str = "rs";
+
 pub fn optional_pathbuf_to_utf8(pathbuf: Option<PathBuf>) -> eyre::Result<Option<Utf8PathBuf>> {
     match pathbuf {
         Some(pathbuf) => {
@@ -101,4 +109,8 @@ pub fn save_png_file(default_path: &Option<Utf8PathBuf>) -> eyre::Result<Option<
 
 pub fn save_tmx_file(default_path: &Option<Utf8PathBuf>) -> eyre::Result<Option<Utf8PathBuf>> {
     save_file_with_extension_and_default(TMX_NAME, TMX_EXTENSION, default_path)
+}
+
+pub fn save_rs_file(default_path: &Option<Utf8PathBuf>) -> eyre::Result<Option<Utf8PathBuf>> {
+    save_file_with_extension_and_default(RS_NAME, RS_EXTENSION, default_path)
 }
