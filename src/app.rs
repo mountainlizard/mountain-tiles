@@ -11,6 +11,7 @@ use crate::ui::tileset_textures::TilesetTextures;
 use crate::undo::{RevisionIndex, Undo};
 
 mod actions;
+mod codegen;
 mod eframe_app;
 pub mod files;
 mod init;
