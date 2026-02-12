@@ -21,6 +21,7 @@ pub mod maps;
 mod modals;
 mod palette;
 mod png;
+mod raw;
 mod selection;
 mod stamp;
 mod tiled;

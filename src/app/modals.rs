@@ -71,6 +71,10 @@ impl App {
         self.edit.show_modal(ModalState::export_tiled());
     }
 
+    pub fn show_export_raw_modal(&mut self) {
+        self.edit.show_modal(ModalState::export_raw());
+    }
+
     pub fn show_export_png_modal(&mut self) {
         self.edit.show_modal(ModalState::export_png());
     }

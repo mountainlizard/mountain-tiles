@@ -83,9 +83,9 @@ fn add_file_menu(ui: &mut Ui, app: &mut App) {
                 app.show_export_png_modal();
             }
 
-            #[cfg(feature = "export-codegen-rs")]
-            if ui.button("󰈇 Export Codegen Rust...").clicked() {
-                app.show_export_codegen_file_modal();
+            #[cfg(feature = "export-raw")]
+            if ui.button("󰈇 Export Raw...").clicked() {
+                app.show_export_raw_modal();
             }
         }
 

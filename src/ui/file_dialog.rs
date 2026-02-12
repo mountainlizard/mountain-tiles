@@ -47,9 +47,38 @@ pub fn optional_pathbuf_to_utf8(pathbuf: Option<PathBuf>) -> eyre::Result<Option
 
 /// Pick a file to open, with no filter
 /// Returns an error if a file is selected, and the file path can't be converted to a Utf8 path.
-/// Otherwise returns the selected file path as utf8, or `None` if no file is selected.
+/// Otherwise returns the selected file path as utf8, or `None` if no file is selected (e.g. dialog is cancelled).
 pub fn pick_file() -> eyre::Result<Option<Utf8PathBuf>> {
     optional_pathbuf_to_utf8(rfd::FileDialog::new().pick_file())
+}
+
+/// Pick a folder
+/// Returns an error if a folder is selected, and the folder path can't be converted to a Utf8 path.
+/// Otherwise returns the selected folder path as utf8, or `None` if no folder is selected (e.g. dialog is cancelled).
+pub fn pick_folder() -> eyre::Result<Option<Utf8PathBuf>> {
+    optional_pathbuf_to_utf8(rfd::FileDialog::new().pick_folder())
+}
+
+/// Pick a folder
+/// If `default_path` is specified, then it is used to set the initial directory of the dialog. If
+/// it's a file, its parent dir will be used, if it's a dir already then it will be used directly.
+/// Returns an error if a folder is selected, and the folder path can't be converted to a Utf8 path.
+/// Otherwise returns the selected folder path as utf8, or `None` if no folder is selected (e.g. dialog is cancelled).
+pub fn pick_folder_with_default(
+    default_path: &Option<Utf8PathBuf>,
+) -> eyre::Result<Option<Utf8PathBuf>> {
+    let mut dialog = rfd::FileDialog::new();
+
+    if let Some(path) = default_path {
+        let mut directory = path.clone();
+
+        if !directory.is_dir() {
+            directory.pop();
+            dialog = dialog.set_directory(directory);
+        }
+    }
+
+    optional_pathbuf_to_utf8(dialog.pick_folder())
 }
 
 /// Pick a file to open, with a single filter
