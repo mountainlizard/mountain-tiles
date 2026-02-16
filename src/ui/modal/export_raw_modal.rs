@@ -33,14 +33,14 @@ pub fn export_raw_modal_ui(ui: &mut Ui, app: &mut App) {
                 //     "Export first layer only",
                 // );
 
-                ui.checkbox(
-                    &mut settings.export_combined_1bit_tileset,
-                    "Export combined tilesets as stacked 1bit raw image",
-                );
+                // ui.checkbox(
+                //     &mut settings.export_combined_1bit_tileset,
+                //     "Also export combined tilesets as stacked 1bit raw image",
+                // );
 
                 ui.checkbox(
                     &mut settings.export_combined_png_tileset,
-                    "Export combined tilesets as stacked png image",
+                    "Also export combined tilesets as stacked png image",
                 );
 
                 ui.add_space(DEFAULT_THEME.modal_spacing);
