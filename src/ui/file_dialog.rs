@@ -33,6 +33,14 @@ pub const RS_NAME: &str = "Rust codegen";
 
 pub const RS_EXTENSION: &str = "rs";
 
+#[cfg(not(target_os = "windows"))]
+pub const JSON_NAME: &str = "JSON data (.json)";
+
+#[cfg(target_os = "windows")]
+pub const JSON_NAME: &str = "JSON data";
+
+pub const JSON_EXTENSION: &str = "json";
+
 pub fn optional_pathbuf_to_utf8(pathbuf: Option<PathBuf>) -> eyre::Result<Option<Utf8PathBuf>> {
     match pathbuf {
         Some(pathbuf) => {
@@ -142,4 +150,8 @@ pub fn save_tmx_file(default_path: &Option<Utf8PathBuf>) -> eyre::Result<Option<
 
 pub fn save_rs_file(default_path: &Option<Utf8PathBuf>) -> eyre::Result<Option<Utf8PathBuf>> {
     save_file_with_extension_and_default(RS_NAME, RS_EXTENSION, default_path)
+}
+
+pub fn save_json_file(default_path: &Option<Utf8PathBuf>) -> eyre::Result<Option<Utf8PathBuf>> {
+    save_file_with_extension_and_default(JSON_NAME, JSON_EXTENSION, default_path)
 }

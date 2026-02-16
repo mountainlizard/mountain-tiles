@@ -63,12 +63,20 @@ fn add_file_menu(ui: &mut Ui, app: &mut App) {
                 }
             });
 
-            if ui.button("󰋺 Import Palette...").clicked() {
+            if ui.button("󰋺 Import Palette (image)...").clicked() {
                 app.show_import_palette_modal();
             }
 
-            if ui.button("󰈇 Export Palette...").clicked() {
+            if ui.button("󰈇 Export Palette (image)...").clicked() {
                 app.show_export_palette_modal();
+            }
+
+            if ui.button("󰋺 Import Palette (lospec JSON)...").clicked() {
+                app.show_import_palette_lospec_modal();
+            }
+
+            if ui.button("󰈇 Export Palette (lospec JSON)...").clicked() {
+                app.show_export_palette_lospec_modal();
             }
 
             if ui.button("󰋺 Import Tiled...").clicked() {

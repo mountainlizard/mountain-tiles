@@ -1,6 +1,9 @@
 use std::fs::File;
 use std::io::{BufWriter, Write};
 
+use crate::data::png::PngExportSettings;
+use crate::data::tiles::tileset_stacked_tiles::TilesetStackedTiles;
+use crate::render::render_tiles;
 use crate::{
     app::{maps::MapEditing, App},
     data::{
@@ -103,8 +106,18 @@ impl App {
             });
             match file_dialog::save_rs_file(&default_path) {
                 Ok(Some(path)) => {
-                    if let Err(e) = Self::export_map_raw(&me, path, settings) {
+                    if let Err(e) = Self::export_map_raw(&me, path.clone(), settings) {
                         self.show_error_modal(&e.to_string());
+                        return;
+                    }
+                    if settings.export_combined_png_tileset {
+                        let mut png_path = path.clone();
+                        png_path.set_extension(file_dialog::PNG_EXTENSION);
+                        if let Err(e) = self.export_tilesets_png(png_path) {
+                            self.show_error_modal(
+                                format!("Error exporting png:\n{}", &e.to_string()).as_str(),
+                            );
+                        }
                     }
                 }
                 Ok(None) => {}
@@ -113,6 +126,21 @@ impl App {
         } else {
             self.show_error_modal("No map selected to export");
         }
+    }
+
+    fn export_tilesets_png(&self, path: Utf8PathBuf) -> eyre::Result<()> {
+        let tiles = &TilesetStackedTiles::new(&self.state.resources.tilesets);
+        let palette = &self.state.resources.palette;
+        let tilesets = &self.state.resources.tilesets;
+        let textures = &self.textures;
+        let settings = &PngExportSettings {
+            scale: 1,
+            transparent: true,
+        };
+        let image = render_tiles(tiles, palette, tilesets, textures, settings)?;
+        image.save(path)?;
+
+        Ok(())
     }
 
     fn export_map_raw(
@@ -134,7 +162,7 @@ impl App {
             let width = tiles.map_size().w;
 
             let mut f = BufWriter::new(File::create(path)?);
-            writeln!(f, "use crate::tile::Tile;")?;
+            writeln!(f, "use tili::tile::Tile;")?;
             writeln!(f)?;
             writeln!(f, "pub const TILES_WIDTH: u32 = {};", width)?;
             writeln!(f, "pub const TILES: [Tile; {}] = [", len)?;
