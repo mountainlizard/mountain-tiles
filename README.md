@@ -67,7 +67,7 @@ There are much more mature alternative map editors that have a much deeper featu
 
 2. [LDtk](https://ldtk.io) is another great editor, however it doesn't support rotating tiles (although there is an [issue to support this](https://github.com/deepnight/ldtk/issues/207)).
 
-3. [REXPaint](https://www.gridsagegames.com/rexpaint/) is a really beautiful editor, but only supports Windows natively, and doesn't support tile rotation or mirroring, and
+3. [REXPaint](https://www.gridsagegames.com/rexpaint/) is a really beautiful editor, but only supports Windows natively, and doesn't support tile rotation or mirroring.
 
 4. [Sprite Fusion](https://www.spritefusion.com) supports tile rotation and mirroring, but doesn't seem to support setting individual tile colors using a palette.
 
@@ -75,7 +75,7 @@ If you know of a cross-platform editor that supports tile rotation, mirroring an
 
 ## Additional information
 
-There are additional markdown docs covering:
+There are additional docs covering:
 
 - [Development](development.md)
 - [Running in a browser](web-platform.md)
