@@ -1,149 +1,84 @@
 # MountainTiles
 
-<img src="example-render.jpg" alt="Mountain Tiles example map, rendered with a CRT effect" width="590"/>
+A tile-based map/image editor using [egui](https://www.egui.rs), coded by humans without AI.
 
-A tile based map/image editor using egui.
+<img src="screenshot.png" alt="Mountain Tiles editor showing the example map" width="1293"/>
 
-Note that this project is developed on [Codeberg](https://codeberg.org/mountainlizard/mountain-tiles) and mirrored to [Github](https://github.com/mountainlizard/mountain-tiles). Please use the [Codeberg repo](https://codeberg.org/mountainlizard/mountain-tiles) for issues, pull requests etc. since the Github repo is just a mirror.
+Note that this project is developed on [Codeberg](https://codeberg.org/mountainlizard/mountain-tiles) and mirrored to [Github](https://github.com/mountainlizard/mountain-tiles). Please use the [Codeberg repo](https://codeberg.org/mountainlizard/mountain-tiles) for [issues](https://codeberg.org/mountainlizard/mountain-tiles/issues), [pull requests](https://codeberg.org/mountainlizard/mountain-tiles/pulls) etc. since the Github repo is just a mirror.
 
-This project was created using the [eframe template](https://github.com/emilk/eframe_template/)
+Please see [`CONTRIBUTING.md`](CONTRIBUTING.md) if you wish to contribute to the project, there are also notes on the [development](development.md) process.
 
-Please see `CONTRIBUTING.md` if you wish to contribute to the project.
+## Downloads
 
-## Running locally
+Installers are available on the [Github releases page](https://github.com/mountainlizard/mountain-tiles/releases).
+The macOS builds are signed and notarized so should run without additional permissions/settings.
 
-Make sure you are using the latest version of stable rust by running `rustup update`.
+The following platforms are supported (see notes for support level) - the last part of the filename indicates the platform:
 
-On Linux you need to first run:
+| Platform                         | File ends with:    | Notes                      |
+| -------------------------------- | ------------------ | -------------------------- |
+| macOS - Apple Silicon            | \_aarch64.dmg      | Tested                     |
+| macOS - Intel                    | \_x64.dmg          | Tested (on M1 via Rosetta) |
+| Linux - Intel/AMD (.deb package) | \_amd64.deb        | Tested                     |
+| Linux - ARM 64 (.deb package)    | \_arm64.deb        | Tested                     |
+| Linux - Intel/AMD (AppImage)     | \_x86_64.AppImage  | Tested                     |
+| Linux - ARM 64 (AppImage)        | \_aarch64.AppImage | Tested                     |
+| Linux - Intel/AMD (archive)      | \_x86_64.tar.gz    | Tested                     |
+| Linux - ARM 64 (archive)         | \_aarch64.tar.gz   | Tested                     |
+| Windows - Intel (Installer)      | \_x64-setup.exe    | Tested                     |
+| Windows - ARM 64 (Installer)     | \_arm64-setup.exe  | Untested                   |
+| Windows - Intel (Executable)     | \_X64.exe          | Tested                     |
+| Windows - ARM 64 (Executable)    | \_ARM64.exe        | Untested                   |
 
-`sudo apt-get install libxcb-render0-dev libxcb-shape0-dev libxcb-xfixes0-dev libxkbcommon-dev libssl-dev`
-
-On Fedora Rawhide you need to run:
-
-`dnf install clang clang-devel clang-tools-extra libxkbcommon-devel pkg-config openssl-devel libxcb-devel gtk3-devel atk fontconfig-devel`
-
-To run directly:
-
-```bash
-cargo run --release
-```
-
-To watch for changes and kill then restart application, install [bacon](https://dystroy.org/bacon/) and then run:
-
-```bash
-bacon run
-```
-
-## Packaging
-
-Packages are built using [cargo-packager](https://github.com/crabnebula-dev/cargo-packager).
-
-Install this using:
-
-```bash
-cargo install cargo-packager --locked
-```
-
-You can then package for your current platform using:
-
-```bash
-cargo packager --release
-```
-
-If packaging on macOS, this may fail if you have the `.dmg` file created by a previous build still mounted - unmount it and run again.
-
-To sign and notarise the application bundle on macOS, see [Signing on macOS](macos-signing.md).
-
-Packaging has been tested as:
-
-1. `.app` and `.dmg` on macOS (Arm64 on M1, x64 tested only via cross compile then Rosetta on M1)
-2. `.deb`, `.tar.gz` and `.AppImage` on Linux (pop_os on Intel, Raspberry Pi OS (KDE) on arm64)
-3. `.exe` installer on Windows (Intel)
-
-## Supported platforms
-
-The goal is to support the following:
-
-1. macOS with Apple Silicon. This should work on Intel, but is only tested with cross-compile and Rosetta on Apple Silicon, I don't have an Intel mac to test with.
-2. Windows on Intel. If anyone wants to try Arm let me know how it goes, I don't have a device to test with.
-3. Linux on Arm64 (tested on Raspberry Pi 5) and Intel.
+Let me know if you try it out on Windows ARM64 - I'd be interested to know if it works, I don't have a device to test on.
 
 Note that in theory other unixes may work, however this might require disabling the logic for running a single instance of the application only. In addition, the `interprocess` crate will use file-type sockets on this platform, and warns about possible issues with stale files. It may be possible to mitigate this issue by allowing for deleting stale files, but this would require more investigation. If anyone tries, please let me know how it goes.
 
-## Running web version locally
+## Example Files
 
-Note that the web version is currently incomplete - it's missing functionality to open maps and tilesets without the filesystem. As a result, it won't currently compile. This may be addressed in future, e.g. by allowing use of local storage.
+Check the example-data folder in this repo for example files, including the map shown in the screenshot above, and the instructions for the software as a map!
 
-You can compile to [WASM](https://en.wikipedia.org/wiki/WebAssembly) and publish it as a web page.
+## Features
 
-We use [Trunk](https://trunkrs.dev/) to build for web target.
+Mountain Tiles was created to quickly and easily edit maps where each tile can be tinted using a palette, and rotated/mirrored. This is particularly useful for lower res and 1-bit tiles, but it's possible to use high res tiles in color with alpha.
 
-1. Install the required target with `rustup target add wasm32-unknown-unknown`.
-2. Install Trunk with `cargo install --locked trunk`.
-3. Run `trunk serve` to build and serve on `http://127.0.0.1:8080`. Trunk will rebuild automatically if you edit the project.
-4. Open `http://127.0.0.1:8080/index.html#dev` in a browser. See the warning below.
+- Support for macOS, Linux and Windows.
+- Multiple maps per project, sharing the same tilesets and palette.
+- Multiple layers per map.
+- Each tile has a tint color chosen from the palette (using white leaves tile untinted).
+- Copy and paste between layers and maps.
+- Support for tilesets with alpha, or with a transparent color (can be configured on import).
+- Support for arbitrary-sized palette, with optional alpha values.
+- Select and draw with one or more tiles from the tileset, or copied from the map.
+- Rotate and mirror tiles.
+- Import/export maps in [Tiled](http://www.mapeditor.org) format.
+- Import/export palettes in [lospec](https://lospec.com) JSON format, and as PNG images.
+- Export maps as PNG images with/without transparent background.
 
-> `assets/sw.js` script will try to cache our app, and loads the cached version when it cannot connect to server allowing your app to work offline (like PWA).
-> appending `#dev` to `index.html` will skip this caching, allowing us to load the latest builds during development.
+You can press "h" or click the "Help..." menu item to show common shortcuts and actions in the app - this will show something like the following:
 
-## Deploying web version
+<img src="instructions.png" alt="Mountain Tiles instructions" width="1280"/>
 
-1. Just run `trunk build --release`.
-2. It will generate a `dist` directory as a "static html" website
-3. Upload the `dist` directory to any of the numerous free hosting websites including [GitHub Pages](https://docs.github.com/en/free-pro-team@latest/github/working-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site).
-4. we already provide a workflow that auto-deploys our app to GitHub pages if you enable it.
-   > To enable Github Pages, you need to go to Repository -> Settings -> Pages -> Source -> set to `gh-pages` branch and `/` (root).
-   >
-   > If `gh-pages` is not available in `Source`, just create and push a branch called `gh-pages` and it should be available.
-   >
-   > If you renamed the `main` branch to something else (say you re-initialized the repository with `master` as the initial branch), be sure to edit the github workflows `.github/workflows/pages.yml` file to reflect the change
-   >
-   > ```yml
-   > on:
-   >   push:
-   >     branches:
-   >       - <branch name>
-   > ```
+## Alternatives
 
-## Continuous integration
+There are much more mature alternative map editors that have a much deeper feature set, particularly for use with games, but at least for now each one is missing some of the features of Mountain Tiles, so that they don't allow for tiles to be rotated, mirrored and tinted using a palette:
 
-For the most part, the CI set up in github actions should just run, however it does expect to have various secrets set up for Apple signing/notarization. See the [github actions howto](https://docs.github.com/en/actions/how-tos/deploy/deploy-to-third-party-platforms/sign-xcode-applications) for the required secrets - see `rust.yml` in the github workflows for details.
+1. [Tiled](http://www.mapeditor.org) is an excellent, full-featured map editor, however it doesn't seem to have an easy workflow for tinting individual tiles using a palette. The closest workflow I could find was to have one layer per color, and move tiles around between layers to change color. This is also the approach Mountain Tiles uses to export to Tiled format - each combination of a layer and color in Mountain Tiles is exported as its own tinted layer in Tiled.
 
-- `BUILD_CERTIFICATE_BASE64` contains base64-encoded .p12 for an Apple Signing Certificate.
-- `P12_PASSWORD` contain the password for the .p12 file.
-- `KEYCHAIN_PASSWORD` a random string used as the keychain password for the keychain created on the agent as part of build.
+2. [LDtk](https://ldtk.io) is another great editor, however it doesn't support rotating tiles (although there is an [issue to support this](https://github.com/deepnight/ldtk/issues/207)).
 
-We've omitted the following secrets from the how-to, since we don't build mobile versions:
+3. [REXPaint](https://www.gridsagegames.com/rexpaint/) is a really beautiful editor, but only supports Windows natively, and doesn't support tile rotation or mirroring, and
 
-- `BUILD_PROVISION_PROFILE_BASE64` contains base64-encoded provisioning profile.
+4. [Sprite Fusion](https://www.spritefusion.com) supports tile rotation and mirroring, but doesn't seem to support setting individual tile colors using a palette.
 
-Note that if the name of the developer changes, the `signing-identity` in `Cargo.toml` will need to be updated - this should be the name of the certificate in the .p12 file stored as a secret.
+If you know of a cross-platform editor that supports tile rotation, mirroring and tinting with a palette, please let me know!
 
-In order to perform a release, you also need:
+## Additional information
 
-- `RELEASE_TOKEN` contains a github personal access token with permissions to read and write contents, this is used to create a release and attach assets.
+There are additional markdown docs covering:
 
-To trigger a release, make sure you are on main branch and on the correct commit (most likely the head), and that the `Cargo.toml` package version in that commit matches the version number of the release, then add a tag to the repo starting with `v`, then the version number, e.g.:
-
-```bash
-git tag -a "v0.1.6" -m "Release v0.1.6"
-git push --tags "origin"
-```
-
-This will trigger the `rust.yml` workflow, and since the event is a `push` and the ref starts with `refs/tags/v` this will also run the `release` job, which creates a release named after the tag, and uploads all artifacts to the release.
-
-## Debian (.deb) packaging
-
-See `Cargo.toml` file, in the `[package.metadata.packager.deb]` section.
-This includes additional files for the .deb package - the `files` field is a map, where each key is the file path relative to the root of the project, and each value is the location in the resulting .deb package. All source files are in the `deb` directory of the project.
-
-In summary, there is an xml file with our mime types, and a `postinst` script that runs after installation to:
-
-1. Update the desktop database using the contents of our `.desktop` file, as created by `cargo-packager` automatically.
-2. Update the mime database using our `x-mountain-tiles.xml` file, which is installed to the `usr/share/mime/packages` directory on the user's system.
-
-For more details, see [freedesktop docs](https://specifications.freedesktop.org/shared-mime-info-spec/latest/ar01s02.html), we also used existing deb files as a reference.
-
-## References
-
-- [Helpful guide on signing and notarizing on macOS](https://scriptingosx.com/2021/07/notarize-a-command-line-tool-with-notarytool/)
+- [Development](development.md)
+- [Running in a browser](web-platform.md)
+- [CI and packaging](ci-and-packaging.md)
+- [macOS signing and notarization](macos-signing.md)
+- [Contributing to the project](CONTRIBUTING.md)
