@@ -66,12 +66,12 @@ jobs:
             ZIG_TARGET: aarch64-unknown-linux-gnu.2.17
 
           # This is intel
-          - os: macos-13
+          - os: macos-15-intel
             RUST_TARGET: default
             ZIG_TARGET: default
 
           # This is arm64
-          - os: macos-latest
+          - os: macos-15
             RUST_TARGET: default
             ZIG_TARGET: default
 
