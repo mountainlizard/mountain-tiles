@@ -40,6 +40,13 @@ impl UserColor {
         UserColor([r, g, b, 255])
     }
 
+    /// A new color parsed from hex. This is processed by prepending "#", and then
+    /// parsing as a css color, so it will support 3, 4, 6 or 8 digits of hex.
+    pub fn from_hex(hex: &str) -> eyre::Result<Self> {
+        let c = csscolorparser::parse(format!("#{}", hex).as_str())?;
+        Ok(c.into())
+    }
+
     /// Convert to a [`Color32`] in the normal premultiplied form - this can be
     /// used directly by egui, for example to give the vertex colors of quads in a tile etc.
     /// This should NOT be shown to the user since it doesn't match the normal (e.g. CSS)
@@ -90,6 +97,17 @@ impl UserColor {
         } else {
             format!(
                 "#{:02X}{:02X}{:02X}{:02X}",
+                self.0[0], self.0[1], self.0[2], self.0[3]
+            )
+        }
+    }
+
+    pub fn as_hex_string(&self) -> String {
+        if self.0[3] == 255 {
+            format!("{:02X}{:02X}{:02X}", self.0[0], self.0[1], self.0[2])
+        } else {
+            format!(
+                "{:02X}{:02X}{:02X}{:02X}",
                 self.0[0], self.0[1], self.0[2], self.0[3]
             )
         }

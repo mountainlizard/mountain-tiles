@@ -89,7 +89,7 @@ embed-resource = "3.0"
 assert_fs = "1.1.3"
 
 [features]
-export-codegen-rs = []
+export-raw = []
 
 [profile.release]
 opt-level = 2 # fast and small wasm

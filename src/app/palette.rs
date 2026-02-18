@@ -1,9 +1,12 @@
 use crate::{
     app::App,
-    data::palette::{Palette, PaletteIndex},
-    data::tiles::tile_color::TileColor,
-    data::{action::Action, modal::DataLossOperation},
-    ui::file_dialog,
+    data::{
+        action::Action,
+        modal::DataLossOperation,
+        palette::{Palette, PaletteIndex},
+        tiles::tile_color::TileColor,
+    },
+    ui::file_dialog::{self, JSON_EXTENSION, JSON_NAME},
 };
 
 impl App {
@@ -74,6 +77,29 @@ impl App {
         match file_dialog::save_png_file(&None) {
             Ok(Some(path)) => {
                 if let Err(e) = self.state.resources.palette().write_to_image_by_path(path) {
+                    self.show_error_modal(&e.to_string());
+                }
+            }
+            Ok(None) => {}
+            Err(e) => self.show_error_modal(&e.to_string()),
+        }
+    }
+
+    pub fn show_import_palette_lospec_modal(&mut self) {
+        match file_dialog::pick_file_with_extension(JSON_NAME, JSON_EXTENSION) {
+            Ok(Some(path)) => match Palette::from_json_by_path(path) {
+                Ok(palette) => self.show_palette_modal(palette),
+                Err(e) => self.show_error_modal(&e.to_string()),
+            },
+            Ok(None) => {}
+            Err(e) => self.show_error_modal(&e.to_string()),
+        }
+    }
+
+    pub fn show_export_palette_lospec_modal(&mut self) {
+        match file_dialog::save_json_file(&None) {
+            Ok(Some(path)) => {
+                if let Err(e) = self.state.resources.palette().write_to_json_by_path(path) {
                     self.show_error_modal(&e.to_string());
                 }
             }

@@ -17,6 +17,7 @@ pub mod layer_tiles;
 pub mod stamp_tiles;
 pub mod tile_color;
 pub mod tile_selection;
+pub mod tileset_stacked_tiles;
 pub mod tileset_tiles;
 
 #[derive(Debug, serde::Deserialize, serde::Serialize, Clone, Copy, Hash, PartialEq, Eq)]

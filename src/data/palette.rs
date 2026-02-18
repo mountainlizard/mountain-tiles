@@ -1,7 +1,12 @@
-use std::slice::{Iter, IterMut};
+use std::{
+    fs::File,
+    io::{BufReader, BufWriter},
+    slice::{Iter, IterMut},
+};
 
 use camino::Utf8PathBuf;
 use egui::ahash::{HashSet, HashSetExt};
+use eyre::{bail, eyre};
 use image::{ImageReader, RgbaImage};
 
 use crate::data::tiles::tile_color::{TileColor, UserColor};
@@ -71,6 +76,13 @@ impl Default for Palette {
     }
 }
 
+#[derive(serde::Deserialize, serde::Serialize)]
+struct LospecJson {
+    pub name: String,
+    pub author: String,
+    pub colors: Vec<String>,
+}
+
 impl Palette {
     /// Load an image from given path, and use the colors in it as a palette.
     /// The pixels of the image are used in order from x = 0 to width then y = 0 to height
@@ -94,6 +106,21 @@ impl Palette {
         Ok(Self::new(colors))
     }
 
+    /// Load JSON from given path, and attempt to parse as lospec JSON.
+    pub fn from_json_by_path(path: Utf8PathBuf) -> eyre::Result<Palette> {
+        let file = File::open(path.clone())?;
+        let buf_reader = BufReader::new(file);
+        let lospec: LospecJson = serde_json::from_reader(buf_reader)?;
+
+        let colors = lospec
+            .colors
+            .iter()
+            .map(|s| UserColor::from_hex(s.as_str()))
+            .collect::<Result<Vec<_>, _>>()?;
+
+        Ok(Self::new(colors))
+    }
+
     pub fn write_to_image_by_path(&self, path: Utf8PathBuf) -> eyre::Result<()> {
         let mut image = RgbaImage::new(self.len(), 1);
         for (x, color) in self.colors().enumerate() {
@@ -101,6 +128,27 @@ impl Palette {
             image.put_pixel(x as u32, 0, rgba);
         }
         image.save(path)?;
+        Ok(())
+    }
+
+    pub fn write_to_json_by_path(&self, path: Utf8PathBuf) -> eyre::Result<()> {
+        let file = File::create(path.clone())?;
+        let buf_writer = BufWriter::new(file);
+
+        if self.colors.iter().any(|c| c.a() != 255) {
+            bail!("Only palettes with no transparency can be exported to lospec JSON format - alpha values must all be 255.");
+        }
+        let name = path
+            .file_stem()
+            .ok_or(eyre!("Path has no filename"))?
+            .to_string();
+        let colors = self.colors().map(|c| c.as_hex_string()).collect();
+        let lospec = LospecJson {
+            name,
+            author: "Exported by mountain-tiles".to_string(),
+            colors,
+        };
+        serde_json::to_writer(buf_writer, &lospec)?;
         Ok(())
     }
 

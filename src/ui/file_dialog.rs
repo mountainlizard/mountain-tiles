@@ -33,6 +33,14 @@ pub const RS_NAME: &str = "Rust codegen";
 
 pub const RS_EXTENSION: &str = "rs";
 
+#[cfg(not(target_os = "windows"))]
+pub const JSON_NAME: &str = "JSON data (.json)";
+
+#[cfg(target_os = "windows")]
+pub const JSON_NAME: &str = "JSON data";
+
+pub const JSON_EXTENSION: &str = "json";
+
 pub fn optional_pathbuf_to_utf8(pathbuf: Option<PathBuf>) -> eyre::Result<Option<Utf8PathBuf>> {
     match pathbuf {
         Some(pathbuf) => {
@@ -47,9 +55,38 @@ pub fn optional_pathbuf_to_utf8(pathbuf: Option<PathBuf>) -> eyre::Result<Option
 
 /// Pick a file to open, with no filter
 /// Returns an error if a file is selected, and the file path can't be converted to a Utf8 path.
-/// Otherwise returns the selected file path as utf8, or `None` if no file is selected.
+/// Otherwise returns the selected file path as utf8, or `None` if no file is selected (e.g. dialog is cancelled).
 pub fn pick_file() -> eyre::Result<Option<Utf8PathBuf>> {
     optional_pathbuf_to_utf8(rfd::FileDialog::new().pick_file())
+}
+
+/// Pick a folder
+/// Returns an error if a folder is selected, and the folder path can't be converted to a Utf8 path.
+/// Otherwise returns the selected folder path as utf8, or `None` if no folder is selected (e.g. dialog is cancelled).
+pub fn pick_folder() -> eyre::Result<Option<Utf8PathBuf>> {
+    optional_pathbuf_to_utf8(rfd::FileDialog::new().pick_folder())
+}
+
+/// Pick a folder
+/// If `default_path` is specified, then it is used to set the initial directory of the dialog. If
+/// it's a file, its parent dir will be used, if it's a dir already then it will be used directly.
+/// Returns an error if a folder is selected, and the folder path can't be converted to a Utf8 path.
+/// Otherwise returns the selected folder path as utf8, or `None` if no folder is selected (e.g. dialog is cancelled).
+pub fn pick_folder_with_default(
+    default_path: &Option<Utf8PathBuf>,
+) -> eyre::Result<Option<Utf8PathBuf>> {
+    let mut dialog = rfd::FileDialog::new();
+
+    if let Some(path) = default_path {
+        let mut directory = path.clone();
+
+        if !directory.is_dir() {
+            directory.pop();
+            dialog = dialog.set_directory(directory);
+        }
+    }
+
+    optional_pathbuf_to_utf8(dialog.pick_folder())
 }
 
 /// Pick a file to open, with a single filter
@@ -113,4 +150,8 @@ pub fn save_tmx_file(default_path: &Option<Utf8PathBuf>) -> eyre::Result<Option<
 
 pub fn save_rs_file(default_path: &Option<Utf8PathBuf>) -> eyre::Result<Option<Utf8PathBuf>> {
     save_file_with_extension_and_default(RS_NAME, RS_EXTENSION, default_path)
+}
+
+pub fn save_json_file(default_path: &Option<Utf8PathBuf>) -> eyre::Result<Option<Utf8PathBuf>> {
+    save_file_with_extension_and_default(JSON_NAME, JSON_EXTENSION, default_path)
 }
