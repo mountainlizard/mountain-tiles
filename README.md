@@ -1,8 +1,8 @@
 # MountainTiles
 
-<img src="example-render.jpg" alt="Mountain Tiles example map, rendered with a CRT effect" width="590"/>
-
 A tile based map/image editor using egui.
+
+<img src="screenshot.png" alt="Mountain Tiles editor showing the example map" width="1293"/>
 
 Note that this project is developed on [Codeberg](https://codeberg.org/mountainlizard/mountain-tiles) and mirrored to [Github](https://github.com/mountainlizard/mountain-tiles). Please use the [Codeberg repo](https://codeberg.org/mountainlizard/mountain-tiles) for issues, pull requests etc. since the Github repo is just a mirror.
 
@@ -56,7 +56,7 @@ To sign and notarise the application bundle on macOS, see [Signing on macOS](mac
 
 Packaging has been tested as:
 
-1. `.app` and `.dmg` on macOS (Arm64 on M1, x64 tested only via cross compile then Rosetta on M1)
+1. `.app` and `.dmg` on macOS (Arm64 on M1, x64 tested only via Rosetta on M1)
 2. `.deb`, `.tar.gz` and `.AppImage` on Linux (pop_os on Intel, Raspberry Pi OS (KDE) on arm64)
 3. `.exe` installer on Windows (Intel)
 
@@ -137,10 +137,13 @@ This will trigger the `rust.yml` workflow, and since the event is a `push` and t
 See `Cargo.toml` file, in the `[package.metadata.packager.deb]` section.
 This includes additional files for the .deb package - the `files` field is a map, where each key is the file path relative to the root of the project, and each value is the location in the resulting .deb package. All source files are in the `deb` directory of the project.
 
-In summary, there is an xml file with our mime types, and a `postinst` script that runs after installation to:
+In summary, there is:
 
-1. Update the desktop database using the contents of our `.desktop` file, as created by `cargo-packager` automatically.
-2. Update the mime database using our `x-mountain-tiles.xml` file, which is installed to the `usr/share/mime/packages` directory on the user's system.
+1. `x-mountain-tiles.xml`, which is installed to the `usr/share/mime/packages` directory on the user's system. This should be detected by the package manager to update the mime database. This allows us to associate a mime type with our application, linking it to file extension(s).
+
+2. A set of application icons installed to `/usr/share/icons/hicolor`, which should in theory be used for the application, although this doesn't always seem to work. The package manager should detect these and update the icon database.
+
+Finally, the package manager should detect the `.desktop` file, as created by `cargo-packager`, and use it to update the desktop database.
 
 For more details, see [freedesktop docs](https://specifications.freedesktop.org/shared-mime-info-spec/latest/ar01s02.html), we also used existing deb files as a reference.
 
