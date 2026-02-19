@@ -23,25 +23,20 @@ pub fn export_raw_modal_ui(ui: &mut Ui, app: &mut App) {
                 ui.label("Exports all maps as selected raw formats, with optional image files for combined tilesets.");
                 ui.add_space(DEFAULT_THEME.modal_spacing);
 
-                // ui.checkbox(
-                //     &mut settings.export_selected_map_only,
-                //     "Export selected map only",
-                // );
-
-                // ui.checkbox(
-                //     &mut settings.export_first_layer_only,
-                //     "Export first layer only",
-                // );
-
-                // ui.checkbox(
-                //     &mut settings.export_combined_1bit_tileset,
-                //     "Also export combined tilesets as stacked 1bit raw image",
-                // );
+                ui.checkbox(
+                    &mut settings.export_project_to_rust,
+                    "Export palette, tilesets and all layers to Rust project layout",
+                );
 
                 ui.checkbox(
                     &mut settings.export_combined_png_tileset,
                     "Also export combined tilesets as stacked png image",
                 );
+
+                // ui.checkbox(
+                //     &mut settings.export_combined_1bit_tileset,
+                //     "Also export combined tilesets as stacked 1bit raw image",
+                // );
 
                 ui.add_space(DEFAULT_THEME.modal_spacing);
                 ui.separator();
