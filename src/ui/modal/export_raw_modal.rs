@@ -24,11 +24,6 @@ pub fn export_raw_modal_ui(ui: &mut Ui, app: &mut App) {
                 ui.add_space(DEFAULT_THEME.modal_spacing);
 
                 ui.checkbox(
-                    &mut settings.export_project_to_rust,
-                    "Export palette, tilesets and all layers to Rust project layout",
-                );
-
-                ui.checkbox(
                     &mut settings.export_combined_png_tileset,
                     "Also export combined tilesets as stacked png image",
                 );

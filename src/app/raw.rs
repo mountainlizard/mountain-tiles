@@ -84,47 +84,6 @@ fn layer_to_raw(layer: &Layer, tilesets: &Tilesets) -> eyre::Result<Vec<u32>> {
 }
 
 impl App {
-    pub fn show_export_selected_map_raw_file_modal(&mut self, settings: &RawExportSettings) {
-        let self_path = self.save_path.clone();
-        if let Some(me) = self.selected_map_editing_mut() {
-            // Default codegen path to the same as the project itself, plus the map name, with rs extension
-            let default_path = self_path.map(|path| {
-                path_with_suffix_and_extension(
-                    &path,
-                    "map",
-                    me.map.name().as_str(),
-                    file_dialog::RS_EXTENSION,
-                )
-            });
-            match file_dialog::save_rs_file(&default_path) {
-                Ok(Some(path)) => {
-                    if let Err(e) = Self::export_map_module_to_file(
-                        &me.map.name,
-                        &me.map.tiles,
-                        &me.resources.tilesets,
-                        path.clone(),
-                    ) {
-                        self.show_error_modal(&e.to_string());
-                        return;
-                    }
-                    if settings.export_combined_png_tileset {
-                        let mut png_path = path.clone();
-                        png_path.set_extension(file_dialog::PNG_EXTENSION);
-                        if let Err(e) = self.export_tilesets_png(png_path) {
-                            self.show_error_modal(
-                                format!("Error exporting png:\n{}", &e.to_string()).as_str(),
-                            );
-                        }
-                    }
-                }
-                Ok(None) => {}
-                Err(e) => self.show_error_modal(&e.to_string()),
-            }
-        } else {
-            self.show_error_modal("No map selected to export");
-        }
-    }
-
     pub fn export_from_workspace_error(&mut self) -> eyre::Result<()> {
         let self_path = self
             .save_path
@@ -184,42 +143,44 @@ impl App {
         }
     }
 
-    pub fn show_export_project_raw_file_modal(&mut self, _settings: &RawExportSettings) {
-        println!("TODO: Export project raw");
-        // if let Some(self_path) = self.save_path.clone() {
-        // } else {
-        //     self.show_error_modal("Please save the project before exporting.");
-        // }
-        // // Default dir to the same as the project itself
-        // match file_dialog::pick_folder_with_default(&self_path) {
-        //     Ok(Some(path)) => {
-        //         // for map in self.state.maps.iter() {
-        //         //     if let Err(e) = Self::export_map_raw(
-        //         //         &map.tiles,
-        //         //         &self.state.resources.tilesets,
-        //         //         path.clone(),
-        //         //     ) {
-        //         //         self.show_error_modal(
-        //         //             format!("Error exporting map '{}':\n{}", map.name(), &e.to_string())
-        //         //                 .as_str(),
-        //         //         );
-        //         //     }
-        //         // }
-        //         // if let Err(e) = self.export_raw(path, settings) {
-        //         //     self.show_error_modal(&e.to_string());
-        //         // }
-        //         println!("TODO: Export project raw to {:?}", path);
-        //     }
-        //     Ok(None) => {}
-        //     Err(e) => self.show_error_modal(&e.to_string()),
-        // }
-    }
-
     pub fn show_export_raw_file_modal(&mut self, settings: &RawExportSettings) {
-        if settings.export_project_to_rust {
-            self.show_export_project_raw_file_modal(settings);
+        let self_path = self.save_path.clone();
+        if let Some(me) = self.selected_map_editing_mut() {
+            // Default codegen path to the same as the project itself, plus the map name, with rs extension
+            let default_path = self_path.map(|path| {
+                path_with_suffix_and_extension(
+                    &path,
+                    "map",
+                    me.map.name().as_str(),
+                    file_dialog::RS_EXTENSION,
+                )
+            });
+            match file_dialog::save_rs_file(&default_path) {
+                Ok(Some(path)) => {
+                    if let Err(e) = Self::export_map_module_to_file(
+                        &me.map.name,
+                        &me.map.tiles,
+                        &me.resources.tilesets,
+                        path.clone(),
+                    ) {
+                        self.show_error_modal(&e.to_string());
+                        return;
+                    }
+                    if settings.export_combined_png_tileset {
+                        let mut png_path = path.clone();
+                        png_path.set_extension(file_dialog::PNG_EXTENSION);
+                        if let Err(e) = self.export_tilesets_png(png_path) {
+                            self.show_error_modal(
+                                format!("Error exporting png:\n{}", &e.to_string()).as_str(),
+                            );
+                        }
+                    }
+                }
+                Ok(None) => {}
+                Err(e) => self.show_error_modal(&e.to_string()),
+            }
         } else {
-            self.show_export_selected_map_raw_file_modal(settings);
+            self.show_error_modal("No map selected to export");
         }
     }
 
