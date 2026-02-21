@@ -1,0 +1,7 @@
+[default.export]
+module-path = "../src/maps.rs"
+tileset-path = "../assets/tilesets/"
+tileset-png = true
+
+[project.example.export]
+module-path = "example/example.rs"

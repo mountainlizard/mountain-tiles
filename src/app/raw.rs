@@ -2,10 +2,11 @@ use std::fs::File;
 use std::io::{BufWriter, Write};
 
 use crate::data::png::PngExportSettings;
+use crate::data::tiles::layer_tiles::LayerTiles;
 use crate::data::tiles::tileset_stacked_tiles::TilesetStackedTiles;
 use crate::render::render_tiles;
 use crate::{
-    app::{maps::MapEditing, App},
+    app::App,
     data::{
         raw::RawExportSettings,
         tiles::{layer_tiles::Layer, tile_color::TileColor, Tile, Tiles},
@@ -15,6 +16,7 @@ use crate::{
     utils::path_with_suffix_and_extension,
 };
 use camino::Utf8PathBuf;
+use convert_case::ccase;
 use egui::ahash::{HashMap, HashMapExt};
 use eyre::{bail, eyre};
 
@@ -80,19 +82,7 @@ fn layer_to_raw(layer: &Layer, tilesets: &Tilesets) -> eyre::Result<Vec<u32>> {
 }
 
 impl App {
-    pub fn show_export_raw_file_modal(&mut self, settings: &RawExportSettings) {
-        // let self_path = self.save_path.clone();
-        // // Default dir to the same as the project itself
-        // match file_dialog::pick_folder_with_default(&self_path) {
-        //     Ok(Some(path)) => {
-        //         if let Err(e) = self.export_raw(path, settings) {
-        //             self.show_error_modal(&e.to_string());
-        //         }
-        //     }
-        //     Ok(None) => {}
-        //     Err(e) => self.show_error_modal(&e.to_string()),
-        // }
-
+    pub fn show_export_selected_map_raw_file_modal(&mut self, settings: &RawExportSettings) {
         let self_path = self.save_path.clone();
         if let Some(me) = self.selected_map_editing_mut() {
             // Default codegen path to the same as the project itself, plus the map name, with rs extension
@@ -106,7 +96,12 @@ impl App {
             });
             match file_dialog::save_rs_file(&default_path) {
                 Ok(Some(path)) => {
-                    if let Err(e) = Self::export_map_raw(&me, path.clone(), settings) {
+                    if let Err(e) = Self::export_map_module_to_file(
+                        &me.map.name,
+                        &me.map.tiles,
+                        &me.resources.tilesets,
+                        path.clone(),
+                    ) {
                         self.show_error_modal(&e.to_string());
                         return;
                     }
@@ -128,6 +123,44 @@ impl App {
         }
     }
 
+    pub fn show_export_project_raw_file_modal(&mut self, _settings: &RawExportSettings) {
+        if let Some(self_path) = self.save_path.clone() {
+        } else {
+            self.show_error_modal("Please save the project before exporting.");
+        }
+        // // Default dir to the same as the project itself
+        // match file_dialog::pick_folder_with_default(&self_path) {
+        //     Ok(Some(path)) => {
+        //         // for map in self.state.maps.iter() {
+        //         //     if let Err(e) = Self::export_map_raw(
+        //         //         &map.tiles,
+        //         //         &self.state.resources.tilesets,
+        //         //         path.clone(),
+        //         //     ) {
+        //         //         self.show_error_modal(
+        //         //             format!("Error exporting map '{}':\n{}", map.name(), &e.to_string())
+        //         //                 .as_str(),
+        //         //         );
+        //         //     }
+        //         // }
+        //         // if let Err(e) = self.export_raw(path, settings) {
+        //         //     self.show_error_modal(&e.to_string());
+        //         // }
+        //         println!("TODO: Export project raw to {:?}", path);
+        //     }
+        //     Ok(None) => {}
+        //     Err(e) => self.show_error_modal(&e.to_string()),
+        // }
+    }
+
+    pub fn show_export_raw_file_modal(&mut self, settings: &RawExportSettings) {
+        if settings.export_project_to_rust {
+            self.show_export_project_raw_file_modal(settings);
+        } else {
+            self.show_export_selected_map_raw_file_modal(settings);
+        }
+    }
+
     fn export_tilesets_png(&self, path: Utf8PathBuf) -> eyre::Result<()> {
         let tiles = &TilesetStackedTiles::new(&self.state.resources.tilesets);
         let palette = &self.state.resources.palette;
@@ -143,43 +176,97 @@ impl App {
         Ok(())
     }
 
-    fn export_map_raw(
-        me: &MapEditing<'_>,
+    fn export_map_module_to_file(
+        module_name: &str,
+        tiles: &LayerTiles,
+        tilesets: &Tilesets,
         path: Utf8PathBuf,
-        _settings: &RawExportSettings,
     ) -> eyre::Result<()> {
-        let tiles = &me.map.tiles;
-        let tilesets = &me.resources.tilesets;
+        let mut f = BufWriter::new(File::create(path)?);
+        Self::export_map_module(module_name, tiles, tilesets, &mut f)?;
+        Ok(())
+    }
 
-        if tiles.layer_count() != 1 {
-            bail!("Export to rust codegen only supports a single layer");
-        }
+    fn export_map_module<W: Write>(
+        map_name: &str,
+        tiles: &LayerTiles,
+        tilesets: &Tilesets,
+        f: &mut W,
+    ) -> eyre::Result<()> {
+        // If there are no layers, there's nothing to export
+        if let Some(layer_tile_count) = tiles.first_layer().map(|layer| layer.tiles_iter().len()) {
+            writeln!(f, "pub mod {} {{", ccase!(snake, map_name))?;
 
-        if let Some(layer) = tiles.first_layer() {
-            let combined = layer_to_raw(layer, tilesets)?;
-
-            let len = combined.len();
-            let width = tiles.map_size().w;
-
-            let mut f = BufWriter::new(File::create(path)?);
-            writeln!(f, "use tili::tile::Tile;")?;
+            writeln!(f, "    pub mod layers {{")?;
             writeln!(f)?;
-            writeln!(f, "pub const TILES_WIDTH: u32 = {};", width)?;
-            writeln!(f, "pub const TILES: [Tile; {}] = [", len)?;
+            writeln!(f, "        use embedded_graphics_core::prelude::Size;")?;
+            writeln!(f, "        use tili::tile::{{Tile, LayerData}};")?;
+            writeln!(f)?;
 
-            for tile in combined.iter() {
-                writeln!(f, "\tTile::raw({}),", tile)?;
+            for layer in tiles.layers() {
+                let combined = layer_to_raw(layer, tilesets)?;
+
+                writeln!(
+                    f,
+                    "        pub const {}: LayerData<{}> = LayerData {{",
+                    ccase!(constant, layer.name()),
+                    layer_tile_count,
+                )?;
+
+                writeln!(f, "            name: \"{}\",", layer.name())?;
+                writeln!(f, "            visible: {},", layer.visible())?;
+                writeln!(
+                    f,
+                    "            size: Size::new({}, {}),",
+                    tiles.map_size().w,
+                    tiles.map_size().h
+                )?;
+
+                writeln!(f, "            tiles: [")?;
+
+                for tile in combined.iter() {
+                    writeln!(f, "                Tile::raw({}),", tile)?;
+                }
+
+                writeln!(f, "            ],")?;
+                writeln!(f, "            opacity: {:?},", layer.opacity())?;
+                writeln!(f, "        }};")?;
             }
 
-            writeln!(f, "];")?;
+            writeln!(f, "    }}")?;
             writeln!(f)?;
+            writeln!(f, "    use embedded_graphics_core::prelude::Size;")?;
+            writeln!(f, "    use tili::tile::MapData;")?;
+            writeln!(f)?;
+
+            writeln!(
+                f,
+                "    pub const map: MapData<{}, {}> = MapData {{",
+                tiles.layer_count(),
+                layer_tile_count
+            )?;
+            writeln!(f, "        name: \"{}\",", map_name)?;
+            writeln!(
+                f,
+                "        size: Size::new({}, {}),",
+                tiles.map_size().w,
+                tiles.map_size().h
+            )?;
+
+            writeln!(f, "        layers: [")?;
+            for layer in tiles.layers() {
+                writeln!(f, "            &layers::{}", ccase!(constant, layer.name()))?;
+            }
+            writeln!(f, "        ]")?;
+
+            writeln!(f, "    }};")?;
+
+            writeln!(f, "}}")?;
 
             // Flush to detect any errors
             f.flush()?;
-
-            Ok(())
-        } else {
-            bail!("Export to raw requires a single layer");
         }
+
+        Ok(())
     }
 }
