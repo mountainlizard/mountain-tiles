@@ -233,7 +233,13 @@ impl App {
             transparent: true,
         };
         let image = render_tiles(tiles, palette, tilesets, textures, settings)?;
-        image.save(path)?;
+        image.save(path.clone()).map_err(|e| {
+            eyre!(
+                "Failed to save tileset png to:\n\n{}:\n\nError:\n{}\n\nPlease check the relevant directory exists.",
+                path,
+                e
+            )
+        })?;
 
         Ok(())
     }
