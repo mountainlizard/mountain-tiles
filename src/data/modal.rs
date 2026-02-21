@@ -1,7 +1,5 @@
 use crate::{
-    data::{
-        png::PngExportSettings, raw::RawExportSettings, tiled::TiledExportSettings, tiles::Tiles,
-    },
+    data::{png::PngExportSettings, tiled::TiledExportSettings, tiles::Tiles},
     tiled::tiled_json::Tiled,
 };
 use camino::Utf8PathBuf;
@@ -128,10 +126,6 @@ pub enum ModalState {
         settings: TiledExportSettings,
         result: ModalResult,
     },
-    ExportRaw {
-        settings: RawExportSettings,
-        result: ModalResult,
-    },
     Help {
         result: ModalResult,
     },
@@ -152,7 +146,6 @@ impl ModalState {
             ModalState::ExportPng { result, .. } => Some(result.clone()),
             ModalState::ExportTiled { result, .. } => Some(result.clone()),
             ModalState::Help { result, .. } => Some(result.clone()),
-            ModalState::ExportRaw { result, .. } => Some(result.clone()),
         }
     }
 
@@ -170,7 +163,6 @@ impl ModalState {
             ModalState::ExportPng { ref mut result, .. } => *result = ModalResult::Active,
             ModalState::ExportTiled { ref mut result, .. } => *result = ModalResult::Active,
             ModalState::Help { ref mut result, .. } => *result = ModalResult::Active,
-            ModalState::ExportRaw { ref mut result, .. } => *result = ModalResult::Active,
         }
     }
 
@@ -270,13 +262,6 @@ impl ModalState {
 
     pub(crate) fn export_tiled() -> ModalState {
         ModalState::ExportTiled {
-            settings: Default::default(),
-            result: Default::default(),
-        }
-    }
-
-    pub(crate) fn export_raw() -> ModalState {
-        ModalState::ExportRaw {
             settings: Default::default(),
             result: Default::default(),
         }

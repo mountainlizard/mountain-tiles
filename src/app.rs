@@ -12,6 +12,7 @@ use crate::undo::{RevisionIndex, Undo};
 
 mod actions;
 mod eframe_app;
+mod export_workspace;
 pub mod files;
 mod init;
 mod ipc;
@@ -20,7 +21,6 @@ pub mod maps;
 mod modals;
 mod palette;
 mod png;
-mod raw;
 mod selection;
 mod stamp;
 mod tiled;

@@ -10,12 +10,9 @@ use crate::ui::file_dialog::PNG_EXTENSION;
 use crate::{
     app::App,
     data::{
-        raw::RawExportSettings,
         tiles::{layer_tiles::Layer, tile_color::TileColor, Tile, Tiles},
         tilesets::{TilesetId, Tilesets},
     },
-    ui::file_dialog,
-    utils::path_with_suffix_and_extension,
 };
 use camino::Utf8PathBuf;
 use convert_case::ccase;
@@ -143,47 +140,6 @@ impl App {
         }
     }
 
-    pub fn show_export_raw_file_modal(&mut self, settings: &RawExportSettings) {
-        let self_path = self.save_path.clone();
-        if let Some(me) = self.selected_map_editing_mut() {
-            // Default codegen path to the same as the project itself, plus the map name, with rs extension
-            let default_path = self_path.map(|path| {
-                path_with_suffix_and_extension(
-                    &path,
-                    "map",
-                    me.map.name().as_str(),
-                    file_dialog::RS_EXTENSION,
-                )
-            });
-            match file_dialog::save_rs_file(&default_path) {
-                Ok(Some(path)) => {
-                    if let Err(e) = Self::export_map_module_to_file(
-                        &me.map.name,
-                        &me.map.tiles,
-                        &me.resources.tilesets,
-                        path.clone(),
-                    ) {
-                        self.show_error_modal(&e.to_string());
-                        return;
-                    }
-                    if settings.export_combined_png_tileset {
-                        let mut png_path = path.clone();
-                        png_path.set_extension(file_dialog::PNG_EXTENSION);
-                        if let Err(e) = self.export_tilesets_png(png_path) {
-                            self.show_error_modal(
-                                format!("Error exporting png:\n{}", &e.to_string()).as_str(),
-                            );
-                        }
-                    }
-                }
-                Ok(None) => {}
-                Err(e) => self.show_error_modal(&e.to_string()),
-            }
-        } else {
-            self.show_error_modal("No map selected to export");
-        }
-    }
-
     fn export_tilesets_png(&self, path: Utf8PathBuf) -> eyre::Result<()> {
         let tiles = &TilesetStackedTiles::new(&self.state.resources.tilesets);
         let palette = &self.state.resources.palette;
@@ -202,17 +158,6 @@ impl App {
             )
         })?;
 
-        Ok(())
-    }
-
-    fn export_map_module_to_file(
-        module_name: &str,
-        tiles: &LayerTiles,
-        tilesets: &Tilesets,
-        path: Utf8PathBuf,
-    ) -> eyre::Result<()> {
-        let mut f = BufWriter::new(File::create(path)?);
-        Self::export_map_module(module_name, tiles, tilesets, &mut f)?;
         Ok(())
     }
 

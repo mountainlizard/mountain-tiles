@@ -24,7 +24,6 @@ pub mod data {
     pub mod mode;
     pub mod palette;
     pub mod png;
-    pub mod raw;
     pub mod resources;
     pub mod settings;
     pub mod stamp;
