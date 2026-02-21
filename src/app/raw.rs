@@ -142,7 +142,10 @@ impl App {
             let mut module_file = self_path.clone();
             module_file.pop();
             module_file.push(module_path);
-            let mut f = BufWriter::new(File::create(module_file)?);
+            let mut f = BufWriter::new(
+                File::create(module_file.clone())
+                    .map_err(|e| eyre!("Failed to open module file '{}': {}", module_file, e))?,
+            );
 
             // TODO: Keep map of name to count, use to append numbers on duplicate names
 

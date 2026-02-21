@@ -73,8 +73,20 @@ impl Workspace {
     }
 
     pub fn from_file(path: Utf8PathBuf) -> eyre::Result<Workspace> {
-        let workspace_toml = fs::read_to_string(path)?;
-        let workspace: Workspace = toml::from_str(&workspace_toml)?;
+        let workspace_toml = fs::read_to_string(path.clone()).map_err(|e| {
+            eyre!(
+                "Can't open workspace TOML file.\n\nExpected at:\n{}\n\nError:\n{}\n\nExample data contains a template.",
+                path,
+                e
+            )
+        })?;
+        let workspace: Workspace = toml::from_str(&workspace_toml).map_err(|e| {
+            eyre!(
+                "Can't parse workspace TOML file.\n\nFile is at:\n{}:\n\nError:\n{}\n\nExample data contains a template.",
+                path,
+                e
+            )
+        })?;
         Ok(workspace)
     }
 
@@ -110,7 +122,7 @@ impl Project {
 
         workspace
             .project_by_name(project_name)
-            .ok_or(eyre!("No workspace settings found.\nCreate a file at:\n{}\nSee example data for supported settings.", workspace_path))
+            .ok_or(eyre!("No workspace settings found.\n\nCreate a file at:\n{}\n\nExample data contains a template.", workspace_path))
     }
 }
 
