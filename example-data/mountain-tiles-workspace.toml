@@ -26,7 +26,7 @@ tileset-png = true
 
 # Export tilesets as a 1bit raw image.
 # To export, this must be true, and `tileset-path` must also be specified.
-tileset-1bit = false
+tileset-1bit = true
 
 # This section defines the export settings for any project with a filename matching
 # the second part, in this case "instructions". So this would apply to projects that have

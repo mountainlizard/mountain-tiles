@@ -17,6 +17,14 @@ pub const PNG_NAME: &str = "PNG Image";
 pub const PNG_EXTENSION: &str = "png";
 
 #[cfg(not(target_os = "windows"))]
+pub const RAW_1BIT_NAME: &str = "Raw 1bit Image (.png)";
+
+#[cfg(target_os = "windows")]
+pub const RAW_1BIT_NAME: &str = "Raw 1bit Image";
+
+pub const RAW_1BIT_EXTENSION: &str = "raw";
+
+#[cfg(not(target_os = "windows"))]
 pub const TMX_NAME: &str = "Tiled Map XML (.tmx)";
 
 #[cfg(target_os = "windows")]

@@ -1,4 +1,4 @@
-use std::fs::File;
+use std::fs::{self, File};
 use std::io::{BufWriter, Write};
 
 use crate::data::config::workspace::{Project, Workspace};
@@ -6,7 +6,7 @@ use crate::data::png::PngExportSettings;
 use crate::data::tiles::layer_tiles::LayerTiles;
 use crate::data::tiles::tileset_stacked_tiles::TilesetStackedTiles;
 use crate::render::render_tiles;
-use crate::ui::file_dialog::PNG_EXTENSION;
+use crate::ui::file_dialog::{PNG_EXTENSION, RAW_1BIT_EXTENSION};
 use crate::{
     app::App,
     data::{
@@ -14,10 +14,12 @@ use crate::{
         tilesets::{TilesetId, Tilesets},
     },
 };
+use bitbuffer::{BigEndian, BitWriteStream};
 use camino::Utf8PathBuf;
 use convert_case::ccase;
 use egui::ahash::{HashMap, HashMapExt};
 use eyre::{bail, eyre};
+use image::{ImageBuffer, Rgba};
 
 fn tile_option_to_u32(
     tile: &Option<Tile>,
@@ -80,6 +82,63 @@ fn layer_to_raw(layer: &Layer, tilesets: &Tilesets) -> eyre::Result<Vec<u32>> {
     Ok(combined)
 }
 
+// Convert an image to 1-bit (i.e. binary, black and white).
+// This uses 1 bit per pixel, packed into bytes in a big endian order. Pixels are
+// encoded in the normal "reading" order starting at top-right and running along rows.
+// At the end of each row, we pad any partial byte with zeroes to align to the next byte,
+// so rows always start at the start of a byte.
+// This should match with the format expected by ImageMagick using:
+// convert -depth 1 -size WxH+0 gray:in.raw out.png
+// Where "W" and "H" are the width and height of the image as integers.
+// Output pixel bits are set to 1 if the input pixel has any color channel above 128, and
+// alpha above 128. Most inputs are expected to be either pure black and white with alpha
+// 255 everywhere, or white with alpha 255, and "black" pixels with alpha 0 and arbitrary color.
+fn image_to_raw_1bit(image: &ImageBuffer<Rgba<u8>, Vec<u8>>) -> eyre::Result<Vec<u8>> {
+    let mut write_bytes = vec![];
+    let mut write_stream = BitWriteStream::new(&mut write_bytes, BigEndian);
+
+    for y in 0..image.height() {
+        for x in 0..image.width() {
+            let p = image.get_pixel(x, y).0;
+            let bit = (p[0] > 128 || p[1] > 128 || p[2] > 128) && p[3] > 128;
+            write_stream.write_bool(bit)?;
+        }
+        write_stream.align();
+    }
+
+    Ok(write_bytes)
+}
+
+fn save_image_as_raw_1bit(
+    image: &ImageBuffer<Rgba<u8>, Vec<u8>>,
+    path: Utf8PathBuf,
+) -> eyre::Result<()> {
+    let raw_1bit = image_to_raw_1bit(image)
+        .map_err(|e| eyre!("Failed to convert image to raw 1bit: {}", e))?;
+    fs::write(path.clone(), raw_1bit).map_err(|e| {
+        eyre!(
+            "Failed to write raw 1bit image to:\n\n{}\n\nError:\n{}",
+            path,
+            e
+        )
+    })?;
+    Ok(())
+}
+
+fn save_image_as_png(
+    image: &ImageBuffer<Rgba<u8>, Vec<u8>>,
+    path: Utf8PathBuf,
+) -> eyre::Result<()> {
+    image.save(path.clone()).map_err(|e| {
+                    eyre!(
+                        "Failed to save tileset png to:\n\n{}:\n\nError:\n{}\n\nPlease check the relevant directory exists.",
+                        path,
+                        e
+                    )
+                })?;
+    Ok(())
+}
+
 impl App {
     pub fn export_from_workspace_error(&mut self) -> eyre::Result<()> {
         let self_path = self
@@ -92,6 +151,28 @@ impl App {
         if !project.export_has_effect() {
             let workspace_path = Workspace::workspace_path_from_project_path(self_path.clone())?;
             bail!("Export settings do not export any files\nAdd some settings to workspace file at:\n{}\nSee example data for supported settings.", workspace_path);
+        }
+
+        if let Some(relative_tileset_path) =
+            project.export.as_ref().and_then(|e| e.tileset_path.clone())
+        {
+            let mut tileset_path = self_path.clone();
+            tileset_path.pop();
+            tileset_path.push(relative_tileset_path);
+
+            let tileset_image = self.tilesets_to_image()?;
+
+            if project.export_tileset_1bit() {
+                let mut raw_path = tileset_path.clone();
+                raw_path.set_extension(RAW_1BIT_EXTENSION);
+                save_image_as_raw_1bit(&tileset_image, raw_path.clone())?;
+            }
+
+            if project.export_tileset_png() {
+                let mut png_path = tileset_path.clone();
+                png_path.set_extension(PNG_EXTENSION);
+                save_image_as_png(&tileset_image, png_path)?;
+            }
         }
 
         if let Some(module_path) = project.export.as_ref().and_then(|e| e.module_path.clone()) {
@@ -117,20 +198,6 @@ impl App {
             f.flush()?;
         }
 
-        if let Some(relative_tileset_path) =
-            project.export.as_ref().and_then(|e| e.tileset_path.clone())
-        {
-            let mut tileset_path = self_path.clone();
-            tileset_path.pop();
-            tileset_path.push(relative_tileset_path);
-
-            if project.export_tileset_png() {
-                let mut png_path = tileset_path.clone();
-                png_path.set_extension(PNG_EXTENSION);
-                self.export_tilesets_png(png_path)?;
-            }
-        }
-
         Ok(())
     }
 
@@ -140,7 +207,7 @@ impl App {
         }
     }
 
-    fn export_tilesets_png(&self, path: Utf8PathBuf) -> eyre::Result<()> {
+    fn tilesets_to_image(&self) -> eyre::Result<ImageBuffer<Rgba<u8>, Vec<u8>>> {
         let tiles = &TilesetStackedTiles::new(&self.state.resources.tilesets);
         let palette = &self.state.resources.palette;
         let tilesets = &self.state.resources.tilesets;
@@ -150,15 +217,7 @@ impl App {
             transparent: true,
         };
         let image = render_tiles(tiles, palette, tilesets, textures, settings)?;
-        image.save(path.clone()).map_err(|e| {
-            eyre!(
-                "Failed to save tileset png to:\n\n{}:\n\nError:\n{}\n\nPlease check the relevant directory exists.",
-                path,
-                e
-            )
-        })?;
-
-        Ok(())
+        Ok(image)
     }
 
     fn export_map_module<W: Write>(
