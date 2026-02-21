@@ -95,6 +95,11 @@ fn add_file_menu(ui: &mut Ui, app: &mut App) {
             if ui.button("󰈇 Export Raw...").clicked() {
                 app.show_export_raw_modal();
             }
+
+            #[cfg(feature = "export-raw")]
+            if ui.button("󰈇 Export from workspace...").clicked() {
+                app.export_from_workspace();
+            }
         }
 
         if ui.button("󰩈 Quit").clicked() {

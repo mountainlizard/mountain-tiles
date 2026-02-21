@@ -1,7 +1,32 @@
+# This section defines the default export settings for any projects not covered by
+# any `[project]` section (see example below)
 [default.export]
+
+# If specified, all maps in the project are exported to a set of Rust modules in this file
 module-path = "../src/maps.rs"
-tileset-path = "../assets/tilesets/"
+
+# If specified, tileset images are exported to files based on this path, which
+# must be in the form of a filename rather than a directory.
+# Since there are multiple possible formats, the filename will be modified to
+# reflect the format. You can either omit the extension or use an arbitrary one like 
+# ".ext" as shown here.
+# The modified filenames are as follows:
+# - PNG - replace/add the extension ".png"
+# - 1bit raw data - replace/add the extension ".raw"
+tileset-path = "../assets/tilesets/tileset.ext"
+
+# Export tilesets as a png image.
+# To export, this must be true, and `tileset-path` must also be specified.
 tileset-png = true
 
+# Export tilesets as a 1bit raw image.
+# To export, this must be true, and `tileset-path` must also be specified.
+tileset-1bit = false
+
+# This section defines the export settings for any project with a filename matching
+# the second part, in this case "example". So this would apply to projects that have
+# been saved as "example.mnp".
+# The contents are the same as for `[default.export]` above.
+# The project name must be quoted as necessary for TOML (e.g. if it has spaces)
 [project.example.export]
 module-path = "example/example.rs"

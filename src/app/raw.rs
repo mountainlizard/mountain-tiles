@@ -1,10 +1,12 @@
 use std::fs::File;
 use std::io::{BufWriter, Write};
 
+use crate::data::config::workspace::{Project, Workspace};
 use crate::data::png::PngExportSettings;
 use crate::data::tiles::layer_tiles::LayerTiles;
 use crate::data::tiles::tileset_stacked_tiles::TilesetStackedTiles;
 use crate::render::render_tiles;
+use crate::ui::file_dialog::PNG_EXTENSION;
 use crate::{
     app::App,
     data::{
@@ -123,11 +125,68 @@ impl App {
         }
     }
 
-    pub fn show_export_project_raw_file_modal(&mut self, _settings: &RawExportSettings) {
-        if let Some(self_path) = self.save_path.clone() {
-        } else {
-            self.show_error_modal("Please save the project before exporting.");
+    pub fn export_from_workspace_error(&mut self) -> eyre::Result<()> {
+        let self_path = self
+            .save_path
+            .as_ref()
+            .ok_or(eyre!("Please save the project before exporting."))?;
+
+        let project = Project::from_project_path(self_path.clone())?;
+
+        if !project.export_has_effect() {
+            let workspace_path = Workspace::workspace_path_from_project_path(self_path.clone())?;
+            bail!("Export settings do not export any files\nAdd some settings to workspace file at:\n{}\nSee example data for supported settings.", workspace_path);
         }
+
+        if let Some(module_path) = project.export.as_ref().and_then(|e| e.module_path.clone()) {
+            let mut module_file = self_path.clone();
+            module_file.pop();
+            module_file.push(module_path);
+            let mut f = BufWriter::new(File::create(module_file)?);
+
+            // TODO: Keep map of name to count, use to append numbers on duplicate names
+
+            for map in self.state.maps.iter() {
+                Self::export_map_module(
+                    &map.name,
+                    &map.tiles,
+                    &self.state.resources.tilesets,
+                    &mut f,
+                )?;
+            }
+
+            f.flush()?;
+        }
+
+        if let Some(relative_tileset_path) =
+            project.export.as_ref().and_then(|e| e.tileset_path.clone())
+        {
+            let mut tileset_path = self_path.clone();
+            tileset_path.pop();
+            tileset_path.push(relative_tileset_path);
+
+            if project.export_tileset_png() {
+                let mut png_path = tileset_path.clone();
+                png_path.set_extension(PNG_EXTENSION);
+                self.export_tilesets_png(png_path)?;
+            }
+        }
+
+        Ok(())
+    }
+
+    pub fn export_from_workspace(&mut self) {
+        if let Err(e) = self.export_from_workspace_error() {
+            self.show_error_modal(&e.to_string());
+        }
+    }
+
+    pub fn show_export_project_raw_file_modal(&mut self, _settings: &RawExportSettings) {
+        println!("TODO: Export project raw");
+        // if let Some(self_path) = self.save_path.clone() {
+        // } else {
+        //     self.show_error_modal("Please save the project before exporting.");
+        // }
         // // Default dir to the same as the project itself
         // match file_dialog::pick_folder_with_default(&self_path) {
         //     Ok(Some(path)) => {
