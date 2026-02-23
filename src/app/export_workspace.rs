@@ -1,12 +1,11 @@
 use std::fs::{self, File};
 use std::io::{BufWriter, Write};
 
-use crate::data::config::workspace::{Project, Workspace};
+use crate::data::config::workspace::{Export, Project, Workspace};
 use crate::data::png::PngExportSettings;
 use crate::data::tiles::layer_tiles::LayerTiles;
 use crate::data::tiles::tileset_stacked_tiles::TilesetStackedTiles;
 use crate::render::render_tiles;
-use crate::ui::file_dialog::{PNG_EXTENSION, RAW_1BIT_EXTENSION};
 use crate::{
     app::App,
     data::{
@@ -140,48 +139,72 @@ fn save_image_as_png(
 }
 
 impl App {
-    pub fn export_from_workspace_error(&mut self) -> eyre::Result<()> {
-        let self_path = self
-            .save_path
-            .as_ref()
-            .ok_or(eyre!("Please save the project before exporting."))?;
-
-        let project = Project::from_project_path(self_path.clone())?;
-
-        if !project.export_has_effect() {
-            let workspace_path = Workspace::workspace_path_from_project_path(self_path.clone())?;
-            bail!("Export settings do not export any files\nAdd some settings to workspace file at:\n{}\nSee example data for supported settings.", workspace_path);
-        }
-
-        if let Some(relative_tileset_path) =
-            project.export.as_ref().and_then(|e| e.tileset_path.clone())
-        {
-            let mut tileset_path = self_path.clone();
-            tileset_path.pop();
-            tileset_path.push(relative_tileset_path);
-
+    fn export_tileset(&self, self_dir: &Utf8PathBuf, export: &Export) -> eyre::Result<()> {
+        if export.exports_tileset() {
             let tileset_image = self.tilesets_to_image()?;
 
-            if project.export_tileset_1bit() {
-                let mut raw_path = tileset_path.clone();
-                raw_path.set_extension(RAW_1BIT_EXTENSION);
-                save_image_as_raw_1bit(&tileset_image, raw_path.clone())?;
+            if let Some(rel_path) = &export.tileset_1bit_path {
+                let mut path = self_dir.clone();
+                path.push(rel_path);
+                save_image_as_raw_1bit(&tileset_image, path)?;
             }
 
-            if project.export_tileset_png() {
-                let mut png_path = tileset_path.clone();
-                png_path.set_extension(PNG_EXTENSION);
-                save_image_as_png(&tileset_image, png_path)?;
+            if let Some(rel_path) = &export.tileset_png_path {
+                let mut path = self_dir.clone();
+                path.push(rel_path);
+                save_image_as_png(&tileset_image, path)?;
             }
         }
 
-        if let Some(module_path) = project.export.as_ref().and_then(|e| e.module_path.clone()) {
-            let mut module_file = self_path.clone();
-            module_file.pop();
-            module_file.push(module_path);
+        Ok(())
+    }
+
+    fn export_palette(&self, self_dir: &Utf8PathBuf, export: &Export) -> eyre::Result<()> {
+        if let Some(rel_path) = &export.palette_json_path {
+            let mut path = self_dir.clone();
+            path.push(rel_path);
+
+            self.state
+                .resources
+                .palette()
+                .write_to_json_by_path(path.clone())
+                .map_err(|e| {
+                    eyre!(
+                        "Failed to write JSON palette data to:\n\n{}\n\nError:\n{}",
+                        path,
+                        e
+                    )
+                })?;
+        }
+
+        if let Some(rel_path) = &export.palette_image_path {
+            let mut path = self_dir.clone();
+            path.push(rel_path);
+
+            self.state
+                .resources
+                .palette()
+                .write_to_image_by_path(path.clone())
+                .map_err(|e| {
+                    eyre!(
+                        "Failed to write palette as image to:\n\n{}\n\nError:\n{}",
+                        path,
+                        e
+                    )
+                })?;
+        }
+
+        Ok(())
+    }
+
+    fn export_module(&self, self_dir: &Utf8PathBuf, export: &Export) -> eyre::Result<()> {
+        if let Some(module_path) = &export.module_path {
+            let mut path = self_dir.clone();
+            path.push(module_path);
+
             let mut f = BufWriter::new(
-                File::create(module_file.clone())
-                    .map_err(|e| eyre!("Failed to open module file '{}': {}", module_file, e))?,
+                File::create(path.clone())
+                    .map_err(|e| eyre!("Failed to open module file '{}': {}", path, e))?,
             );
 
             // TODO: Keep map of name to count, use to append numbers on duplicate names
@@ -196,6 +219,30 @@ impl App {
             }
 
             f.flush()?;
+        }
+        Ok(())
+    }
+
+    pub fn export_from_workspace_error(&mut self) -> eyre::Result<()> {
+        let self_path = self
+            .save_path
+            .as_ref()
+            .ok_or(eyre!("Please save the project before exporting."))?;
+
+        let project = Project::from_project_path(self_path.clone())?;
+
+        if !project.export_has_effect() {
+            let workspace_path = Workspace::workspace_path_from_project_path(self_path.clone())?;
+            bail!("Export settings do not export any files\nAdd some settings to workspace file at:\n{}\nSee example data for supported settings.", workspace_path);
+        }
+
+        if let Some(export) = project.export.as_ref() {
+            let mut self_dir = self_path.clone();
+            self_dir.pop();
+
+            self.export_tileset(&self_dir, export)?;
+            self.export_palette(&self_dir, export)?;
+            self.export_module(&self_dir, export)?;
         }
 
         Ok(())

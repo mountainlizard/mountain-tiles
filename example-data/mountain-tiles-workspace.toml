@@ -7,26 +7,40 @@
 [default.export]
 
 # If specified, all maps in the project are exported to a set of Rust modules in this file
-# Note this is relative to the location of this file.
+# Note the path is relative to the location of this file.
 module-path = "export/src/default_maps.rs"
 
-# If specified, tileset images are exported to files based on this path, which
-# must be in the form of a filename rather than a directory.
-# Since there are multiple possible formats, the filename will be modified to
-# reflect the format. You can either omit the extension or use an arbitrary one like 
-# ".ext" as shown here.
-# The modified filenames are as follows:
-# - PNG - replace/add the extension ".png"
-# - 1bit raw data - replace/add the extension ".raw"
-tileset-path = "export/tilesets/default_tilesets.ext"
+# Export tilesets as a single png image to the specified file path.
+# Note the path is relative to the location of this file.
+# The image contains the tiles from all tilesets, ordered
+# by tileset then tile indec within the tileset.
+# The image consists of a single column of tiles.
+# This is compatible with use in Bevy as an `ImageArrayLayout`, for
+# example as the `tileset` for a `TilemapChunk`.
+tileset-png-path = "export/tilesets/default_tilesets.png"
 
-# Export tilesets as a png image.
-# To export, this must be true, and `tileset-path` must also be specified.
-tileset-png = true
+# Export tilesets as a single 1bit raw image.
+# Note the path is relative to the location of this file.
+# The 1bit raw data consists of just image data, with no header.
+# Data is output in the normal order from top left, row by row.
+# Each row consists of 1 bit per pixel, nominally this is 1 for white
+# and 0 for black. The bits are packed into successive bytes, in
+# BigEndian order, and the last byte is padded with zeroes if needed.
+# This should be compatible with Imagemagick `convert` using a depth of 1.
+# The image contains the tiles from all tilesets, ordered
+# by tileset then tile indec within the tileset.
+# The image consists of a single column of tiles.
+# This is compatible with use in Bevy as an `ImageArrayLayout`, for
+# example as the `tileset` for a `TilemapChunk`.
+tileset-1bit-path = "export/tilesets/default_tilesets.raw"
 
-# Export tilesets as a 1bit raw image.
-# To export, this must be true, and `tileset-path` must also be specified.
-tileset-1bit = true
+# Export palette as a png image to the specified file path.
+# Note the path is relative to the location of this file.
+palette-image-path = "export/palettes/default-palette.png"
+
+# Export palette as lospec-compatible JSON to the specified file path.
+# Note the path is relative to the location of this file.
+palette-json-path = "export/palettes/default-palette.json"
 
 # This section defines the export settings for any project with a filename matching
 # the second part, in this case "instructions". So this would apply to projects that have

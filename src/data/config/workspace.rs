@@ -14,42 +14,40 @@ impl Project {
     pub fn export_has_effect(&self) -> bool {
         self.export.as_ref().is_some_and(Export::has_effect)
     }
-
-    /// True if the export settings include tileset as a png
-    pub fn export_tileset_png(&self) -> bool {
-        self.export
-            .as_ref()
-            .and_then(|e| e.tileset_png)
-            .unwrap_or(false)
-    }
-
-    /// True if the export settings include tileset as 1bit data
-    pub fn export_tileset_1bit(&self) -> bool {
-        self.export
-            .as_ref()
-            .and_then(|e| e.tileset_1bit)
-            .unwrap_or(false)
-    }
 }
 
 #[derive(Debug, Serialize, Deserialize, Default, Clone)]
 pub struct Export {
     #[serde(rename = "module-path")]
     pub module_path: Option<Utf8PathBuf>,
-    #[serde(rename = "tileset-path")]
-    pub tileset_path: Option<Utf8PathBuf>,
-    #[serde(rename = "tileset-png")]
-    pub tileset_png: Option<bool>,
-    #[serde(rename = "tileset-1bit")]
-    pub tileset_1bit: Option<bool>,
+
+    #[serde(rename = "tileset-png-path")]
+    pub tileset_png_path: Option<Utf8PathBuf>,
+
+    #[serde(rename = "tileset-1bit-path")]
+    pub tileset_1bit_path: Option<Utf8PathBuf>,
+
+    #[serde(rename = "palette-image-path")]
+    pub palette_image_path: Option<Utf8PathBuf>,
+
+    #[serde(rename = "palette-json-path")]
+    pub palette_json_path: Option<Utf8PathBuf>,
 }
 
 impl Export {
     /// True if the export settings have any effect (i.e. they specify some data to be exported)
     pub fn has_effect(&self) -> bool {
-        let has_tileset_format =
-            self.tileset_png.is_some_and(|x| x) || self.tileset_1bit.is_some_and(|x| x);
-        self.module_path.is_some() || (self.tileset_path.is_some() && has_tileset_format)
+        self.module_path.is_some() || self.exports_tileset() || self.exports_palette()
+    }
+
+    /// True if tileset is exported in any format
+    pub fn exports_tileset(&self) -> bool {
+        self.tileset_png_path.is_some() || self.tileset_1bit_path.is_some()
+    }
+
+    /// True if palette is exported in any format
+    pub fn exports_palette(&self) -> bool {
+        self.palette_image_path.is_some() || self.palette_json_path.is_some()
     }
 }
 
