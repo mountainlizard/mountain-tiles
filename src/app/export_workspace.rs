@@ -1,6 +1,5 @@
 use std::fs::{self, File};
 use std::io::{BufWriter, Write};
-use std::time::Duration;
 
 use crate::data::config::workspace::{Project, Workspace};
 use crate::data::png::PngExportSettings;
@@ -206,9 +205,7 @@ impl App {
         if let Err(e) = self.export_from_workspace_error() {
             self.show_error_modal(&e.to_string());
         } else {
-            self.toasts
-                .success("Exported workspace")
-                .duration(Duration::from_secs(2));
+            self.success("Exported workspace");
         }
     }
 
