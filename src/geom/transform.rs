@@ -8,8 +8,10 @@ use crate::geom::i32pos2::{i32pos2, I32Pos2};
 /// then rotated.
 /// To recreate the correct transform, the mirror is performed before the rotation.
 /// The representation is a u8 value where the bits (from most significant to least
-/// significant), represent mirroring in the x axis, then the y axis, then the diagonal
-/// axis running from the top-left of the tile to the bottom-right.
+/// significant), represent mirroring in the x axis (i.e. x maps to -x), then the
+/// y axis (i.e. y maps to -y), then the diagonal axis running from the top-left of
+/// the tile to the bottom-right. Note that this all applies in the egui/UV coordinate
+/// system with the origin in the top left, the x axis running right, and the y axis down.
 /// This allows easy conversion to the format used for tile indices in Tiled maps,
 /// where bits 31, 30 and 29 correspond to bits 2, 1 and 0 of this enum's values.
 /// So for a given enum value, we can just use `value << 29` to produce the bits required
