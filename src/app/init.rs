@@ -1,7 +1,8 @@
 use std::env;
 
 use camino::Utf8PathBuf;
-use egui::ThemePreference;
+use egui::{vec2, ThemePreference};
+use egui_notify::Anchor;
 
 use crate::{
     app::{
@@ -54,6 +55,13 @@ impl App {
 
         // Store ipc_listener to be polled on updates
         data.ipc_listener = ipc_listener;
+
+        // Customise toasts
+        data.toasts = data
+            .toasts
+            .with_anchor(Anchor::BottomRight)
+            .with_margin(vec2(32.0, 32.0))
+            .with_padding(vec2(16.0, 16.0));
 
         data.update_texture_base_dir_from_file_path(data.save_path.clone());
 

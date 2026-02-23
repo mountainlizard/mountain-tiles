@@ -73,6 +73,7 @@ tili = { path = "../tili" }
 convert_case = "0.11.0"
 toml = "1.0.3"
 bitbuffer = "0.11.3"
+egui-notify = "0.21.0"
 
 # native:
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]

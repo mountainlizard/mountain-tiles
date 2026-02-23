@@ -98,5 +98,7 @@ impl eframe::App for App {
             });
 
         self.feed_undo();
+
+        self.toasts.show(ctx);
     }
 }

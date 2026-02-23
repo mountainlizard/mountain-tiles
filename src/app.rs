@@ -1,7 +1,3 @@
-use std::collections::VecDeque;
-
-use camino::Utf8PathBuf;
-
 use crate::data::edit_state::EditState;
 use crate::data::mode::Mode;
 use crate::data::settings::Settings;
@@ -9,6 +5,9 @@ use crate::data::state::State;
 use crate::instance::IpcListener;
 use crate::ui::tileset_textures::TilesetTextures;
 use crate::undo::{RevisionIndex, Undo};
+use camino::Utf8PathBuf;
+use egui_notify::Toasts;
+use std::collections::VecDeque;
 
 mod actions;
 mod eframe_app;
@@ -74,6 +73,10 @@ pub struct App {
     /// Allows listening for IPC messages, e.g. to open files
     #[serde(skip)]
     pub ipc_listener: Option<IpcListener>,
+
+    /// Display notifications
+    #[serde(skip)]
+    pub toasts: Toasts,
 }
 
 impl App {
