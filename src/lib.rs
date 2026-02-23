@@ -24,7 +24,6 @@ pub mod data {
     pub mod mode;
     pub mod palette;
     pub mod png;
-    pub mod raw;
     pub mod resources;
     pub mod settings;
     pub mod stamp;
@@ -32,6 +31,9 @@ pub mod data {
     pub mod tiled;
     pub mod tiles;
     pub mod tilesets;
+    pub mod config {
+        pub mod workspace;
+    }
 }
 
 pub mod geom {

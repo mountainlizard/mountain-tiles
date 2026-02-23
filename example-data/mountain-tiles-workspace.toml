@@ -1,0 +1,51 @@
+# This workspace file provides export settings for any MountainTiles 
+# projects in the same directory.
+# These settings are used for the "File -> Export from workspace..." menu item.
+
+# This section defines the default export settings for any projects not covered by
+# any `[project]` section (see example below)
+[default.export]
+
+# If specified, all maps in the project are exported to a set of Rust modules in this file
+# Note the path is relative to the location of this file.
+module-path = "export/src/default_maps.rs"
+
+# Export tilesets as a single png image to the specified file path.
+# Note the path is relative to the location of this file.
+# The image contains the tiles from all tilesets, ordered
+# by tileset then tile indec within the tileset.
+# The image consists of a single column of tiles.
+# This is compatible with use in Bevy as an `ImageArrayLayout`, for
+# example as the `tileset` for a `TilemapChunk`.
+tileset-png-path = "export/tilesets/default_tilesets.png"
+
+# Export tilesets as a single 1bit raw image.
+# Note the path is relative to the location of this file.
+# The 1bit raw data consists of just image data, with no header.
+# Data is output in the normal order from top left, row by row.
+# Each row consists of 1 bit per pixel, nominally this is 1 for white
+# and 0 for black. The bits are packed into successive bytes, in
+# BigEndian order, and the last byte is padded with zeroes if needed.
+# This should be compatible with Imagemagick `convert` using a depth of 1.
+# The image contains the tiles from all tilesets, ordered
+# by tileset then tile indec within the tileset.
+# The image consists of a single column of tiles.
+# This is compatible with use in Bevy as an `ImageArrayLayout`, for
+# example as the `tileset` for a `TilemapChunk`.
+tileset-1bit-path = "export/tilesets/default_tilesets.raw"
+
+# Export palette as a png image to the specified file path.
+# Note the path is relative to the location of this file.
+palette-image-path = "export/palettes/default-palette.png"
+
+# Export palette as lospec-compatible JSON to the specified file path.
+# Note the path is relative to the location of this file.
+palette-json-path = "export/palettes/default-palette.json"
+
+# This section defines the export settings for any project with a filename matching
+# the second part, in this case "instructions". So this would apply to projects that have
+# been saved as "instructions.mnp".
+# The contents are the same as for `[default.export]` above.
+# The project name must be quoted as necessary for TOML (e.g. if it has spaces)
+[project.instructions.export]
+module-path = "export/instructions/src/intructions_maps.rs"

@@ -1,7 +1,6 @@
 pub mod data_loss_modal;
 pub mod error_modal;
 pub mod export_png_modal;
-pub mod export_raw_modal;
 pub mod export_tiled_modal;
 pub mod help_modal;
 pub mod import_tiled_modal;

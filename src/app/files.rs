@@ -52,6 +52,7 @@ impl App {
         self.push_recent_file_path(path.clone());
         self.act(Action::OnSave { path: path.clone() });
         self.update_texture_base_dir_from_file_path(Some(path));
+        self.success("Saved");
     }
 
     pub fn clear_save_path(&mut self) {

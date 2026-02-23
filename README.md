@@ -2,7 +2,9 @@
 
 A tile-based map/image editor using [egui](https://www.egui.rs), coded by humans without AI.
 
+<!-- markdownlint-disable MD033 -->
 <img src="screenshot.png" alt="Mountain Tiles editor showing the example map" width="1293"/>
+<!-- markdownlint-enable MD033 -->
 
 Note that this project is developed on [Codeberg](https://codeberg.org/mountainlizard/mountain-tiles) and mirrored to [Github](https://github.com/mountainlizard/mountain-tiles). Please use the [Codeberg repo](https://codeberg.org/mountainlizard/mountain-tiles) for [issues](https://codeberg.org/mountainlizard/mountain-tiles/issues), [pull requests](https://codeberg.org/mountainlizard/mountain-tiles/pulls) etc. since the Github repo is just a mirror.
 
@@ -57,7 +59,9 @@ Mountain Tiles was created to quickly and easily edit maps where each tile can b
 
 You can press "h" or click the "Help..." menu item to show common shortcuts and actions in the app - this will show something like the following:
 
+<!-- markdownlint-disable MD033 -->
 <img src="instructions.png" alt="Mountain Tiles instructions" width="1280"/>
+<!-- markdownlint-enable MD033 -->
 
 ## Alternatives
 

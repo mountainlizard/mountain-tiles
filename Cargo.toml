@@ -1,6 +1,6 @@
 [package]
 name = "mountain-tiles"
-version = "0.3.0"
+version = "0.4.0"
 authors = ["Ben Webster (b@rebeam.org)"]
 edition = "2021"
 include = ["LICENSE-APACHE", "LICENSE-MIT", "**/*.rs", "Cargo.toml"]
@@ -69,6 +69,11 @@ sanitize-filename = "0.6.0"
 interprocess = "2.2.3"
 single-instance = "0.3"
 
+convert_case = "0.11.0"
+toml = "1.0.3"
+bitbuffer = "0.11.3"
+egui-notify = "0.21.0"
+
 # native:
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 env_logger = "0.11"
@@ -89,7 +94,6 @@ embed-resource = "3.0"
 assert_fs = "1.1.3"
 
 [features]
-export-raw = []
 
 [profile.release]
 opt-level = 2 # fast and small wasm
