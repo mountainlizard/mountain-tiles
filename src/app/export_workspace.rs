@@ -323,7 +323,7 @@ impl App {
 
             writeln!(
                 f,
-                "    pub const map: MapData<{}, {}> = MapData {{",
+                "    pub const MAP: MapData<{}, {}> = MapData {{",
                 tiles.layer_count(),
                 layer_tile_count
             )?;
