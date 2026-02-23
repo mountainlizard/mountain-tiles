@@ -134,9 +134,10 @@ mod tests {
             default: Some(Project {
                 export: Some(Export {
                     module_path: Some("../src/maps.rs".into()),
-                    tileset_path: Some("../assets/tilesets/".into()),
-                    tileset_png: Some(true),
-                    tileset_1bit: None,
+                    tileset_png_path: Some("../assets/tilesets/tileset.png".into()),
+                    tileset_1bit_path: None,
+                    palette_image_path: Some("../assets/palette/palette.png".into()),
+                    palette_json_path: None,
                 }),
             }),
             project: Some(HashMap::from([(
@@ -152,8 +153,8 @@ mod tests {
         let toml = toml::to_string(&workspace)?;
         let expected = r#"[default.export]
 module-path = "../src/maps.rs"
-tileset-path = "../assets/tilesets/"
-tileset-png = true
+tileset-png-path = "../assets/tilesets/tileset.png"
+palette-image-path = "../assets/palette/palette.png"
 
 [project.example.export]
 module-path = "example/example.rs"
@@ -168,9 +169,10 @@ module-path = "example/example.rs"
             default: Some(Project {
                 export: Some(Export {
                     module_path: Some("../src/maps.rs".into()),
-                    tileset_path: Some("../assets/tilesets/".into()),
-                    tileset_png: Some(true),
-                    tileset_1bit: None,
+                    tileset_png_path: Some("../assets/tilesets/tileset.png".into()),
+                    tileset_1bit_path: None,
+                    palette_image_path: Some("../assets/palette/palette.png".into()),
+                    palette_json_path: None,
                 }),
             }),
             ..Default::default()
@@ -178,8 +180,8 @@ module-path = "example/example.rs"
         let toml = toml::to_string(&workspace)?;
         let expected = r#"[default.export]
 module-path = "../src/maps.rs"
-tileset-path = "../assets/tilesets/"
-tileset-png = true
+tileset-png-path = "../assets/tilesets/tileset.png"
+palette-image-path = "../assets/palette/palette.png"
 "#;
         assert_eq!(toml, expected);
         Ok(())
