@@ -1,7 +1,7 @@
 use std::fs::{self, File};
 use std::io::{BufWriter, Write};
 
-use crate::data::config::workspace::{Export, Project, Workspace};
+use crate::data::config::workspace::{self, Export, Project, Workspace};
 use crate::data::png::PngExportSettings;
 use crate::data::tiles::layer_tiles::LayerTiles;
 use crate::data::tiles::tileset_stacked_tiles::TilesetStackedTiles;
@@ -13,7 +13,7 @@ use crate::{
         tilesets::{TilesetId, Tilesets},
     },
 };
-use bitbuffer::{BigEndian, BitWriteStream};
+use bitbuffer::{BigEndian, BitWriteStream, Endianness, LittleEndian};
 use camino::Utf8PathBuf;
 use convert_case::ccase;
 use egui::ahash::{HashMap, HashMapExt};
@@ -82,7 +82,7 @@ fn layer_to_raw(layer: &Layer, tilesets: &Tilesets) -> eyre::Result<Vec<u32>> {
 }
 
 // Convert an image to 1-bit (i.e. binary, black and white).
-// This uses 1 bit per pixel, packed into bytes in a big endian order. Pixels are
+// This uses 1 bit per pixel, packed into bytes using the specified endianness. Pixels are
 // encoded in the normal "reading" order starting at top-right and running along rows.
 // At the end of each row, we pad any partial byte with zeroes to align to the next byte,
 // so rows always start at the start of a byte.
@@ -92,9 +92,12 @@ fn layer_to_raw(layer: &Layer, tilesets: &Tilesets) -> eyre::Result<Vec<u32>> {
 // Output pixel bits are set to 1 if the input pixel has any color channel above 128, and
 // alpha above 128. Most inputs are expected to be either pure black and white with alpha
 // 255 everywhere, or white with alpha 255, and "black" pixels with alpha 0 and arbitrary color.
-fn image_to_raw_1bit(image: &ImageBuffer<Rgba<u8>, Vec<u8>>) -> eyre::Result<Vec<u8>> {
+fn image_to_raw_1bit<E: Endianness>(
+    image: &ImageBuffer<Rgba<u8>, Vec<u8>>,
+    endianness: E,
+) -> eyre::Result<Vec<u8>> {
     let mut write_bytes = vec![];
-    let mut write_stream = BitWriteStream::new(&mut write_bytes, BigEndian);
+    let mut write_stream = BitWriteStream::new(&mut write_bytes, endianness);
 
     for y in 0..image.height() {
         for x in 0..image.width() {
@@ -108,11 +111,12 @@ fn image_to_raw_1bit(image: &ImageBuffer<Rgba<u8>, Vec<u8>>) -> eyre::Result<Vec
     Ok(write_bytes)
 }
 
-fn save_image_as_raw_1bit(
+fn save_image_as_raw_1bit<E: Endianness>(
     image: &ImageBuffer<Rgba<u8>, Vec<u8>>,
     path: Utf8PathBuf,
+    endianness: E,
 ) -> eyre::Result<()> {
-    let raw_1bit = image_to_raw_1bit(image)
+    let raw_1bit = image_to_raw_1bit(image, endianness)
         .map_err(|e| eyre!("Failed to convert image to raw 1bit: {}", e))?;
     fs::write(path.clone(), raw_1bit).map_err(|e| {
         eyre!(
@@ -146,7 +150,18 @@ impl App {
             if let Some(rel_path) = &export.tileset_1bit_path {
                 let mut path = self_dir.clone();
                 path.push(rel_path);
-                save_image_as_raw_1bit(&tileset_image, path)?;
+                match export
+                    .tileset_1bit_endianness
+                    .as_ref()
+                    .unwrap_or(&workspace::Endianness::Little)
+                {
+                    workspace::Endianness::Big => {
+                        save_image_as_raw_1bit(&tileset_image, path, BigEndian)?
+                    }
+                    workspace::Endianness::Little => {
+                        save_image_as_raw_1bit(&tileset_image, path, LittleEndian)?
+                    }
+                }
             }
 
             if let Some(rel_path) = &export.tileset_png_path {
@@ -210,12 +225,19 @@ impl App {
             // TODO: Keep map of name to count, use to append numbers on duplicate names
 
             for map in self.state.maps.iter() {
-                Self::export_map_module(
-                    &map.name,
-                    &map.tiles,
-                    &self.state.resources.tilesets,
-                    &mut f,
-                )?;
+                let export = export
+                    .skip_maps_with_prefix
+                    .as_ref()
+                    .map(|skip| !map.name.starts_with(skip))
+                    .unwrap_or(true);
+                if export {
+                    Self::export_map_module(
+                        &map.name,
+                        &map.tiles,
+                        &self.state.resources.tilesets,
+                        &mut f,
+                    )?;
+                }
             }
 
             f.flush()?;

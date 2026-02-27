@@ -5,6 +5,13 @@ use eyre::eyre;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize, Default, Clone)]
+pub enum Endianness {
+    #[default]
+    Big,
+    Little,
+}
+
+#[derive(Debug, Serialize, Deserialize, Default, Clone)]
 pub struct Project {
     pub export: Option<Export>,
 }
@@ -18,20 +25,61 @@ impl Project {
 
 #[derive(Debug, Serialize, Deserialize, Default, Clone)]
 pub struct Export {
+    /// If specified, all maps in the project are exported to a set of Rust modules in this file
+    /// Note the path may be relative - when a workspace is loaded from a file, paths should be
+    /// taken to be relative to that file.
     #[serde(rename = "module-path")]
     pub module_path: Option<Utf8PathBuf>,
 
+    /// Export tilesets as a single png image to the specified file path.
+    /// Note the path may be relative - when a workspace is loaded from a file, paths should be
+    /// taken to be relative to that file.
+    /// The image contains the tiles from all tilesets, ordered
+    /// by tileset then tile indec within the tileset.
+    /// The image consists of a single column of tiles.
+    /// This is compatible with use in Bevy as an `ImageArrayLayout`, for
+    /// example as the `tileset` for a `TilemapChunk`.
     #[serde(rename = "tileset-png-path")]
     pub tileset_png_path: Option<Utf8PathBuf>,
 
+    /// Export tilesets as a single 1bit raw image.
+    /// Note the path may be relative - when a workspace is loaded from a file, paths should be
+    /// taken to be relative to that file.
+    /// The 1bit raw data consists of just image data, with no header.
+    /// Data is output in the normal order from top left, row by row.
+    /// Each row consists of 1 bit per pixel, nominally this is 1 for white
+    /// and 0 for black. The bits are packed into successive bytes, in
+    /// BigEndian order, and the last byte is padded with zeroes if needed.
+    /// This should be compatible with Imagemagick `convert` using a depth of 1.
+    /// The image contains the tiles from all tilesets, ordered
+    /// by tileset then tile indec within the tileset.
+    /// The image consists of a single column of tiles.
+    /// This is compatible with use in Bevy as an `ImageArrayLayout`, for
+    /// example as the `tileset` for a `TilemapChunk`.
     #[serde(rename = "tileset-1bit-path")]
     pub tileset_1bit_path: Option<Utf8PathBuf>,
 
+    /// If specified, sets the endianness of the 1bit raw image export.
+    /// If not specified, defaults to little endian
+    #[serde(rename = "tileset-1bit-endianness")]
+    pub tileset_1bit_endianness: Option<Endianness>,
+
+    /// Export palette as a png image to the specified file path.
+    /// Note the path may be relative - when a workspace is loaded from a file, paths should be
+    /// taken to be relative to that file.
     #[serde(rename = "palette-image-path")]
     pub palette_image_path: Option<Utf8PathBuf>,
 
+    /// Export palette as lospec-compatible JSON to the specified file path.
+    /// Note the path may be relative - when a workspace is loaded from a file, paths should be
+    /// taken to be relative to that file.
     #[serde(rename = "palette-json-path")]
     pub palette_json_path: Option<Utf8PathBuf>,
+
+    /// If this is specified, then the export will skip any map
+    /// whose name starts with the given prefix, e.g. "_skip-this-map"
+    #[serde(rename = "skip-maps-with-prefix")]
+    pub skip_maps_with_prefix: Option<String>,
 }
 
 impl Export {
@@ -136,8 +184,10 @@ mod tests {
                     module_path: Some("../src/maps.rs".into()),
                     tileset_png_path: Some("../assets/tilesets/tileset.png".into()),
                     tileset_1bit_path: None,
+                    tileset_1bit_endianness: Some(Endianness::Little),
                     palette_image_path: Some("../assets/palette/palette.png".into()),
                     palette_json_path: None,
+                    skip_maps_with_prefix: Some("skip-".to_string()),
                 }),
             }),
             project: Some(HashMap::from([(
@@ -154,7 +204,9 @@ mod tests {
         let expected = r#"[default.export]
 module-path = "../src/maps.rs"
 tileset-png-path = "../assets/tilesets/tileset.png"
+tileset-1bit-endianness = "Little"
 palette-image-path = "../assets/palette/palette.png"
+skip-maps-with-prefix = "skip-"
 
 [project.example.export]
 module-path = "example/example.rs"
@@ -171,8 +223,10 @@ module-path = "example/example.rs"
                     module_path: Some("../src/maps.rs".into()),
                     tileset_png_path: Some("../assets/tilesets/tileset.png".into()),
                     tileset_1bit_path: None,
+                    tileset_1bit_endianness: None,
                     palette_image_path: Some("../assets/palette/palette.png".into()),
                     palette_json_path: None,
+                    skip_maps_with_prefix: None,
                 }),
             }),
             ..Default::default()

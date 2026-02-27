@@ -34,6 +34,11 @@ tileset-png-path = "export/tilesets/default_tilesets.png"
 # example as the `tileset` for a `TilemapChunk`.
 tileset-1bit-path = "export/tilesets/default_tilesets.raw"
 
+# If specified, sets the endianness of the 1bit raw image export.
+# Valid options are "Big" and "Little" - these are case-sensitive
+# If not specified, defaults to "Little"
+tileset-1bit-endianness = "Little"
+
 # Export palette as a png image to the specified file path.
 # Note the path is relative to the location of this file.
 palette-image-path = "export/palettes/default-palette.png"
@@ -41,6 +46,10 @@ palette-image-path = "export/palettes/default-palette.png"
 # Export palette as lospec-compatible JSON to the specified file path.
 # Note the path is relative to the location of this file.
 palette-json-path = "export/palettes/default-palette.json"
+
+# If this is specified, then the export will skip any map
+# whose name starts with the given prefix, e.g. "_skip-this-map"
+skip-maps-with-prefix = "_"
 
 # This section defines the export settings for any project with a filename matching
 # the second part, in this case "instructions". So this would apply to projects that have
