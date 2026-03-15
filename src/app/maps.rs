@@ -155,7 +155,7 @@ impl<'a> MapEditing<'a> {
     }
 
     /// Produce a mapping from layers of the provided [`Stamp`] to the
-    /// layer index where that stamp layer would be drawn in our asssociated
+    /// layer index where that stamp layer would be drawn in our associated
     /// [`Map`].
     /// Note that this may be smaller than the number of layers in the
     /// [`Stamp`] - in this case the additional [`Stamp`] layers will be
