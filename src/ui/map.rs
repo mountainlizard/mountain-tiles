@@ -2,9 +2,9 @@ use egui::{DragPanButtons, Sense, Ui};
 
 use crate::{
     app::App,
-    data::tiles::{stamp_tiles::StampTiles, tile_selection::TileSelection, Tiles},
+    data::tiles::{Tiles, stamp_tiles::StampTiles, tile_selection::TileSelection},
     data::{action::Action, mode::Mode},
-    ui::tiles::{tiles_no_sense, Overlay},
+    ui::tiles::{Overlay, tiles_no_sense},
 };
 
 pub fn map_ui(ui: &mut Ui, app: &mut App) {
@@ -36,7 +36,8 @@ pub fn map_ui(ui: &mut Ui, app: &mut App) {
             let palette = me.resources.palette();
             let tilesets = me.resources.tilesets();
             let textures = me.textures;
-            let response = match mode {
+
+            match mode {
                 Mode::Select => ui.add(tiles_no_sense(
                     me.map.tiles(),
                     palette,
@@ -80,8 +81,7 @@ pub fn map_ui(ui: &mut Ui, app: &mut App) {
                     Some(&TileSelection::erase(map_hovered)),
                     Overlay::None,
                 )),
-            };
-            response
+            }
         });
 
         let tiles_response = double_response.inner;
