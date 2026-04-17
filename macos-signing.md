@@ -1,5 +1,7 @@
 # Signing on macOS
 
+At various stages in the following process, you may get a message from a command line tool saying "A required agreement is missing or has expired" - if so, go to [the developer.apple.com account page](https://developer.apple.com/account), sign in if necessary, and then check for a new agreement.
+
 To sign on macOS (for distribution of a `.dmg` file outside the App Store), you will need to:
 
 1. Make sure you have a valid, paid membership of the [Apple Developer Program](https://developer.apple.com/programs/).
