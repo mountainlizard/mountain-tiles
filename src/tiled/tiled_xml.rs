@@ -454,19 +454,15 @@ impl TiledXml {
                 let tile_data: Vec<_> = layer
                     .tiles_iter()
                     .map(|tile| match tile {
-                        Some(tile) => {
-                            if tile.color == color {
-                                if let Some(firstgid) = firstgids.get(&tile.source.tileset_id) {
-                                    (firstgid + tile.source.tile_index.index())
-                                        | tile.transform.as_tiled_flip_bits()
-                                } else {
-                                    0
-                                }
+                        Some(tile) if tile.color == color => {
+                            if let Some(firstgid) = firstgids.get(&tile.source.tileset_id) {
+                                (firstgid + tile.source.tile_index.index())
+                                    | tile.transform.as_tiled_flip_bits()
                             } else {
                                 0
                             }
                         }
-                        None => 0,
+                        _ => 0,
                     })
                     .map(|i| i.to_string())
                     .collect();
