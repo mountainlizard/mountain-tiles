@@ -7,11 +7,7 @@ use crate::{
 };
 
 pub fn error_modal_ui(ui: &mut Ui, app: &mut App) {
-    if let ModalState::Error {
-        ref message,
-        ref mut result,
-    } = &mut app.edit.modal
-    {
+    if let ModalState::Error { message, result } = &mut app.edit.modal {
         Modal::new(Id::new("Error Modal"))
             .frame(DEFAULT_THEME.modal_frame())
             .show(ui.ctx(), |ui| {
@@ -20,7 +16,7 @@ pub fn error_modal_ui(ui: &mut Ui, app: &mut App) {
                 ui.heading("Error");
                 ui.add_space(DEFAULT_THEME.modal_spacing);
 
-                ui.label(message);
+                ui.label(message.to_string());
 
                 ui.add_space(DEFAULT_THEME.modal_spacing);
                 ui.separator();

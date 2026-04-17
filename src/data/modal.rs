@@ -5,7 +5,7 @@ use crate::{
 use camino::Utf8PathBuf;
 
 use crate::{
-    data::palette::{palette_index, Palette, PaletteIndex},
+    data::palette::{Palette, PaletteIndex, palette_index},
     data::settings::Settings,
     data::tiles::{layer_tiles::LayerId, tile_color::UserColor},
     data::tilesets::{Tileset, TilesetId, Tilesets},
@@ -152,17 +152,17 @@ impl ModalState {
     pub fn make_active(&mut self) {
         match self {
             ModalState::None => {}
-            ModalState::Map { ref mut result, .. } => *result = ModalResult::Active,
-            ModalState::Tileset { ref mut result, .. } => *result = ModalResult::Active,
-            ModalState::Layer { ref mut result, .. } => *result = ModalResult::Active,
-            ModalState::ImportTiled { ref mut result, .. } => *result = ModalResult::Active,
-            ModalState::Error { ref mut result, .. } => *result = ModalResult::Active,
-            ModalState::DataLoss { ref mut result, .. } => *result = ModalResult::Active,
-            ModalState::Palette { ref mut result, .. } => *result = ModalResult::Active,
-            ModalState::Settings { ref mut result, .. } => *result = ModalResult::Active,
-            ModalState::ExportPng { ref mut result, .. } => *result = ModalResult::Active,
-            ModalState::ExportTiled { ref mut result, .. } => *result = ModalResult::Active,
-            ModalState::Help { ref mut result, .. } => *result = ModalResult::Active,
+            ModalState::Map { result, .. } => *result = ModalResult::Active,
+            ModalState::Tileset { result, .. } => *result = ModalResult::Active,
+            ModalState::Layer { result, .. } => *result = ModalResult::Active,
+            ModalState::ImportTiled { result, .. } => *result = ModalResult::Active,
+            ModalState::Error { result, .. } => *result = ModalResult::Active,
+            ModalState::DataLoss { result, .. } => *result = ModalResult::Active,
+            ModalState::Palette { result, .. } => *result = ModalResult::Active,
+            ModalState::Settings { result, .. } => *result = ModalResult::Active,
+            ModalState::ExportPng { result, .. } => *result = ModalResult::Active,
+            ModalState::ExportTiled { result, .. } => *result = ModalResult::Active,
+            ModalState::Help { result, .. } => *result = ModalResult::Active,
         }
     }
 

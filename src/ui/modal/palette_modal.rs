@@ -1,4 +1,4 @@
-use egui::{vec2, Id, Modal, RichText, Ui};
+use egui::{Id, Modal, RichText, Ui, vec2};
 use egui_extras::{Column, TableBuilder};
 
 use crate::{
@@ -17,11 +17,11 @@ const TABLE_HEIGHT: f32 = 250.0;
 
 pub fn palette_modal_ui(ui: &mut Ui, app: &mut App) {
     let modal_to_apply = if let ModalState::Palette {
-        ref mut selected_index,
-        ref mut palette,
-        ref mut scroll_to_row,
-        ref mut edit_color_as_text,
-        ref mut result,
+        selected_index,
+        palette,
+        scroll_to_row,
+        edit_color_as_text,
+        result,
     } = &mut app.edit.modal
     {
         selected_index.limit_to_palette(palette);

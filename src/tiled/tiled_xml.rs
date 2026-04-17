@@ -7,7 +7,7 @@ use crate::{
     app::maps::MapEditing,
     data::palette::{Palette, PaletteIndex},
     data::tiled::TiledExportSettings,
-    data::tiles::{layer_tiles::LayerTiles, tile_color::TileColor, Tiles},
+    data::tiles::{Tiles, layer_tiles::LayerTiles, tile_color::TileColor},
     data::tilesets::Tileset,
     data::tilesets::Tilesets,
     geom::u32size2::u32size2,
@@ -18,9 +18,9 @@ use crate::{
 };
 use camino::Utf8PathBuf;
 use egui::ahash::{HashMap, HashMapExt, HashSet, HashSetExt};
-use eyre::{bail, eyre, Context};
-use quick_xml::events::{BytesDecl, BytesStart, Event};
+use eyre::{Context, bail, eyre};
 use quick_xml::Writer;
+use quick_xml::events::{BytesDecl, BytesStart, Event};
 use serde::{Deserialize, Serialize};
 
 pub const TSX_VERSION: &str = "1.10";
@@ -404,7 +404,10 @@ impl TiledXml {
             let source = format!("{}.{}", source_base, file_dialog::TSX_EXTENSION);
 
             if !tsx_file_names.insert(source.clone()) {
-                bail!("Cannot export map as Tiled .tmx format.\nThere is more than one tileset named '{}'\n To export as Tiled, edit tileset names to be unique.\nThis is to allow each tileset to be saved as 'name.tsx'.", tileset.name)
+                bail!(
+                    "Cannot export map as Tiled .tmx format.\nThere is more than one tileset named '{}'\n To export as Tiled, edit tileset names to be unique.\nThis is to allow each tileset to be saved as 'name.tsx'.",
+                    tileset.name
+                )
             }
 
             tileset_refs.push(TilesetReferenceXml {
@@ -453,16 +456,16 @@ impl TiledXml {
                 };
                 let tile_data: Vec<_> = layer
                     .tiles_iter()
-                    .map(|tile| match tile {
-                        Some(tile) if tile.color == color => {
-                            if let Some(firstgid) = firstgids.get(&tile.source.tileset_id) {
-                                (firstgid + tile.source.tile_index.index())
-                                    | tile.transform.as_tiled_flip_bits()
-                            } else {
-                                0
-                            }
+                    .map(|tile| {
+                        if let Some(tile) = tile
+                            && tile.color == color
+                            && let Some(firstgid) = firstgids.get(&tile.source.tileset_id)
+                        {
+                            (firstgid + tile.source.tile_index.index())
+                                | tile.transform.as_tiled_flip_bits()
+                        } else {
+                            0
                         }
-                        _ => 0,
                     })
                     .map(|i| i.to_string())
                     .collect();
