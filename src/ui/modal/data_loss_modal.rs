@@ -1,7 +1,7 @@
 use egui::{Color32, Id, Modal, Stroke, Ui};
 
 use crate::{
-    app::{files::OpenContext, App},
+    app::{App, files::OpenContext},
     data::{
         action::Action,
         modal::{DataLossOperation, ModalResult, ModalState},
@@ -10,7 +10,7 @@ use crate::{
 };
 
 pub fn data_loss_modal_ui(ui: &mut Ui, app: &mut App) {
-    let modal_to_apply = if let ModalState::DataLoss {
+    let modal_to_apply = if let &mut ModalState::DataLoss {
         ref operation,
         ref mut result,
     } = &mut app.edit.modal
