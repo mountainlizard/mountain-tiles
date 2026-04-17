@@ -20,7 +20,7 @@ const CLOSE_SHORTCUT_ALT: KeyboardShortcut = KeyboardShortcut {
 };
 
 pub fn help_modal_ui(ui: &mut Ui, app: &mut App) {
-    if let ModalState::Help { ref mut result } = &mut app.edit.modal {
+    if let ModalState::Help { result } = &mut app.edit.modal {
         let screen_rect = ui.ctx().content_rect();
         let modal_max_width = screen_rect.width() - BORDER;
         let modal_max_height = screen_rect.height() - BORDER;
