@@ -12,9 +12,9 @@ use crate::{
 pub fn import_tiled_modal_ui(ui: &mut Ui, app: &mut App) {
     let modal_to_apply = if let ModalState::ImportTiled {
         tiled,
-        ref mut squash_layers,
-        ref mut prefer_relative_path,
-        ref mut result,
+        squash_layers,
+        prefer_relative_path,
+        result,
     } = &mut app.edit.modal
     {
         Modal::new(Id::new("Import Tiled Modal"))

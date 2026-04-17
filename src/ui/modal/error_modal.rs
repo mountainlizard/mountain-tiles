@@ -7,7 +7,7 @@ use crate::{
 };
 
 pub fn error_modal_ui(ui: &mut Ui, app: &mut App) {
-    if let ModalState::Error {
+    if let &mut ModalState::Error {
         ref message,
         ref mut result,
     } = &mut app.edit.modal

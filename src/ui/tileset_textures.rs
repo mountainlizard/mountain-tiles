@@ -134,7 +134,7 @@ impl TilesetTextures {
         base_dir: &Option<Utf8PathBuf>,
         tileset: &Tileset,
     ) -> Utf8PathBuf {
-        if let Some(ref base_dir) = base_dir {
+        if let Some(base_dir) = base_dir {
             let mut path = base_dir.clone();
             path.push(tileset.path.clone());
             path
