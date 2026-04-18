@@ -1,6 +1,5 @@
+use serde::{Deserialize, Deserializer, Serialize, Serializer, de::Visitor};
 use std::fmt;
-
-use serde::{de::Visitor, Deserialize, Deserializer, Serialize, Serializer};
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct TiledColor {

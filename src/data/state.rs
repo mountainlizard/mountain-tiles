@@ -1,21 +1,19 @@
-use std::{
-    fs::File,
-    io::{BufReader, BufWriter},
-};
-
-use camino::Utf8PathBuf;
-
 use crate::{
     data::palette::Palette,
     data::tiles::Tile,
     data::tilesets::TilesetId,
     data::{
         action::ActionResult,
-        file_format::{confirm_format, FileContents, FileFormat},
+        file_format::{FileContents, FileFormat, confirm_format},
         maps::Maps,
         resources::{Resources, TileResourceLocation, TileResourceUse},
     },
     undo::Undoable,
+};
+use camino::Utf8PathBuf;
+use std::{
+    fs::File,
+    io::{BufReader, BufWriter},
 };
 
 #[derive(serde::Deserialize, serde::Serialize, Default, Clone, PartialEq)]

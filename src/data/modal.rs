@@ -1,19 +1,17 @@
 use crate::{
-    data::{png::PngExportSettings, tiled::TiledExportSettings, tiles::Tiles},
+    data::{
+        maps::{Map, MapId},
+        palette::{Palette, PaletteIndex, palette_index},
+        png::PngExportSettings,
+        resources::TileResourceUse,
+        settings::Settings,
+        tiled::TiledExportSettings,
+        tiles::{Tiles, layer_tiles::LayerId, tile_color::UserColor},
+        tilesets::{Tileset, TilesetId, Tilesets},
+    },
     tiled::tiled_json::Tiled,
 };
 use camino::Utf8PathBuf;
-
-use crate::{
-    data::palette::{palette_index, Palette, PaletteIndex},
-    data::settings::Settings,
-    data::tiles::{layer_tiles::LayerId, tile_color::UserColor},
-    data::tilesets::{Tileset, TilesetId, Tilesets},
-    data::{
-        maps::{Map, MapId},
-        resources::TileResourceUse,
-    },
-};
 
 #[derive(Clone, PartialEq, Default)]
 pub enum ModalResult {

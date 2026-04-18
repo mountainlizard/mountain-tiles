@@ -1,22 +1,21 @@
-use egui::{Color32, Id, Label, Modal, Slider, Ui};
-
 use crate::{
     app::App,
     data::{
         action::Action,
         modal::{ModalResult, ModalState, TilesetOperation},
-        tiles::{tile_color::UserColor, tileset_tiles::TilesetTiles, Tiles},
+        tiles::{Tiles, tile_color::UserColor, tileset_tiles::TilesetTiles},
         tilesets::TilesetMode,
     },
     geom::u32size2::U32Size2,
     ui::{
         file_dialog,
         theme::DEFAULT_THEME,
-        tiles::{tiles, Overlay},
+        tiles::{Overlay, tiles},
         tileset::tileset_message,
         utils::{optional_color_ui, user_color_edit_button},
     },
 };
+use egui::{Color32, Id, Label, Modal, Slider, Ui};
 
 const PREVIEW_SIZE: f32 = 256.0;
 const OVERLAY_COLOR: Color32 = DEFAULT_THEME.selected_fill;

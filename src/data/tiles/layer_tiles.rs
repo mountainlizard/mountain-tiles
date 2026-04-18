@@ -1,17 +1,15 @@
-use std::slice::Iter;
-
-use egui::ahash::{HashSet, HashSetExt};
-
 use crate::{
     data::palette::Palette,
-    data::tiles::{tile_color::UserColor, Tile, Tiles},
+    data::tiles::{Tile, Tiles, tile_color::UserColor},
     data::tilesets::TilesetId,
-    geom::u32pos2::{u32pos2, U32Pos2},
-    geom::u32size2::{u32size2, U32Size2},
+    geom::u32pos2::{U32Pos2, u32pos2},
+    geom::u32size2::{U32Size2, u32size2},
     selection::{
         Selectable, SelectableList, SelectableListIter, SelectableListIterDeletable, Selection,
     },
 };
+use egui::ahash::{HashSet, HashSetExt};
+use std::slice::Iter;
 
 /// This is unique within a [`LayerTiles`], and persists for a
 /// given [`Layer`] even if edited (e.g. resized). This can be used

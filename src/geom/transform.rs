@@ -1,6 +1,5 @@
+use crate::geom::i32pos2::{I32Pos2, i32pos2};
 use core::fmt::Display;
-
-use crate::geom::i32pos2::{i32pos2, I32Pos2};
 
 /// The set of possible tile transforms.
 /// These are described based on a clockwise rotation (common in tilemap editors),
@@ -259,8 +258,8 @@ mod tests {
     }
 
     #[test]
-    fn applying_any_transform_pair_individually_to_a_pos_should_give_same_result_as_applying_combined_single_transform(
-    ) {
+    fn applying_any_transform_pair_individually_to_a_pos_should_give_same_result_as_applying_combined_single_transform()
+     {
         for first in TRANSFORMS.iter() {
             for second in TRANSFORMS.iter() {
                 let combined = first.and_then(*second);

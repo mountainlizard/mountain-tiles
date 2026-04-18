@@ -1,6 +1,3 @@
-use egui::{vec2, Id, Modal, RichText, Ui};
-use egui_extras::{Column, TableBuilder};
-
 use crate::{
     app::App,
     data::modal::{ModalResult, ModalState},
@@ -12,6 +9,8 @@ use crate::{
     },
     ui::theme::DEFAULT_THEME,
 };
+use egui::{Id, Modal, RichText, Ui, vec2};
+use egui_extras::{Column, TableBuilder};
 
 const TABLE_HEIGHT: f32 = 250.0;
 

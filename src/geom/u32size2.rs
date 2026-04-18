@@ -1,10 +1,9 @@
+use crate::geom::i32pos2::I32Pos2;
+use crate::geom::u32pos2::{U32Pos2, u32pos2};
 use core::fmt;
 use core::ops::{Div, Mul};
 use egui::Vec2;
 use std::ops::Add;
-
-use crate::geom::i32pos2::I32Pos2;
-use crate::geom::u32pos2::{u32pos2, U32Pos2};
 
 /// Represents a size in integer increments
 /// e.g. to represent the size of a rectangle of

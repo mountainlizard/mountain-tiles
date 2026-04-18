@@ -1,9 +1,8 @@
-use std::path;
-
-use assert_fs::{fixture::PathChild, TempDir};
+use assert_fs::{TempDir, fixture::PathChild};
 use camino::Utf8PathBuf;
-use eyre::{eyre, Result};
+use eyre::{Result, eyre};
 use mountain_tiles::data::state::State;
+use std::path;
 
 trait TempDirUtf8 {
     fn child_utf8_path_buf<P>(&self, path: P) -> Result<Utf8PathBuf>

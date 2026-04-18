@@ -6,9 +6,9 @@ use crate::{
     ui::tileset_textures::TilesetTextures,
 };
 use egui::ahash::{HashMap, HashMapExt};
-use eyre::{bail, eyre, Result};
+use eyre::{Result, bail, eyre};
 use image::Pixel;
-use image::{imageops::resize, GenericImage, GenericImageView, ImageReader, RgbaImage};
+use image::{GenericImage, GenericImageView, ImageReader, RgbaImage, imageops::resize};
 
 type TilesetImages = HashMap<TilesetId, RgbaImage>;
 

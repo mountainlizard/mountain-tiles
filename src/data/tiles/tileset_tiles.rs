@@ -1,7 +1,7 @@
 use crate::{
     data::tiles::{
-        tile_color::{TileColor, UserColor},
         Tile, TileIndex, TileSource, Tiles,
+        tile_color::{TileColor, UserColor},
     },
     data::tilesets::TilesetId,
     geom::transform::Transform,

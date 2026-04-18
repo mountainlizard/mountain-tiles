@@ -1,15 +1,13 @@
+use crate::data::tiles::tile_color::{TileColor, UserColor};
+use camino::Utf8PathBuf;
+use egui::ahash::{HashSet, HashSetExt};
+use eyre::{bail, eyre};
+use image::{ImageReader, RgbaImage};
 use std::{
     fs::File,
     io::{BufReader, BufWriter},
     slice::{Iter, IterMut},
 };
-
-use camino::Utf8PathBuf;
-use egui::ahash::{HashSet, HashSetExt};
-use eyre::{bail, eyre};
-use image::{ImageReader, RgbaImage};
-
-use crate::data::tiles::tile_color::{TileColor, UserColor};
 
 #[derive(
     Debug, serde::Deserialize, serde::Serialize, Clone, Copy, Hash, PartialEq, Eq, Default,
@@ -136,7 +134,9 @@ impl Palette {
         let buf_writer = BufWriter::new(file);
 
         if self.colors.iter().any(|c| c.a() != 255) {
-            bail!("Only palettes with no transparency can be exported to lospec JSON format - alpha values must all be 255.");
+            bail!(
+                "Only palettes with no transparency can be exported to lospec JSON format - alpha values must all be 255."
+            );
         }
         let name = path
             .file_stem()

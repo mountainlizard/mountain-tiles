@@ -1,14 +1,12 @@
-use std::{fmt::Display, slice::Iter};
-
+use crate::{
+    data::tiles::{TileSource, tile_color::UserColor},
+    geom::u32size2::{U32Size2, u32size2},
+    selection::{Selectable, SelectableDefault},
+};
 use camino::Utf8PathBuf;
 use egui::ahash::HashSet;
 use log::info;
-
-use crate::{
-    data::tiles::{tile_color::UserColor, TileSource},
-    geom::u32size2::{u32size2, U32Size2},
-    selection::{Selectable, SelectableDefault},
-};
+use std::{fmt::Display, slice::Iter};
 
 /// This is unique within a [`Tilesets`], and persists for a
 /// given [`Tileset`] even if edited (e.g. image changed). This can be used
@@ -240,7 +238,10 @@ impl Tileset {
                 );
                 self.path = relative_path;
             } else {
-                info!("...prefers relative path, pathdiff could not find relative path from base_dir {} to tileset path {}", base_dir, self.path);
+                info!(
+                    "...prefers relative path, pathdiff could not find relative path from base_dir {} to tileset path {}",
+                    base_dir, self.path
+                );
             }
         } else if self.prefer_relative_path {
             info!("...prefers relative path but is already relative, leaving path unaltered");

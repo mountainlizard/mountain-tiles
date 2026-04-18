@@ -1,14 +1,13 @@
-use std::collections::hash_set::Iter;
-
 use crate::{
     data::tiles::TileEvent,
     geom::{
-        u32pos2::{u32pos2, U32Pos2},
+        u32pos2::{U32Pos2, u32pos2},
         u32rect::U32Rect,
     },
 };
 use egui::ahash::HashSet;
 use egui::ahash::HashSetExt;
+use std::collections::hash_set::Iter;
 
 #[derive(Debug, Default, Clone, Copy, PartialEq)]
 pub enum SelectionType {

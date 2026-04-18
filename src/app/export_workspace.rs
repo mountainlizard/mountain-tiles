@@ -1,15 +1,12 @@
-use std::fs::{self, File};
-use std::io::{BufWriter, Write};
-
-use crate::data::config::workspace::{self, Export, Project, Workspace};
-use crate::data::png::PngExportSettings;
-use crate::data::tiles::layer_tiles::LayerTiles;
-use crate::data::tiles::tileset_stacked_tiles::TilesetStackedTiles;
 use crate::render::render_tiles;
 use crate::{
     app::App,
     data::{
-        tiles::{layer_tiles::Layer, tile_color::TileColor, Tile, Tiles},
+        config::workspace::{self, Export, Project, Workspace},
+        png::PngExportSettings,
+        tiles::layer_tiles::LayerTiles,
+        tiles::tileset_stacked_tiles::TilesetStackedTiles,
+        tiles::{Tile, Tiles, layer_tiles::Layer, tile_color::TileColor},
         tilesets::{TilesetId, Tilesets},
     },
 };
@@ -19,6 +16,8 @@ use convert_case::ccase;
 use egui::ahash::{HashMap, HashMapExt};
 use eyre::{bail, eyre};
 use image::{ImageBuffer, Rgba};
+use std::fs::{self, File};
+use std::io::{BufWriter, Write};
 
 fn tile_option_to_u32(
     tile: &Option<Tile>,
@@ -255,7 +254,10 @@ impl App {
 
         if !project.export_has_effect() {
             let workspace_path = Workspace::workspace_path_from_project_path(self_path.clone())?;
-            bail!("Export settings do not export any files\nAdd some settings to workspace file at:\n{}\nSee example data for supported settings.", workspace_path);
+            bail!(
+                "Export settings do not export any files\nAdd some settings to workspace file at:\n{}\nSee example data for supported settings.",
+                workspace_path
+            );
         }
 
         if let Some(export) = project.export.as_ref() {

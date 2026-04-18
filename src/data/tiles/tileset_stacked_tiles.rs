@@ -1,15 +1,15 @@
 use crate::{
     data::{
         tiles::{
-            tile_color::{TileColor, UserColor},
             Tile, TileIndex, TileSource, Tiles,
+            tile_color::{TileColor, UserColor},
         },
         tilesets::{TilesetId, Tilesets},
     },
     geom::{
         transform::Transform,
         u32pos2::U32Pos2,
-        u32size2::{u32size2, U32Size2},
+        u32size2::{U32Size2, u32size2},
     },
 };
 

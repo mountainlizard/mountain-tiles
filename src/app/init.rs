@@ -1,18 +1,16 @@
-use std::env;
-
-use camino::Utf8PathBuf;
-use egui::{vec2, ThemePreference};
-use egui_notify::Anchor;
-
 use crate::{
     app::{
-        files::{OpenContext, StateSource},
         App, UNIQUE_ID, USE_STORAGE,
+        files::{OpenContext, StateSource},
     },
     instance::create_ipc_listener,
     ui::egui_utils,
     ui::theme::{self, DEFAULT_THEME},
 };
+use camino::Utf8PathBuf;
+use egui::{ThemePreference, vec2};
+use egui_notify::Anchor;
+use std::env;
 
 impl App {
     /// Called once before the first frame.

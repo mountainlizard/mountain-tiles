@@ -1,14 +1,13 @@
 // use egui::{pos2, vec2, DragPanButtons, Rect, Sense, Ui};
-use egui::{vec2, Layout, Ui, WidgetText};
-
 use crate::{
     app::App,
-    data::tiles::{tile_color::UserColor, tileset_tiles::TilesetTiles, Tiles},
+    data::tiles::{Tiles, tile_color::UserColor, tileset_tiles::TilesetTiles},
     geom::u32size2::U32Size2,
     ui::egui_utils::square_button,
     ui::theme::DEFAULT_THEME,
-    ui::tiles::{tiles, Overlay},
+    ui::tiles::{Overlay, tiles},
 };
+use egui::{Layout, Ui, WidgetText, vec2};
 
 fn tileset_tiles_ui(ui: &mut Ui, app: &mut App) {
     if let Some(tileset) = app.selected_tileset() {

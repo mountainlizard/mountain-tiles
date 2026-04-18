@@ -1,9 +1,8 @@
-use egui::{vec2, Response, Sense, StrokeKind, Ui, Vec2};
-
 use crate::{
     app::App, data::palette::palette_index, data::tiles::tile_color::UserColor,
     ui::theme::DEFAULT_THEME,
 };
+use egui::{Response, Sense, StrokeKind, Ui, Vec2, vec2};
 
 const BUTTON_SIZE: Vec2 = vec2(16.0, 16.0);
 

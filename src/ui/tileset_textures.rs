@@ -1,12 +1,11 @@
-use std::fmt::Display;
-
 use crate::data::tilesets::{Tileset, TilesetMode};
 use camino::Utf8PathBuf;
 use egui::{
+    Context, ImageSource, SizeHint, TextureOptions,
     emath::OrderedFloat,
     load::{LoadError, TexturePoll},
-    Context, ImageSource, SizeHint, TextureOptions,
 };
+use std::fmt::Display;
 
 const MOUNTAIN_TILES: ImageSource<'static> =
     egui::include_image!("../../assets/mountain-tiles.png");
@@ -62,11 +61,20 @@ impl TilesetError {
             TextureSource::Builtin => "".to_string(),
             TextureSource::File { base_dir } => {
                 if self.tileset_path.is_absolute() {
-                    format!("Image has absolute path '{}', is this correct for your system? You might want to use a relative path.", self.tileset_path)
+                    format!(
+                        "Image has absolute path '{}', is this correct for your system? You might want to use a relative path.",
+                        self.tileset_path
+                    )
                 } else {
                     match base_dir {
-                        None => format!("Image has relative path '{}', but project has not been saved, try saving.", self.tileset_path),
-                        Some(base_dir) => format!("Image is at relative path '{}', project saved at '{}'.", self.tileset_path, base_dir),
+                        None => format!(
+                            "Image has relative path '{}', but project has not been saved, try saving.",
+                            self.tileset_path
+                        ),
+                        Some(base_dir) => format!(
+                            "Image is at relative path '{}', project saved at '{}'.",
+                            self.tileset_path, base_dir
+                        ),
                     }
                 }
             }
