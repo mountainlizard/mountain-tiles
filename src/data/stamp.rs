@@ -1,13 +1,12 @@
-use egui::ahash::{HashMap, HashMapExt, HashSet, HashSetExt};
-
 use crate::{
     data::tiles::{
-        tile_color::TileColor, tile_selection::TileSelection, Tile, TileIndex, TileSource, Tiles,
+        Tile, TileIndex, TileSource, Tiles, tile_color::TileColor, tile_selection::TileSelection,
     },
     data::tilesets::Tilesets,
     geom::i32pos2::I32Pos2,
     geom::transform::Transform,
 };
+use egui::ahash::{HashMap, HashMapExt, HashSet, HashSetExt};
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct TileLocation {

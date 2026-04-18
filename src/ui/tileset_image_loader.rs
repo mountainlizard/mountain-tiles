@@ -1,16 +1,14 @@
+use crate::data::tilesets::TilesetMode;
 use egui::ahash::HashMap;
 use egui::{
+    ColorImage,
     load::{Bytes, BytesPoll, ImageLoadResult, ImageLoader, ImagePoll, LoadError, SizeHint},
     mutex::Mutex,
-    ColorImage,
 };
 use image::ImageFormat;
-use std::{mem::size_of, path::Path, sync::Arc, task::Poll};
-
 #[cfg(not(target_arch = "wasm32"))]
 use std::thread;
-
-use crate::data::tilesets::TilesetMode;
+use std::{mem::size_of, path::Path, sync::Arc, task::Poll};
 
 type Entry = Poll<Result<Arc<ColorImage>, String>>;
 

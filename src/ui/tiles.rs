@@ -1,13 +1,8 @@
-use egui::{
-    load::{SizedTexture, TexturePoll},
-    pos2, vec2, Color32, Context, Mesh, Pos2, Rect, Sense, Shape, Vec2,
-};
-
 use crate::{
     data::palette::Palette,
     data::tiles::{
-        tile_selection::{SelectionType, TileSelection},
         Tiles,
+        tile_selection::{SelectionType, TileSelection},
     },
     data::tilesets::{Tileset, Tilesets},
     geom::transform::Transform,
@@ -15,6 +10,11 @@ use crate::{
     ui::theme::DEFAULT_THEME,
     ui::tile_mesh::TileMesh,
     ui::tileset_textures::{ErrorTexture, TilesetTextures},
+};
+use egui::{
+    Color32, Context, Mesh, Pos2, Rect, Sense, Shape, Vec2,
+    load::{SizedTexture, TexturePoll},
+    pos2, vec2,
 };
 
 const SELECTION_FILL_COLOR: Color32 = DEFAULT_THEME.selected_fill;

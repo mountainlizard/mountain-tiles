@@ -1,7 +1,6 @@
-use egui::{vec2, Color32, InnerResponse, Stroke, Style, Ui};
-
 #[cfg(not(target_arch = "wasm32"))]
 use crate::{app::App, data::mode::Mode, ui::egui_utils::unselectable_label};
+use egui::{Color32, InnerResponse, Stroke, Style, Ui, vec2};
 
 fn set_menu_style(style: &mut Style) {
     style.spacing.button_padding = vec2(6.0, 0.0);

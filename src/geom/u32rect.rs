@@ -1,5 +1,5 @@
 use crate::{
-    geom::u32pos2::{u32pos2, U32Pos2},
+    geom::u32pos2::{U32Pos2, u32pos2},
     geom::u32size2::U32Size2,
 };
 

@@ -1,9 +1,8 @@
-use egui::{
-    color_picker::show_color_at, Popup, PopupCloseBehavior, Response, Sense, Slider, StrokeKind,
-    Ui, WidgetInfo, WidgetType,
-};
-
 use crate::data::tiles::tile_color::UserColor;
+use egui::{
+    Popup, PopupCloseBehavior, Response, Sense, Slider, StrokeKind, Ui, WidgetInfo, WidgetType,
+    color_picker::show_color_at,
+};
 
 fn color_button(ui: &mut Ui, color: UserColor, open: bool) -> Response {
     let size = ui.spacing().interact_size;

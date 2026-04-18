@@ -1,14 +1,13 @@
-use egui::{
-    text::{CCursor, CCursorRange},
-    InnerResponse, Layout, Response, RichText, Ui, Vec2, WidgetText,
-};
-
 use crate::{
     data::tiles::tile_color::UserColor,
     ui::{
         color_edit::color_edit_button, theme::DEFAULT_THEME,
         tileset_image_loader::TilesetImageLoader,
     },
+};
+use egui::{
+    InnerResponse, Layout, Response, RichText, Ui, Vec2, WidgetText,
+    text::{CCursor, CCursorRange},
 };
 
 pub fn replace_fonts(ctx: &egui::Context) {

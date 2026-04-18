@@ -1,18 +1,16 @@
-use std::{
-    env,
-    io::{self, BufReader},
-    sync::mpsc,
-    thread,
-};
-
 use camino::Utf8PathBuf;
 use interprocess::local_socket::ListenerOptions;
+use interprocess::local_socket::{GenericNamespaced, Stream, prelude::*};
 use log::error;
 use single_instance::SingleInstance;
-use std::sync::OnceLock;
-use {
-    interprocess::local_socket::{prelude::*, GenericNamespaced, Stream},
-    std::io::prelude::*,
+
+use std::{
+    env,
+    io::prelude::*,
+    io::{self, BufReader},
+    sync::OnceLock,
+    sync::mpsc,
+    thread,
 };
 
 static SINGLE_INSTANCE_CELL: OnceLock<Option<SingleInstance>> = OnceLock::new();

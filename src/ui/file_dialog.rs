@@ -1,9 +1,7 @@
-use std::path::PathBuf;
-
+use crate::data::file_format;
 use camino::Utf8PathBuf;
 use eyre::Context;
-
-use crate::data::file_format;
+use std::path::PathBuf;
 
 pub const MOUNTAIN_TILES_MAP_NAME: &str = file_format::NAME;
 pub const MOUNTAIN_TILES_MAP_EXTENSION: &str = file_format::EXTENSION;
@@ -52,9 +50,9 @@ pub const JSON_EXTENSION: &str = "json";
 pub fn optional_pathbuf_to_utf8(pathbuf: Option<PathBuf>) -> eyre::Result<Option<Utf8PathBuf>> {
     match pathbuf {
         Some(pathbuf) => {
-            let utf8_pathbuf = Utf8PathBuf::try_from(pathbuf).wrap_err_with(|| {
-                "Selected file path contains non-UTF8 characters, and so cannot be used."
-            })?;
+            let utf8_pathbuf = Utf8PathBuf::try_from(pathbuf).wrap_err_with(
+                || "Selected file path contains non-UTF8 characters, and so cannot be used.",
+            )?;
             Ok(Some(utf8_pathbuf))
         }
         None => Ok(None),

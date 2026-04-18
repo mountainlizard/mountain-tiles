@@ -1,6 +1,5 @@
-use egui::{epaint::Vertex, Color32, Mesh, Rect};
-
 use crate::geom::transform::Transform;
+use egui::{Color32, Mesh, Rect, epaint::Vertex};
 
 pub trait TileMesh {
     fn add_rect_with_transform(

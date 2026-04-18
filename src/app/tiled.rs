@@ -1,12 +1,11 @@
-use camino::Utf8PathBuf;
-
 use crate::{
-    app::{maps::MapEditing, App},
+    app::{App, maps::MapEditing},
     data::{modal::DataLossOperation, tiled::TiledExportSettings},
     tiled::{tiled_json::Tiled, tiled_xml::TiledXml},
     ui::file_dialog,
     utils::path_with_suffix_and_extension,
 };
+use camino::Utf8PathBuf;
 
 impl App {
     pub fn check_data_loss_then_pick_tiled_file_to_import(&mut self) {

@@ -1,5 +1,3 @@
-use egui::{Pos2, Rect, Vec2};
-
 use crate::{
     data::{
         tiles::tile_color::{TileColor, UserColor},
@@ -8,10 +6,11 @@ use crate::{
     geom::{
         i32pos2::I32Pos2,
         transform::Transform,
-        u32pos2::{u32pos2, U32Pos2},
+        u32pos2::{U32Pos2, u32pos2},
         u32size2::U32Size2,
     },
 };
+use egui::{Pos2, Rect, Vec2};
 
 pub mod layer_tiles;
 pub mod stamp_tiles;

@@ -1,6 +1,6 @@
 use crate::{
     data::stamp::{Stamp, TileLocation},
-    data::tiles::{tile_color::UserColor, Tile, Tiles},
+    data::tiles::{Tile, Tiles, tile_color::UserColor},
     geom::i32pos2::I32Pos2,
     geom::u32pos2::U32Pos2,
     geom::u32size2::U32Size2,

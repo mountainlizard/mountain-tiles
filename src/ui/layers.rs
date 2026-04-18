@@ -1,6 +1,3 @@
-use egui::{vec2, Color32, Ui};
-use egui_extras::{Column, TableBuilder};
-
 use crate::{
     app::App,
     data::tiles::Tiles,
@@ -11,6 +8,8 @@ use crate::{
     },
     ui::theme::DEFAULT_THEME,
 };
+use egui::{Color32, Ui, vec2};
+use egui_extras::{Column, TableBuilder};
 
 pub enum LayerOperation {
     Action(Action),

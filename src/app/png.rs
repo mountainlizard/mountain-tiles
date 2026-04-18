@@ -1,12 +1,11 @@
-use camino::Utf8PathBuf;
-
 use crate::{
-    app::{maps::MapEditing, App},
+    app::{App, maps::MapEditing},
     data::png::PngExportSettings,
     render::render_tiles,
     ui::file_dialog,
     utils::path_with_suffix_and_extension,
 };
+use camino::Utf8PathBuf;
 
 impl App {
     pub fn show_export_png_file_modal(&mut self, settings: &PngExportSettings) {

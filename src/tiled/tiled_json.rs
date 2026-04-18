@@ -1,16 +1,9 @@
-use std::{fs::File, io::BufReader};
-
-use camino::Utf8PathBuf;
-use egui::ahash::{HashMap, HashMapExt};
-use eyre::eyre;
-use serde::{Deserialize, Serialize};
-
 use crate::{
-    data::palette::{palette_index, Palette},
+    data::palette::{Palette, palette_index},
     data::tiles::{
+        Tile, TileIndex, TileSource, Tiles,
         layer_tiles::LayerTiles,
         tile_color::{TileColor, UserColor},
-        Tile, TileIndex, TileSource, Tiles,
     },
     data::{
         maps::{Map, MapId},
@@ -23,6 +16,11 @@ use crate::{
     },
     utils,
 };
+use camino::Utf8PathBuf;
+use egui::ahash::{HashMap, HashMapExt};
+use eyre::eyre;
+use serde::{Deserialize, Serialize};
+use std::{fs::File, io::BufReader};
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 pub struct TiledTileset {

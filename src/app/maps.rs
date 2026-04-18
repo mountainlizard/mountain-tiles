@@ -1,5 +1,3 @@
-use egui::Response;
-
 use crate::{
     app::App,
     data::{
@@ -9,12 +7,13 @@ use crate::{
         mode::Mode,
         resources::Resources,
         stamp::{Stamp, TileLocation},
-        tiles::{tile_color::UserColor, Tiles},
+        tiles::{Tiles, tile_color::UserColor},
     },
     geom::{i32pos2::I32Pos2, u32pos2::u32pos2, u32size2::U32Size2},
     selection::{apply_default_selection, apply_default_value_per_selectable_id},
     ui::tileset_textures::TilesetTextures,
 };
+use egui::Response;
 
 pub struct MapEditing<'a> {
     pub map: &'a mut Map,
