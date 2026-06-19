@@ -1,0 +1,12 @@
+AppImage
+M1
+MountainTiles
+aarch64
+arm64
+dmg
+exe
+tileset
+tilesets
+untinted
+amd64
+deb
