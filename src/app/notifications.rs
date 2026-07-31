@@ -1,13 +1,15 @@
-use std::time::Duration;
-
 use egui::WidgetText;
+use egui_toast::{Toast, ToastKind, ToastOptions};
 
 use crate::app::App;
 
 impl App {
     pub fn success(&mut self, caption: impl Into<WidgetText>) {
-        self.toasts
-            .success(caption)
-            .duration(Duration::from_secs(2));
+        self.toasts.add(
+            Toast::default()
+                .kind(ToastKind::Success)
+                .text(caption)
+                .options(ToastOptions::default().duration_in_seconds(2.0)),
+        );
     }
 }

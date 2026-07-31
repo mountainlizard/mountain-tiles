@@ -6,7 +6,7 @@ use crate::{
     geom::i32pos2::I32Pos2,
     geom::transform::Transform,
 };
-use egui::ahash::{HashMap, HashMapExt, HashSet, HashSetExt};
+use ahash::{HashMap, HashMapExt, HashSet, HashSetExt};
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct TileLocation {

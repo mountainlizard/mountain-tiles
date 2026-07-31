@@ -1,5 +1,5 @@
 use crate::data::tilesets::TilesetMode;
-use egui::ahash::HashMap;
+use ahash::HashMap;
 use egui::{
     ColorImage,
     load::{Bytes, BytesPoll, ImageLoadResult, ImageLoader, ImagePoll, LoadError, SizeHint},

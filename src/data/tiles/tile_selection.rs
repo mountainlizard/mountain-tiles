@@ -5,8 +5,7 @@ use crate::{
         u32rect::U32Rect,
     },
 };
-use egui::ahash::HashSet;
-use egui::ahash::HashSetExt;
+use ahash::{HashSet, HashSetExt};
 use std::collections::hash_set::Iter;
 
 #[derive(Debug, Default, Clone, Copy, PartialEq)]

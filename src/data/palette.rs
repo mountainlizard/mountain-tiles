@@ -1,6 +1,6 @@
 use crate::data::tiles::tile_color::{TileColor, UserColor};
+use ahash::{HashSet, HashSetExt};
 use camino::Utf8PathBuf;
-use egui::ahash::{HashSet, HashSetExt};
 use eyre::{bail, eyre};
 use image::{ImageReader, RgbaImage};
 use std::{

@@ -36,7 +36,11 @@ pub fn replace_fonts(ctx: &egui::Context) {
 /// contents. In most cases you will want to use some state to make sure that `init` is true
 /// only when the component is first displayed - e.g. see how [`crate::state::ModalResult`] is
 /// used for modals.
-pub fn singleline_focus_and_select(ui: &mut Ui, text: &mut String, init: bool) -> Response {
+pub fn singleline_focus_and_select(
+    ui: &mut Ui,
+    text: &mut String,
+    init: bool,
+) -> egui::AtomLayoutResponse {
     let mut output = egui::TextEdit::singleline(text).show(ui);
     // See:
     // https://stackoverflow.com/questions/74324236/select-the-text-of-a-textedit-object-in-egui

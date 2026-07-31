@@ -5,7 +5,7 @@ use crate::{
     data::tilesets::{TilesetId, Tilesets},
     ui::tileset_textures::TilesetTextures,
 };
-use egui::ahash::{HashMap, HashMapExt};
+use ahash::{HashMap, HashMapExt};
 use eyre::{Result, bail, eyre};
 use image::Pixel;
 use image::{GenericImage, GenericImageView, ImageReader, RgbaImage, imageops::resize};

@@ -1,9 +1,7 @@
 use std::fmt::Debug;
 use std::hash::Hash;
 
-use egui::ahash::HashMap;
-use egui::ahash::HashSet;
-use egui::ahash::HashSetExt;
+use ahash::{HashMap, HashSet, HashSetExt};
 
 /// A set of items that can be selected, where each item has an id.
 /// No two items in the set at the same time can share an id.

@@ -1,3 +1,5 @@
+use egui::Ui;
+
 use crate::{
     app::App,
     data::modal::{DataLossOperation, ModalState},
@@ -28,37 +30,37 @@ impl eframe::App for App {
     }
 
     /// Called each time the UI needs repainting, which may be many times per second.
-    fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
-        if ctx.input(|i| i.viewport().close_requested())
+    fn ui(&mut self, ui: &mut Ui, _frame: &mut eframe::Frame) {
+        if ui.input(|i| i.viewport().close_requested())
             && self.may_have_unsaved_changes()
             && !self.quit_requested
         {
-            ctx.send_viewport_cmd(egui::ViewportCommand::CancelClose);
+            ui.send_viewport_cmd(egui::ViewportCommand::CancelClose);
             self.show_data_loss_modal(DataLossOperation::Quit);
         }
 
         // Make sure app state remains consistent
         self.apply_invariants();
 
-        self.poll_and_handle_all_ipc_messages(ctx);
+        self.poll_and_handle_all_ipc_messages(ui);
 
         let menu_frame = DEFAULT_THEME.base_100_frame(2);
 
-        egui::TopBottomPanel::top("top_panel")
+        egui::Panel::top("main_app_top_panel")
             .frame(menu_frame)
-            .show(ctx, |ui| {
+            .show(ui, |ui| {
                 menu_ui(ui, self);
             });
 
         let side_frame = DEFAULT_THEME.base_100_frame(16);
 
-        egui::SidePanel::left("left_panel")
+        egui::Panel::left("main_app_left_panel")
             .frame(side_frame)
             .resizable(true)
-            .default_width(350.0)
-            .min_width(275.0)
-            .max_width(750.0)
-            .show(ctx, |ui| {
+            .default_size(350.0)
+            .min_size(275.0)
+            .max_size(750.0)
+            .show(ui, |ui| {
                 maps_ui(ui, self);
 
                 separator(ui);
@@ -78,11 +80,11 @@ impl eframe::App for App {
 
         egui::CentralPanel::default()
             .frame(centre_frame)
-            .show(ctx, |ui| {
+            .show(ui, |ui| {
                 map_ui(ui, self);
 
                 match self.edit.modal {
-                    ModalState::None => consume_shortcuts(ctx, self),
+                    ModalState::None => consume_shortcuts(ui, self),
                     ModalState::Map { .. } => map_modal_ui(ui, self),
                     ModalState::Tileset { .. } => tileset_modal_ui(ui, self),
                     ModalState::Layer { .. } => layer_modal_ui(ui, self),
@@ -99,6 +101,6 @@ impl eframe::App for App {
 
         self.feed_undo();
 
-        self.toasts.show(ctx);
+        self.toasts.show(ui);
     }
 }
