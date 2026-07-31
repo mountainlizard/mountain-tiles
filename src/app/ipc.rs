@@ -12,12 +12,13 @@ impl App {
     }
 
     fn poll_and_handle_ipc_message(&mut self) -> bool {
-        if let Some(ref mut l) = self.ipc_listener {
-            if let Some(message) = l.poll_recv() {
-                self.handle_ipc_message(message);
-                return true;
-            }
+        if let Some(ref mut l) = self.ipc_listener
+            && let Some(message) = l.poll_recv()
+        {
+            self.handle_ipc_message(message);
+            return true;
         }
+
         false
     }
 

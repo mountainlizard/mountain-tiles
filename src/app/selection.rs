@@ -35,22 +35,19 @@ impl App {
     }
 
     pub fn copy_optional_delete(&mut self, delete: bool) {
-        if self.edit.mode == Mode::Select {
-            if let Some(new_stamp) = self
+        if self.edit.mode == Mode::Select
+            && let Some(new_stamp) = self
                 .selected_map_editing_mut()
                 .map(|me| me.selection_as_stamp())
-            {
-                self.edit.stamp = new_stamp;
+        {
+            self.edit.stamp = new_stamp;
 
-                if !self.edit.stamp.is_empty() {
-                    if delete {
-                        if let Some(map) = self.selected_map() {
-                            self.act(Action::EraseSelectedVisibleTiles { map_id: map.id() });
-                        }
-                    }
-                    self.draw_mode();
-                    self.tileset_selected_tiles_from_stamp();
+            if !self.edit.stamp.is_empty() {
+                if delete && let Some(map) = self.selected_map() {
+                    self.act(Action::EraseSelectedVisibleTiles { map_id: map.id() });
                 }
+                self.draw_mode();
+                self.tileset_selected_tiles_from_stamp();
             }
         }
     }

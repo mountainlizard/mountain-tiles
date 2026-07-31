@@ -144,10 +144,10 @@ impl<'a> MapEditing<'a> {
         for (stamp_layer_index, layer_index) in
             self.selected_visible_layer_indices().iter().enumerate()
         {
-            if stamp_layer_index < stamp_layer_count {
-                if let Some(target_layer_map) = layer_map.get_mut(*layer_index) {
-                    *target_layer_map = Some(stamp_layer_index);
-                }
+            if stamp_layer_index < stamp_layer_count
+                && let Some(target_layer_map) = layer_map.get_mut(*layer_index)
+            {
+                *target_layer_map = Some(stamp_layer_index);
             }
         }
         layer_map
@@ -186,10 +186,11 @@ impl<'a> MapEditing<'a> {
         // If we're zoomed in too far, we may have a scene_hovered that's actually inside the
         // map, in which case use it
         // NOTE: This may become unnecessary if related scene issue is resolved
-        if let Some(scene_hovered) = scene_hovered {
-            if map_hovered.is_none() && self.map.tiles().map_size().contains(scene_hovered) {
-                map_hovered = Some(u32pos2(scene_hovered.x as u32, scene_hovered.y as u32))
-            }
+        if let Some(scene_hovered) = scene_hovered
+            && map_hovered.is_none()
+            && self.map.tiles().map_size().contains(scene_hovered)
+        {
+            map_hovered = Some(u32pos2(scene_hovered.x as u32, scene_hovered.y as u32))
         }
 
         // We want to report a scene_hovered even when we are inside the map - in this case we
@@ -319,12 +320,10 @@ impl App {
                     // if we have more stamp layers than suitable map layers)
                     if let Some(layer_index) =
                         stamp_layer_index_to_layer_index.get(location.stamp_layer_index)
+                        && me.resources.is_tile_valid(tile)
+                        && me.map.tiles.set_tile(*layer_index, upos, Some(*tile))
                     {
-                        if me.resources.is_tile_valid(tile)
-                            && me.map.tiles.set_tile(*layer_index, upos, Some(*tile))
-                        {
-                            change = true;
-                        }
+                        change = true;
                     }
                 }
             }

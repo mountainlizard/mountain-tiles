@@ -133,17 +133,16 @@ impl EditState {
         self.selected_map_id = undo_redo_edit.selected_map_id;
 
         // If the undo/redo state has a selected map, and an edit state for that map
-        if let Some(map_id) = undo_redo_edit.selected_map_id {
-            if let Some(undo_redo_map_edit_state) = undo_redo_edit.map_edit_state_by_id.get(&map_id)
-            {
-                // If we have an edit state for the map, copy over the undo/redo scene rect,
-                // otherwise just grab a copy of the whole undo/redo edit state
-                if let Some(map_edit_state) = self.map_edit_state_by_id.get_mut(&map_id) {
-                    map_edit_state.scene_rect = undo_redo_map_edit_state.scene_rect;
-                } else {
-                    self.map_edit_state_by_id
-                        .insert(map_id, undo_redo_map_edit_state.clone());
-                }
+        if let Some(map_id) = undo_redo_edit.selected_map_id
+            && let Some(undo_redo_map_edit_state) = undo_redo_edit.map_edit_state_by_id.get(&map_id)
+        {
+            // If we have an edit state for the map, copy over the undo/redo scene rect,
+            // otherwise just grab a copy of the whole undo/redo edit state
+            if let Some(map_edit_state) = self.map_edit_state_by_id.get_mut(&map_id) {
+                map_edit_state.scene_rect = undo_redo_map_edit_state.scene_rect;
+            } else {
+                self.map_edit_state_by_id
+                    .insert(map_id, undo_redo_map_edit_state.clone());
             }
         }
     }

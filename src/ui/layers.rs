@@ -121,15 +121,15 @@ pub fn layers_ui(ui: &mut Ui, app: &mut App) {
                                     }
                                 }
                             });
-                            if row.response().clicked() {
-                                if let Some(id) = me.map.tiles().layer_id(layer_index) {
-                                    me.edit.layer_selection.update_from_click(
-                                        me.map.tiles(),
-                                        id,
-                                        shift,
-                                        command,
-                                    );
-                                }
+                            if row.response().clicked()
+                                && let Some(id) = me.map.tiles().layer_id(layer_index)
+                            {
+                                me.edit.layer_selection.update_from_click(
+                                    me.map.tiles(),
+                                    id,
+                                    shift,
+                                    command,
+                                );
                             }
                             if row.response().double_clicked() {
                                 operations.push(LayerOperation::ShowLayerModal {

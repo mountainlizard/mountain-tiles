@@ -142,10 +142,10 @@ impl Workspace {
     }
 
     fn specific_project_by_name(&self, project_name: &str) -> Option<Project> {
-        if let Some(projects) = &self.project {
-            if let Some(project) = projects.get(project_name) {
-                return Some(project.clone());
-            }
+        if let Some(projects) = &self.project
+            && let Some(project) = projects.get(project_name)
+        {
+            return Some(project.clone());
         }
         None
     }

@@ -24,20 +24,20 @@ impl App {
     }
 
     pub fn show_layer_modal(&mut self, map_id: MapId, layer_index: usize) {
-        if let Some(map) = self.state.maps.get_by_id(map_id) {
-            if let (Some(layer_id), Some(name), opacity) = (
+        if let Some(map) = self.state.maps.get_by_id(map_id)
+            && let (Some(layer_id), Some(name), opacity) = (
                 map.tiles().layer_id(layer_index),
                 map.tiles().layer_name(layer_index),
                 map.tiles().layer_opacity(layer_index),
-            ) {
-                self.edit.show_modal(ModalState::Layer {
-                    map_id: map.id(),
-                    layer_id,
-                    name: name.clone(),
-                    opacity,
-                    result: ModalResult::Init,
-                });
-            }
+            )
+        {
+            self.edit.show_modal(ModalState::Layer {
+                map_id: map.id(),
+                layer_id,
+                name: name.clone(),
+                opacity,
+                result: ModalResult::Init,
+            });
         }
     }
 

@@ -51,10 +51,10 @@ impl MapEditState {
     /// Apply invariants for this edit state, against specified [`Map`]
     pub(crate) fn apply_invariants(&mut self, map: &Map) {
         // If layer selection is empty, select the first (topmost) layer
-        if self.no_layers_selected(map) {
-            if let Some(layer) = map.tiles().first_layer() {
-                self.layer_selection.select_only(layer.id());
-            }
+        if self.no_layers_selected(map)
+            && let Some(layer) = map.tiles().first_layer()
+        {
+            self.layer_selection.select_only(layer.id());
         }
     }
 }
