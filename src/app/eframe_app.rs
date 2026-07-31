@@ -46,7 +46,7 @@ impl eframe::App for App {
 
         let menu_frame = DEFAULT_THEME.base_100_frame(2);
 
-        egui::Panel::top("top_panel")
+        egui::Panel::top("main_app_top_panel")
             .frame(menu_frame)
             .show(ui, |ui| {
                 menu_ui(ui, self);
@@ -54,7 +54,7 @@ impl eframe::App for App {
 
         let side_frame = DEFAULT_THEME.base_100_frame(16);
 
-        egui::Panel::left("left_panel")
+        egui::Panel::left("main_app_left_panel")
             .frame(side_frame)
             .resizable(true)
             .default_size(350.0)

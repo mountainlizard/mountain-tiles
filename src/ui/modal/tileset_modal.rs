@@ -226,7 +226,7 @@ pub fn tileset_modal_ui(ui: &mut Ui, app: &mut App) {
         .show(ui.ctx(), |ui| {
             ui.set_height(430.0);
 
-            egui::Panel::top("top_panel")
+            egui::Panel::top("tileset_modal_top_panel")
                 .resizable(false)
                 .default_size(48.0)
                 .show_separator_line(false)
@@ -234,7 +234,7 @@ pub fn tileset_modal_ui(ui: &mut Ui, app: &mut App) {
                     tileset_header_ui(ui, app);
                 });
 
-            egui::Panel::bottom("bottom_panel")
+            egui::Panel::bottom("tileset_modal_bottom_panel")
                 .resizable(false)
                 .min_size(0.0)
                 .show(ui, |ui| {
@@ -242,7 +242,7 @@ pub fn tileset_modal_ui(ui: &mut Ui, app: &mut App) {
                     tileset_buttons_ui(ui, app);
                 });
 
-            egui::Panel::left("left_panel")
+            egui::Panel::left("tileset_modal_left_panel")
                 .resizable(false)
                 .show_separator_line(false)
                 .show(ui, |ui| {
