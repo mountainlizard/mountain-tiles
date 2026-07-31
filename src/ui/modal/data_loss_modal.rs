@@ -15,6 +15,7 @@ pub fn data_loss_modal_ui(ui: &mut Ui, app: &mut App) {
         ref mut result,
     } = &mut app.edit.modal
     {
+        let red_1_stroke = Stroke::new(1.0f32, Color32::RED);
         Modal::new(Id::new("Data Loss Modal"))
             .frame(DEFAULT_THEME.modal_frame())
             .show(ui.ctx(), |ui| {
@@ -77,12 +78,9 @@ pub fn data_loss_modal_ui(ui: &mut Ui, app: &mut App) {
                     |_ui| {},
                     |ui| {
                         ui.scope(|ui| {
-                            ui.style_mut().visuals.widgets.inactive.bg_stroke =
-                                Stroke::new(1.0, Color32::RED);
-                            ui.style_mut().visuals.widgets.active.bg_stroke =
-                                Stroke::new(1.0, Color32::RED);
-                            ui.style_mut().visuals.widgets.hovered.bg_stroke =
-                                Stroke::new(1.0, Color32::RED);
+                            ui.style_mut().visuals.widgets.inactive.bg_stroke = red_1_stroke;
+                            ui.style_mut().visuals.widgets.active.bg_stroke = red_1_stroke;
+                            ui.style_mut().visuals.widgets.hovered.bg_stroke = red_1_stroke;
 
                             let text = match operation {
                                 DataLossOperation::DeleteTileset { tileset_use, .. } => {

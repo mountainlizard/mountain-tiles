@@ -128,7 +128,7 @@ pub fn apply_theme(ctx: &egui::Context, colors: Theme) {
     widgets.active.weak_bg_fill = colors.active_widget_bg;
     // widgets.active.bg_stroke = widgets.inactive.bg_stroke;
 
-    widgets.noninteractive.bg_stroke = Stroke::new(1.0, colors.base50);
+    widgets.noninteractive.bg_stroke = Stroke::new(1.0f32, colors.base50);
 
     ctx.set_visuals_of(
         egui::Theme::Dark,
@@ -143,7 +143,7 @@ pub fn apply_theme(ctx: &egui::Context, colors: Theme) {
             widgets,
             selection: Selection {
                 bg_fill: colors.selected,
-                stroke: Stroke::new(1.0, colors.selected_content),
+                stroke: Stroke::new(1.0f32, colors.selected_content),
             },
 
             // bg_fill: Color32::from_rgb(0, 92, 128),
