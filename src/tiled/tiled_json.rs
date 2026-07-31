@@ -16,8 +16,8 @@ use crate::{
     },
     utils,
 };
+use ahash::{HashMap, HashMapExt};
 use camino::Utf8PathBuf;
-use egui::ahash::{HashMap, HashMapExt};
 use eyre::eyre;
 use serde::{Deserialize, Serialize};
 use std::{fs::File, io::BufReader};

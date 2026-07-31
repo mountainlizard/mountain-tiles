@@ -10,10 +10,10 @@ use crate::{
         tilesets::{TilesetId, Tilesets},
     },
 };
+use ahash::{HashMap, HashMapExt};
 use bitbuffer::{BigEndian, BitWriteStream, Endianness, LittleEndian};
 use camino::Utf8PathBuf;
 use convert_case::ccase;
-use egui::ahash::{HashMap, HashMapExt};
 use eyre::{bail, eyre};
 use image::{ImageBuffer, Rgba};
 use std::fs::{self, File};

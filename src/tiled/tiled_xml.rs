@@ -16,8 +16,8 @@ use crate::{
     ui::file_dialog,
     utils,
 };
+use ahash::{HashMap, HashMapExt, HashSet, HashSetExt};
 use camino::Utf8PathBuf;
-use egui::ahash::{HashMap, HashMapExt, HashSet, HashSetExt};
 use eyre::{Context, bail, eyre};
 use quick_xml::Writer;
 use quick_xml::events::{BytesDecl, BytesStart, Event};

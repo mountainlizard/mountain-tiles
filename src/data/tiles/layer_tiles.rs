@@ -8,7 +8,7 @@ use crate::{
         Selectable, SelectableList, SelectableListIter, SelectableListIterDeletable, Selection,
     },
 };
-use egui::ahash::{HashSet, HashSetExt};
+use ahash::{HashSet, HashSetExt};
 use std::slice::Iter;
 
 /// This is unique within a [`LayerTiles`], and persists for a

@@ -6,7 +6,7 @@ use crate::instance::IpcListener;
 use crate::ui::tileset_textures::TilesetTextures;
 use crate::undo::{RevisionIndex, Undo};
 use camino::Utf8PathBuf;
-use egui_notify::Toasts;
+use egui_toast::Toasts;
 use std::collections::VecDeque;
 
 mod actions;

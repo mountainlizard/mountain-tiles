@@ -1,7 +1,7 @@
 use std::fmt::Display;
 use std::slice::{Iter, IterMut};
 
-use egui::ahash::HashSet;
+use ahash::HashSet;
 
 use crate::data::tiles::layer_tiles::LayerTiles;
 use crate::data::tiles::tile_color::UserColor;

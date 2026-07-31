@@ -1,6 +1,6 @@
 use std::mem;
 
-use egui::ahash::HashMap;
+use ahash::HashMap;
 
 use crate::{
     data::palette::PaletteIndex,

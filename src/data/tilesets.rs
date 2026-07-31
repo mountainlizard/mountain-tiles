@@ -3,8 +3,8 @@ use crate::{
     geom::u32size2::{U32Size2, u32size2},
     selection::{Selectable, SelectableDefault},
 };
+use ahash::HashSet;
 use camino::Utf8PathBuf;
-use egui::ahash::HashSet;
 use log::info;
 use std::{fmt::Display, slice::Iter};
 

@@ -226,26 +226,26 @@ pub fn tileset_modal_ui(ui: &mut Ui, app: &mut App) {
         .show(ui.ctx(), |ui| {
             ui.set_height(430.0);
 
-            egui::TopBottomPanel::top("top_panel")
+            egui::Panel::top("top_panel")
                 .resizable(false)
-                .default_height(48.0)
+                .default_size(48.0)
                 .show_separator_line(false)
-                .show_inside(ui, |ui| {
+                .show(ui, |ui| {
                     tileset_header_ui(ui, app);
                 });
 
-            egui::TopBottomPanel::bottom("bottom_panel")
+            egui::Panel::bottom("bottom_panel")
                 .resizable(false)
-                .min_height(0.0)
-                .show_inside(ui, |ui| {
+                .min_size(0.0)
+                .show(ui, |ui| {
                     ui.add_space(DEFAULT_THEME.modal_spacing);
                     tileset_buttons_ui(ui, app);
                 });
 
-            egui::SidePanel::left("left_panel")
+            egui::Panel::left("left_panel")
                 .resizable(false)
                 .show_separator_line(false)
-                .show_inside(ui, |ui| {
+                .show(ui, |ui| {
                     egui::ScrollArea::vertical().show(ui, |ui| {
                         ui.add_space(DEFAULT_THEME.modal_spacing);
                         tileset_settings_ui(ui, app);
@@ -253,7 +253,7 @@ pub fn tileset_modal_ui(ui: &mut Ui, app: &mut App) {
                     });
                 });
 
-            egui::CentralPanel::default().show_inside(ui, |ui| {
+            egui::CentralPanel::default().show(ui, |ui| {
                 ui.vertical_centered(|ui| {
                     ui.add_space(DEFAULT_THEME.modal_spacing);
                     tileset_preview_ui(ui, app);
