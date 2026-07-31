@@ -6,11 +6,11 @@ impl App {
     }
 
     pub fn undo(&mut self) {
-        if self.can_undo() {
-            if let Some((undo_state, undo_edit)) = self.undo.undo(&self.state, &self.edit) {
-                self.state = undo_state;
-                self.edit.merge_undo_redo(undo_edit);
-            }
+        if self.can_undo()
+            && let Some((undo_state, undo_edit)) = self.undo.undo(&self.state, &self.edit)
+        {
+            self.state = undo_state;
+            self.edit.merge_undo_redo(undo_edit);
         }
     }
 
@@ -19,11 +19,11 @@ impl App {
     }
 
     pub fn redo(&mut self) {
-        if self.can_redo() {
-            if let Some((redo_state, redo_edit)) = self.undo.redo(&self.state) {
-                self.state = redo_state;
-                self.edit.merge_undo_redo(redo_edit);
-            }
+        if self.can_redo()
+            && let Some((redo_state, redo_edit)) = self.undo.redo(&self.state)
+        {
+            self.state = redo_state;
+            self.edit.merge_undo_redo(redo_edit);
         }
     }
 

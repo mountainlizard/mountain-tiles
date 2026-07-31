@@ -52,10 +52,8 @@ pub fn color_edit_popup(ui: &mut Ui, color: &mut UserColor, as_text: &mut String
 
     ui.label("CSS");
     let text_changed = ui.text_edit_singleline(as_text).changed();
-    if text_changed {
-        if let Ok(parsed) = csscolorparser::parse(as_text) {
-            *color = parsed.into();
-        }
+    if text_changed && let Ok(parsed) = csscolorparser::parse(as_text) {
+        *color = parsed.into();
     }
 
     let changed = initial != *color;

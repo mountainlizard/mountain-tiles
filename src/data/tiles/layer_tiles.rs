@@ -75,12 +75,11 @@ impl Layer {
     }
 
     fn set_tile(&mut self, pos: U32Pos2, tile: Option<Tile>) {
-        if self.visible {
-            if let Some(i) = pos.linear_index(self.size) {
-                if let Some(target_tile) = self.tiles.get_mut(i as usize) {
-                    *target_tile = tile;
-                }
-            }
+        if self.visible
+            && let Some(i) = pos.linear_index(self.size)
+            && let Some(target_tile) = self.tiles.get_mut(i as usize)
+        {
+            *target_tile = tile;
         }
     }
 
@@ -106,11 +105,11 @@ impl Layer {
     fn clear_tiles_with_tileset(&mut self, tileset_id: TilesetId) -> bool {
         let mut change = false;
         for tile_option in self.tiles.iter_mut() {
-            if let Some(tile) = tile_option {
-                if tile.source.tileset_id == tileset_id {
-                    *tile_option = None;
-                    change = true;
-                }
+            if let Some(tile) = tile_option
+                && tile.source.tileset_id == tileset_id
+            {
+                *tile_option = None;
+                change = true;
             }
         }
         change
@@ -118,10 +117,10 @@ impl Layer {
 
     pub fn clear_tiles_outside_palette(&mut self, palette: &Palette) {
         for tile_option in self.tiles.iter_mut() {
-            if let Some(tile) = tile_option {
-                if !palette.is_tilecolor_available(&tile.color) {
-                    *tile_option = None;
-                }
+            if let Some(tile) = tile_option
+                && !palette.is_tilecolor_available(&tile.color)
+            {
+                *tile_option = None;
             }
         }
     }
@@ -172,11 +171,11 @@ impl Tiles for LayerTiles {
     }
 
     fn set_tile(&mut self, layer: usize, pos: U32Pos2, tile: Option<Tile>) -> bool {
-        if let Some(layer) = self.layers.get_mut(layer) {
-            if layer.tile(pos) != tile {
-                layer.set_tile(pos, tile);
-                return true;
-            }
+        if let Some(layer) = self.layers.get_mut(layer)
+            && layer.tile(pos) != tile
+        {
+            layer.set_tile(pos, tile);
+            return true;
         }
         false
     }

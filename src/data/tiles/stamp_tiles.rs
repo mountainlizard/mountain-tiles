@@ -48,13 +48,13 @@ impl<T: Tiles> Tiles for StampTiles<'_, T> {
 
         // Outer `Some` is for whether we are in bounds of Vec, and inner `Some` is whether
         // this is a visible layer
-        if let Some(Some(visible_layer_index)) = self.layer_to_stamp_layer.get(layer_index) {
-            if let Some(tile) = self.stamp.tiles.get(&TileLocation {
+        if let Some(Some(visible_layer_index)) = self.layer_to_stamp_layer.get(layer_index)
+            && let Some(tile) = self.stamp.tiles.get(&TileLocation {
                 stamp_layer_index: *visible_layer_index,
                 position,
-            }) {
-                return Some(*tile);
-            }
+            })
+        {
+            return Some(*tile);
         }
         self.inner_tiles.tile(layer_index, pos)
     }

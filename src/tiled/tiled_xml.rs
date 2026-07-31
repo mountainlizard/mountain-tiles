@@ -268,14 +268,14 @@ impl TiledXml {
             ));
         }
 
-        if let Some(renderorder) = self.renderorder {
-            if renderorder != RenderOrder::RightDown {
-                return Err(eyre!(
-                    "Unsupported Tiled map render order '{}', only {} is supported.",
-                    renderorder,
-                    RenderOrder::RightDown
-                ));
-            }
+        if let Some(renderorder) = self.renderorder
+            && renderorder != RenderOrder::RightDown
+        {
+            return Err(eyre!(
+                "Unsupported Tiled map render order '{}', only {} is supported.",
+                renderorder,
+                RenderOrder::RightDown
+            ));
         }
 
         let mut layers = vec![];

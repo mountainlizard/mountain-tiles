@@ -90,41 +90,40 @@ fn tiles_ui<T: Tiles>(
                             + rect.min.to_vec2();
                         let screen_size = Vec2::from(tiles.tile_size()) * tiles.scale();
 
-                        if let Some(ref tile) = tiles.tile(layer_index, grid_pos) {
-                            if tile.source.tileset_id == tileset.id() {
-                                let tile_uv_pos = (Vec2::from(
-                                    tile_set_size
-                                        .pos_from_linear_index(tile.source.tile_index.index()),
-                                ) / tile_set_size_f)
-                                    .to_pos2();
-                                let uv = if success {
-                                    Rect::from_min_size(tile_uv_pos, tile_uv_size)
-                                } else {
-                                    Rect::from_min_size(pos2(0.0, 0.0), vec2(1.0, 1.0))
-                                };
-                                let transform = if success {
-                                    tile.transform
-                                } else {
-                                    Transform::None
-                                };
+                        if let Some(ref tile) = tiles.tile(layer_index, grid_pos)
+                            && tile.source.tileset_id == tileset.id()
+                        {
+                            let tile_uv_pos = (Vec2::from(
+                                tile_set_size.pos_from_linear_index(tile.source.tile_index.index()),
+                            ) / tile_set_size_f)
+                                .to_pos2();
+                            let uv = if success {
+                                Rect::from_min_size(tile_uv_pos, tile_uv_size)
+                            } else {
+                                Rect::from_min_size(pos2(0.0, 0.0), vec2(1.0, 1.0))
+                            };
+                            let transform = if success {
+                                tile.transform
+                            } else {
+                                Transform::None
+                            };
 
-                                let color = match opacity {
-                                    Some(opacity) => tile
-                                        .color
-                                        .as_user_color(palette)
-                                        .with_opacity(opacity)
-                                        .as_premultiplied_color32(),
-                                    // TODO: Rename to as_premultiplied_color32
-                                    None => tile.color.as_color32_premultiplied(palette),
-                                };
+                            let color = match opacity {
+                                Some(opacity) => tile
+                                    .color
+                                    .as_user_color(palette)
+                                    .with_opacity(opacity)
+                                    .as_premultiplied_color32(),
+                                // TODO: Rename to as_premultiplied_color32
+                                None => tile.color.as_color32_premultiplied(palette),
+                            };
 
-                                mesh.add_rect_with_transform(
-                                    Rect::from_min_size(screen_pos, screen_size),
-                                    uv,
-                                    transform,
-                                    color,
-                                );
-                            }
+                            mesh.add_rect_with_transform(
+                                Rect::from_min_size(screen_pos, screen_size),
+                                uv,
+                                transform,
+                                color,
+                            );
                         }
                     }
                     ui.painter().add(Shape::mesh(mesh));

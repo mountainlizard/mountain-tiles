@@ -110,18 +110,18 @@ impl App {
     }
 
     pub fn previous_tileset(&mut self) {
-        if let Some(id) = self.edit.selected_tileset_id {
-            if let Some(previous_tileset) = self.state.resources.tilesets().previous_by_id(id) {
-                self.edit.selected_tileset_id = Some(previous_tileset.id());
-            }
+        if let Some(id) = self.edit.selected_tileset_id
+            && let Some(previous_tileset) = self.state.resources.tilesets().previous_by_id(id)
+        {
+            self.edit.selected_tileset_id = Some(previous_tileset.id());
         }
     }
 
     pub fn next_tileset(&mut self) {
-        if let Some(id) = self.edit.selected_tileset_id {
-            if let Some(next_tileset) = self.state.resources.tilesets().next_by_id(id) {
-                self.edit.selected_tileset_id = Some(next_tileset.id());
-            }
+        if let Some(id) = self.edit.selected_tileset_id
+            && let Some(next_tileset) = self.state.resources.tilesets().next_by_id(id)
+        {
+            self.edit.selected_tileset_id = Some(next_tileset.id());
         }
     }
 }
