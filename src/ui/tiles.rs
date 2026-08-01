@@ -84,6 +84,19 @@ fn tiles_ui<T: Tiles>(
                     let tile_set_size_f: Vec2 = tile_set_size.into();
                     let tile_uv_size = vec2(1.0, 1.0) / tile_set_size_f;
 
+                    // When setting UV, we actually use an area slightly inside
+                    // the edges of the tile in the tileset texture.
+                    // Otherwise, some edge pixels of tiles may be rendered using the
+                    // edge of the neighbouring tile in the tileset. This is caused by
+                    // slight inaccuracies in coordinate calculation. The changes to
+                    // UV coords are too small to be seen, except for correcting this
+                    // issue. Testing on a retina display macbook pro M5 showed this
+                    // adjustment to work reliably, it could be increased if the
+                    // issue is still visible on other systems.
+                    let tile_uv_margin = tile_uv_size / 4096.0;
+                    let tile_uv_size_with_margin = tile_uv_size - tile_uv_margin;
+                    let tile_uv_pos_margin = tile_uv_size / 8192.0;
+
                     for grid_pos in tiles.map_positions() {
                         let screen_pos = (Pos2::from(grid_pos * tile_and_gap_size) + half_gap_size)
                             * tiles.scale()
@@ -98,7 +111,10 @@ fn tiles_ui<T: Tiles>(
                             ) / tile_set_size_f)
                                 .to_pos2();
                             let uv = if success {
-                                Rect::from_min_size(tile_uv_pos, tile_uv_size)
+                                Rect::from_min_size(
+                                    tile_uv_pos + tile_uv_pos_margin,
+                                    tile_uv_size_with_margin,
+                                )
                             } else {
                                 Rect::from_min_size(pos2(0.0, 0.0), vec2(1.0, 1.0))
                             };
