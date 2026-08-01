@@ -11,7 +11,8 @@ use crate::{
     },
 };
 use ahash::{HashMap, HashMapExt};
-use bitbuffer::{BigEndian, BitWriteStream, Endianness, LittleEndian};
+use bitvec::bitvec;
+use bitvec::order::{Lsb0, Msb0};
 use camino::Utf8PathBuf;
 use convert_case::ccase;
 use eyre::{bail, eyre};
@@ -91,31 +92,49 @@ fn layer_to_raw(layer: &Layer, tilesets: &Tilesets) -> eyre::Result<Vec<u32>> {
 // Output pixel bits are set to 1 if the input pixel has any color channel above 128, and
 // alpha above 128. Most inputs are expected to be either pure black and white with alpha
 // 255 everywhere, or white with alpha 255, and "black" pixels with alpha 0 and arbitrary color.
-fn image_to_raw_1bit<E: Endianness>(
-    image: &ImageBuffer<Rgba<u8>, Vec<u8>>,
-    endianness: E,
-) -> eyre::Result<Vec<u8>> {
-    let mut write_bytes = vec![];
-    let mut write_stream = BitWriteStream::new(&mut write_bytes, endianness);
+// `msb0` is true to put most significant bit first in each byte, false to put it last.
+fn image_to_raw_1bit(image: &ImageBuffer<Rgba<u8>, Vec<u8>>, msb0: bool) -> eyre::Result<Vec<u8>> {
+    // Duplication is awkward, making this generic on ByteOrder leads to
+    // error about using generic parameter from outer item.
+    if msb0 {
+        let mut bits = bitvec![u8, Msb0;];
+        for y in 0..image.height() {
+            for x in 0..image.width() {
+                let p = image.get_pixel(x, y).0;
+                let bit = (p[0] > 128 || p[1] > 128 || p[2] > 128) && p[3] > 128;
+                bits.push(bit);
+            }
 
-    for y in 0..image.height() {
-        for x in 0..image.width() {
-            let p = image.get_pixel(x, y).0;
-            let bit = (p[0] > 128 || p[1] > 128 || p[2] > 128) && p[3] > 128;
-            write_stream.write_bool(bit)?;
+            // Each row is padded to an exact number of bytes, if needed
+            let padded_len = bits.len().div_ceil(8) * 8;
+            bits.resize(padded_len, false);
         }
-        write_stream.align();
-    }
 
-    Ok(write_bytes)
+        Ok(bits.into_vec())
+    } else {
+        let mut bits = bitvec![u8, Lsb0;];
+        for y in 0..image.height() {
+            for x in 0..image.width() {
+                let p = image.get_pixel(x, y).0;
+                let bit = (p[0] > 128 || p[1] > 128 || p[2] > 128) && p[3] > 128;
+                bits.push(bit);
+            }
+
+            // Each row is padded to an exact number of bytes, if needed
+            let padded_len = bits.len().div_ceil(8) * 8;
+            bits.resize(padded_len, false);
+        }
+
+        Ok(bits.into_vec())
+    }
 }
 
-fn save_image_as_raw_1bit<E: Endianness>(
+fn save_image_as_raw_1bit(
     image: &ImageBuffer<Rgba<u8>, Vec<u8>>,
     path: Utf8PathBuf,
-    endianness: E,
+    msb0: bool,
 ) -> eyre::Result<()> {
-    let raw_1bit = image_to_raw_1bit(image, endianness)
+    let raw_1bit = image_to_raw_1bit(image, msb0)
         .map_err(|e| eyre!("Failed to convert image to raw 1bit: {}", e))?;
     fs::write(path.clone(), raw_1bit).map_err(|e| {
         eyre!(
@@ -155,10 +174,10 @@ impl App {
                     .unwrap_or(&workspace::Endianness::Little)
                 {
                     workspace::Endianness::Big => {
-                        save_image_as_raw_1bit(&tileset_image, path, BigEndian)?
+                        save_image_as_raw_1bit(&tileset_image, path, true)?
                     }
                     workspace::Endianness::Little => {
-                        save_image_as_raw_1bit(&tileset_image, path, LittleEndian)?
+                        save_image_as_raw_1bit(&tileset_image, path, false)?
                     }
                 }
             }
