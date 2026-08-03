@@ -78,7 +78,21 @@ fn main() -> eframe::Result {
         // see `.with_app_id` call above for why we use this value.
         "mountain-tiles",
         native_options,
-        Box::new(|cc| Ok(Box::new(App::new(cc)))),
+        Box::new(|cc| {
+            let mut app = Box::new(App::new(cc));
+
+            #[cfg(target_os = "macos")]
+            if app.native_menu.is_none() {
+                use mountain_tiles::ui::native_menu;
+
+                if let Ok(native_menu) = native_menu::create_for_macos() {
+                    native_menu.menu.init_for_nsapp();
+                    app.native_menu = Some(native_menu);
+                }
+            }
+
+            Ok(app)
+        }),
     )
 }
 

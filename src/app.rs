@@ -3,6 +3,7 @@ use crate::data::mode::Mode;
 use crate::data::settings::Settings;
 use crate::data::state::State;
 use crate::instance::IpcListener;
+use crate::ui::native_menu::NativeMenu;
 use crate::ui::tileset_textures::TilesetTextures;
 use crate::undo::{RevisionIndex, Undo};
 use camino::Utf8PathBuf;
@@ -78,6 +79,10 @@ pub struct App {
     /// Display notifications
     #[serde(skip)]
     pub toasts: Toasts,
+
+    /// Native menu, if available (might not be on all platforms)
+    #[serde(skip)]
+    pub native_menu: Option<NativeMenu>,
 }
 
 impl App {
