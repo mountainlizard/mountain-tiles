@@ -14,7 +14,11 @@ use std::process::exit;
 // When compiling natively:
 #[cfg(not(target_arch = "wasm32"))]
 fn main() -> eframe::Result {
+    use eframe::EventLoopBuilderHook;
     use mountain_tiles::app::{App, UNIQUE_ID};
+
+    #[cfg(target_os = "macos")]
+    use winit::platform::macos::EventLoopBuilderExtMacOS;
 
     env_logger::init(); // Log to stderr (if you run with `RUST_LOG=debug`).
 
@@ -56,8 +60,17 @@ fn main() -> eframe::Result {
             .with_fullsize_content_view(true);
     }
 
+    // Disable winit default menu on macOS. The default menu just directly terminates
+    // the app on quit menu item (including via cmd+q) giving no chance to prompt to
+    // save data.
+    let event_loop_builder: Option<EventLoopBuilderHook> = Some(Box::new(|event_loop_builder| {
+        #[cfg(target_os = "macos")]
+        event_loop_builder.with_default_menu(false);
+    }));
+
     let native_options = eframe::NativeOptions {
         viewport,
+        event_loop_builder,
         ..Default::default()
     };
     eframe::run_native(

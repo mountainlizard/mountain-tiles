@@ -15,7 +15,7 @@ egui = "0.35.0"
 eframe = { version = "0.35.0", default-features = false, features = [
     "accesskit",     # Make egui compatible with screen readers. NOTE: adds a lot of dependencies.
     "default_fonts", # Embed the default egui fonts.
-    "glow",          # Choose the rendering backend. Alternatives: "glow" and "wgpu".
+    "wgpu",          # Choose the rendering backend. Alternatives: "glow" and "wgpu".
     # glow seems to give incorrect colours on mac - native rather than sRGB, making dark
     # colours look too bright. On windows and linux glow colours look fine.
     # However wgpu is much slower than glow, at least on an old surface pro,
