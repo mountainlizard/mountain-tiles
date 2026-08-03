@@ -1,5 +1,7 @@
 use std::sync::mpsc::Receiver;
 
+#[cfg(target_os = "macos")]
+use egui::Context;
 use muda::{
     Menu, MenuEvent, MenuItem, PredefinedMenuItem, Submenu,
     accelerator::{Accelerator, Code, Modifiers},
@@ -14,7 +16,7 @@ pub struct NativeMenu {
 }
 
 #[cfg(target_os = "macos")]
-pub fn create_for_macos() -> muda::Result<NativeMenu> {
+pub fn create_for_macos(ctx: Context) -> muda::Result<NativeMenu> {
     use muda::MenuEvent;
 
     let menu = Menu::new();
@@ -23,6 +25,7 @@ pub fn create_for_macos() -> muda::Result<NativeMenu> {
     let (tx, rx) = std::sync::mpsc::channel();
     MenuEvent::set_event_handler(Some(move |event| {
         let _ = tx.send(event);
+        ctx.request_repaint();
     }));
 
     // App menu (first menu with app name)

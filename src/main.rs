@@ -84,8 +84,8 @@ fn main() -> eframe::Result {
             #[cfg(target_os = "macos")]
             if app.native_menu.is_none() {
                 use mountain_tiles::ui::native_menu;
-
-                if let Ok(native_menu) = native_menu::create_for_macos() {
+                let ctx = cc.egui_ctx.clone();
+                if let Ok(native_menu) = native_menu::create_for_macos(ctx) {
                     native_menu.menu.init_for_nsapp();
                     app.native_menu = Some(native_menu);
                 }
