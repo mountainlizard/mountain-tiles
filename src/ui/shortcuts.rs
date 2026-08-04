@@ -56,11 +56,15 @@ const UNDO_SHORTCUT: KeyboardShortcut = KeyboardShortcut {
     logical_key: Key::Z,
 };
 
-// We use non-standard shortcuts for copy/paste on map
-// This is because the normal cmd+x/c/v shortcuts are grabbed
-// by egui so we never see them. This might actually be fine
-// long-term, since we're not using the system clipboard, but
-// it could also be fixed by forking and using something like:
+// We originally used non-standard shortcuts X/C/V for
+// cut/copy/paste of map selection.
+// This was because the normal cmd+x/c/v shortcuts are grabbed
+// by egui so we didn't receive them - however we now work round
+// this by catching the egui events they produce (although
+// paste event may not be produced if clipboard is empty).
+// We do also include the standard shortcuts as alternatives in
+// case the keyboard input becomes available in future, for
+// example if this PR or similar is accepted:
 // https://github.com/emilk/egui/pull/5615
 // This is linked from the main issue:
 // https://github.com/emilk/egui/issues/4065
@@ -68,8 +72,16 @@ const COPY_SHORTCUT: KeyboardShortcut = KeyboardShortcut {
     modifiers: Modifiers::NONE,
     logical_key: Key::C,
 };
+const COPY_SHORTCUT_ALT: KeyboardShortcut = KeyboardShortcut {
+    modifiers: Modifiers::COMMAND,
+    logical_key: Key::C,
+};
 const CUT_SHORTCUT: KeyboardShortcut = KeyboardShortcut {
     modifiers: Modifiers::NONE,
+    logical_key: Key::X,
+};
+const CUT_SHORTCUT_ALT: KeyboardShortcut = KeyboardShortcut {
+    modifiers: Modifiers::COMMAND,
     logical_key: Key::X,
 };
 const PASTE_SHORTCUT: KeyboardShortcut = KeyboardShortcut {
@@ -79,6 +91,10 @@ const PASTE_SHORTCUT: KeyboardShortcut = KeyboardShortcut {
 const PASTE_SHORTCUT_ALT: KeyboardShortcut = KeyboardShortcut {
     modifiers: Modifiers::NONE,
     logical_key: Key::P,
+};
+const PASTE_SHORTCUT_ALT2: KeyboardShortcut = KeyboardShortcut {
+    modifiers: Modifiers::COMMAND,
+    logical_key: Key::V,
 };
 const ROTATE_SHORTCUT: KeyboardShortcut = KeyboardShortcut {
     modifiers: Modifiers::NONE,
@@ -221,6 +237,24 @@ const HELP_SHORTCUT: KeyboardShortcut = KeyboardShortcut {
 };
 
 pub fn consume_shortcuts(ctx: &Context, app: &mut App) {
+    ctx.input(|i| {
+        for event in &i.raw.events {
+            match event {
+                egui::Event::Copy => app.copy(),
+                egui::Event::Cut => app.cut(),
+                // Note that the paste event may not occur if
+                // the clipboard is empty, however it's more of
+                // convenience thing than anything, since we "paste"
+                // by drawing with the stamp, user can always use one
+                // of the other paste shortcuts rather than ctrl/cmd+v,
+                // plus cutting or copying activates draw mode anyway
+                // so it's rare to need this.
+                egui::Event::Paste(_) => app.draw_mode(),
+                _ => {}
+            }
+        }
+    });
+
     ctx.input_mut(|i| {
         if i.consume_shortcut(&NEW_SHORTCUT) {
             app.check_data_loss_then_new_document();
@@ -243,13 +277,16 @@ pub fn consume_shortcuts(ctx: &Context, app: &mut App) {
             app.reset_selected_map_zoom();
         }
 
-        if i.consume_shortcut(&CUT_SHORTCUT) {
+        if i.consume_shortcut(&CUT_SHORTCUT) || i.consume_shortcut(&CUT_SHORTCUT_ALT) {
             app.cut();
         }
-        if i.consume_shortcut(&COPY_SHORTCUT) {
+        if i.consume_shortcut(&COPY_SHORTCUT) || i.consume_shortcut(&COPY_SHORTCUT_ALT) {
             app.copy();
         }
-        if i.consume_shortcut(&PASTE_SHORTCUT) || i.consume_shortcut(&PASTE_SHORTCUT_ALT) {
+        if i.consume_shortcut(&PASTE_SHORTCUT)
+            || i.consume_shortcut(&PASTE_SHORTCUT_ALT)
+            || i.consume_shortcut(&PASTE_SHORTCUT_ALT2)
+        {
             app.draw_mode();
         }
         if i.consume_shortcut(&DRAW_MODE_SHORTCUT) {
