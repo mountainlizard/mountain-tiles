@@ -44,6 +44,8 @@ impl eframe::App for App {
 
         self.poll_and_handle_all_ipc_messages(ui);
 
+        self.poll_and_handle_native_menu_events(ui);
+
         let menu_frame = DEFAULT_THEME.base_100_frame(2);
 
         egui::Panel::top("main_app_top_panel")

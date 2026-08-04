@@ -30,9 +30,12 @@
 - [ ] Add tests for selection, look at tests for other parts of `State` as well?
 - [ ] Multiple project support - e.g. just have one `MainApp` struct per project, and allow switching between them, e.g. tabs on toolbar?
 - [ ] Direct connection to USB display, e.g. to display live as CRT on a pico, or on a HUB75 panel? Would just send entire tilemap on each edit.
-- [ ] Real menus with [muda](https://github.com/tauri-apps/muda)? On the other hand, might be better to just move away from menus completely and have as plain an interface as possible, with just shortcut keys and plain controls.
 - [ ] Ratatui? [egui_ratatui](https://github.com/gold-silver-copper/egui_ratatui), [soft_ratatui](https://github.com/gold-silver-copper/soft_ratatui), [mousefood](https://github.com/j-g00da/mousefood) on embedded?
 - [ ] [Taffy](https://github.com/PPakalns/egui_taffy/)?
+- [ ] Extend native menu to more functions - leave problematic undo/redo/cut/copy/paste for now?
+- [ ] Extend native menu to undo/redo/cut/copy/paste.
+- [ ] More platforms for native menu.
+- [ ] Make non-native menu into more of a hamburger type thing? Move modes to top of left side panel?
 
 ## Done
 

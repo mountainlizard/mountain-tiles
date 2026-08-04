@@ -14,7 +14,11 @@ use std::process::exit;
 // When compiling natively:
 #[cfg(not(target_arch = "wasm32"))]
 fn main() -> eframe::Result {
+    use eframe::EventLoopBuilderHook;
     use mountain_tiles::app::{App, UNIQUE_ID};
+
+    #[cfg(target_os = "macos")]
+    use winit::platform::macos::EventLoopBuilderExtMacOS;
 
     env_logger::init(); // Log to stderr (if you run with `RUST_LOG=debug`).
 
@@ -56,8 +60,17 @@ fn main() -> eframe::Result {
             .with_fullsize_content_view(true);
     }
 
+    // Disable winit default menu on macOS. The default menu just directly terminates
+    // the app on quit menu item (including via cmd+q) giving no chance to prompt to
+    // save data.
+    let event_loop_builder: Option<EventLoopBuilderHook> = Some(Box::new(|event_loop_builder| {
+        #[cfg(target_os = "macos")]
+        event_loop_builder.with_default_menu(false);
+    }));
+
     let native_options = eframe::NativeOptions {
         viewport,
+        event_loop_builder,
         ..Default::default()
     };
     eframe::run_native(
@@ -65,7 +78,21 @@ fn main() -> eframe::Result {
         // see `.with_app_id` call above for why we use this value.
         "mountain-tiles",
         native_options,
-        Box::new(|cc| Ok(Box::new(App::new(cc)))),
+        Box::new(|cc| {
+            let mut app = Box::new(App::new(cc));
+
+            #[cfg(target_os = "macos")]
+            if app.native_menu.is_none() {
+                use mountain_tiles::ui::native_menu;
+                let ctx = cc.egui_ctx.clone();
+                if let Ok(native_menu) = native_menu::create_for_macos(ctx) {
+                    native_menu.menu.init_for_nsapp();
+                    app.native_menu = Some(native_menu);
+                }
+            }
+
+            Ok(app)
+        }),
     )
 }
 
