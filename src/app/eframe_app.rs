@@ -44,11 +44,7 @@ impl eframe::App for App {
 
         self.poll_and_handle_all_ipc_messages(ui);
 
-        if let Some(ref native_menu) = self.native_menu {
-            while let Ok(event) = native_menu.rx.try_recv() {
-                println!("Menu event: {:?}", event);
-            }
-        }
+        self.poll_and_handle_native_menu_events(ui);
 
         let menu_frame = DEFAULT_THEME.base_100_frame(2);
 

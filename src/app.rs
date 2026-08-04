@@ -19,6 +19,7 @@ mod ipc;
 mod layers;
 pub mod maps;
 mod modals;
+mod native_menu;
 mod notifications;
 mod palette;
 mod png;
