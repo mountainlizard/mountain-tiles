@@ -238,7 +238,7 @@ const HELP_SHORTCUT: KeyboardShortcut = KeyboardShortcut {
 
 pub fn consume_shortcuts(ctx: &Context, app: &mut App) {
     ctx.input(|i| {
-        for event in &i.raw.events {
+        for event in &i.events {
             match event {
                 egui::Event::Copy => app.copy(),
                 egui::Event::Cut => app.cut(),
