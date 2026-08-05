@@ -13,7 +13,6 @@ impl App {
         // Take native menu out so we can use it without holding self
         if let Some(native_menu) = self.native_menu.take() {
             while let Ok(event) = native_menu.rx_raw.try_recv() {
-                println!("Handling raw input for {:?}", event);
                 match event {
                     // We have to push non-key events here - confusingly egui does have
                     // some code to convert things like cmd/ctrl+x to a cut event, but
@@ -43,6 +42,9 @@ impl App {
                     }
                     NativeMenuRawEvent::Redo => {
                         press_and_release(raw_input, Key::Y, Modifiers::COMMAND)
+                    }
+                    NativeMenuRawEvent::SelectAll => {
+                        press_and_release(raw_input, Key::A, Modifiers::COMMAND);
                     }
                 }
             }

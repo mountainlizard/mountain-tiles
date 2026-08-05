@@ -38,6 +38,7 @@ pub enum NativeMenuRawEvent {
     Paste(String),
     Undo,
     Redo,
+    SelectAll,
 }
 
 #[cfg(target_os = "macos")]
@@ -151,7 +152,14 @@ pub fn create_for_macos(ctx: Context) -> muda::Result<NativeMenu> {
     edit_menu.append(&copy_item)?;
     edit_menu.append(&paste_item)?;
 
-    // edit_menu.append(&PredefinedMenuItem::select_all(None))?;
+    let select_all_item = MenuItem::new(
+        "Select All",
+        true,
+        Some(Accelerator::new(Some(CMD_OR_CTRL), Code::KeyA)),
+    );
+    let select_all_id = select_all_item.id().clone();
+
+    edit_menu.append(&select_all_item)?;
     menu.append(&edit_menu)?;
 
     // Window menu
@@ -195,6 +203,8 @@ pub fn create_for_macos(ctx: Context) -> muda::Result<NativeMenu> {
             Some(NativeMenuRawEvent::Undo)
         } else if *event.id() == redo_id {
             Some(NativeMenuRawEvent::Redo)
+        } else if *event.id() == select_all_id {
+            Some(NativeMenuRawEvent::SelectAll)
         } else {
             None
         };
