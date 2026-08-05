@@ -174,6 +174,10 @@ const TOGGLE_SELECT_ALL_LAYERS_SHORTCUT: KeyboardShortcut = KeyboardShortcut {
     modifiers: Modifiers::NONE,
     logical_key: Key::A,
 };
+const TOGGLE_SELECT_ALL_LAYERS_SHORTCUT_ALT: KeyboardShortcut = KeyboardShortcut {
+    modifiers: Modifiers::COMMAND,
+    logical_key: Key::A,
+};
 
 const LAYER_SHORTCUTS: [KeyboardShortcut; 9] = [
     KeyboardShortcut {
@@ -238,7 +242,7 @@ const HELP_SHORTCUT: KeyboardShortcut = KeyboardShortcut {
 
 pub fn consume_shortcuts(ctx: &Context, app: &mut App) {
     ctx.input(|i| {
-        for event in &i.raw.events {
+        for event in &i.events {
             match event {
                 egui::Event::Copy => app.copy(),
                 egui::Event::Cut => app.cut(),
@@ -348,7 +352,9 @@ pub fn consume_shortcuts(ctx: &Context, app: &mut App) {
             app.delete_and_clear_selection();
         }
 
-        if i.consume_shortcut(&TOGGLE_SELECT_ALL_LAYERS_SHORTCUT) {
+        if i.consume_shortcut(&TOGGLE_SELECT_ALL_LAYERS_SHORTCUT)
+            || i.consume_shortcut(&TOGGLE_SELECT_ALL_LAYERS_SHORTCUT_ALT)
+        {
             app.selected_map_toggle_select_all_layers();
         }
 

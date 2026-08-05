@@ -23,6 +23,7 @@ mod native_menu;
 mod notifications;
 mod palette;
 mod png;
+mod raw_input;
 mod selection;
 mod stamp;
 mod tiled;
