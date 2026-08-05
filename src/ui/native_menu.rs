@@ -26,6 +26,18 @@ pub struct NativeMenu {
 /// application code during app update.
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub enum NativeMenuEvent {
+    New,
+    Open,
+    Save,
+    SaveAs,
+    ImportPaletteImage,
+    ExportPaletteImage,
+    ImportPaletteLospec,
+    ExportPaletteLospec,
+    ImportTiled,
+    ExportTiled,
+    ExportPng,
+    ExportFromWorkspace,
     Quit,
 }
 
@@ -82,28 +94,78 @@ pub fn create_for_macos(ctx: Context) -> muda::Result<NativeMenu> {
     menu.append(&app_menu)?;
 
     // File menu
-    // let file_menu = Submenu::new("File", true);
-    // let new_item = MenuItem::new(
-    //     "New",
-    //     true,
-    //     Some(Accelerator::new(Some(CMD_OR_CTRL), Code::KeyN)),
-    // );
-    // let open_item = MenuItem::new(
-    //     "Open",
-    //     true,
-    //     Some(Accelerator::new(Some(CMD_OR_CTRL), Code::KeyO)),
-    // );
-    // let save_item = MenuItem::new(
-    //     "Save",
-    //     true,
-    //     Some(Accelerator::new(Some(CMD_OR_CTRL), Code::KeyS)),
-    // );
-    // file_menu.append(&new_item)?;
-    // file_menu.append(&open_item)?;
-    // file_menu.append(&save_item)?;
-    // file_menu.append(&PredefinedMenuItem::separator())?;
-    // file_menu.append(&PredefinedMenuItem::close_window(None))?;
-    // menu.append(&file_menu)?;
+    let file_menu = Submenu::new("File", true);
+    let new_item = MenuItem::new(
+        "New",
+        true,
+        Some(Accelerator::new(Some(CMD_OR_CTRL), Code::KeyN)),
+    );
+    let new_id = new_item.id().clone();
+
+    let open_item = MenuItem::new(
+        "Open",
+        true,
+        Some(Accelerator::new(Some(CMD_OR_CTRL), Code::KeyO)),
+    );
+    let open_id = open_item.id().clone();
+
+    let save_item = MenuItem::new(
+        "Save",
+        true,
+        Some(Accelerator::new(Some(CMD_OR_CTRL), Code::KeyS)),
+    );
+    let save_id = save_item.id().clone();
+
+    let save_as_item = MenuItem::new(
+        "Save As...",
+        true,
+        Some(Accelerator::new(
+            Some(Modifiers::SHIFT | CMD_OR_CTRL),
+            Code::KeyS,
+        )),
+    );
+    let save_as_id = save_as_item.id().clone();
+
+    let import_palette_image_item = MenuItem::new("Import Palette (image)...", true, None);
+    let import_palette_image_id = import_palette_image_item.id().clone();
+
+    let export_palette_image_item = MenuItem::new("Export Palette (image)...", true, None);
+    let export_palette_image_id = export_palette_image_item.id().clone();
+
+    let import_palette_lospec_item = MenuItem::new("Import Palette (lospec JSON)...", true, None);
+    let import_palette_lospec_id = import_palette_lospec_item.id().clone();
+
+    let export_palette_lospec_item = MenuItem::new("Export Palette (lospec JSON)...", true, None);
+    let export_palette_lospec_id = export_palette_lospec_item.id().clone();
+
+    let import_tiled_item = MenuItem::new("Import Tiled...", true, None);
+    let import_tiled_id = import_tiled_item.id().clone();
+
+    let export_tiled_item = MenuItem::new("Export Tiled...", true, None);
+    let export_tiled_id = export_tiled_item.id().clone();
+
+    let export_png_item = MenuItem::new("Export PNG...", true, None);
+    let export_png_id = export_png_item.id().clone();
+
+    let export_from_workspace_item = MenuItem::new("Export from workspace...", true, None);
+    let export_from_workspace_id = export_from_workspace_item.id().clone();
+
+    file_menu.append(&new_item)?;
+    file_menu.append(&open_item)?;
+    file_menu.append(&save_item)?;
+    file_menu.append(&save_as_item)?;
+    file_menu.append(&PredefinedMenuItem::separator())?;
+    file_menu.append(&import_palette_image_item)?;
+    file_menu.append(&export_palette_image_item)?;
+    file_menu.append(&import_palette_lospec_item)?;
+    file_menu.append(&export_palette_lospec_item)?;
+    file_menu.append(&import_tiled_item)?;
+    file_menu.append(&export_tiled_item)?;
+    file_menu.append(&export_png_item)?;
+    file_menu.append(&export_from_workspace_item)?;
+    file_menu.append(&PredefinedMenuItem::separator())?;
+    file_menu.append(&PredefinedMenuItem::close_window(None))?;
+    menu.append(&file_menu)?;
 
     // Edit menu
     let edit_menu = Submenu::new("Edit", true);
@@ -179,6 +241,30 @@ pub fn create_for_macos(ctx: Context) -> muda::Result<NativeMenu> {
     MenuEvent::set_event_handler(Some(move |event: MenuEvent| {
         let native_menu_event = if *event.id() == quit_id {
             Some(NativeMenuEvent::Quit)
+        } else if *event.id() == new_id {
+            Some(NativeMenuEvent::New)
+        } else if *event.id() == open_id {
+            Some(NativeMenuEvent::Open)
+        } else if *event.id() == save_id {
+            Some(NativeMenuEvent::Save)
+        } else if *event.id() == save_as_id {
+            Some(NativeMenuEvent::SaveAs)
+        } else if *event.id() == import_palette_image_id {
+            Some(NativeMenuEvent::ImportPaletteImage)
+        } else if *event.id() == export_palette_image_id {
+            Some(NativeMenuEvent::ExportPaletteImage)
+        } else if *event.id() == import_palette_lospec_id {
+            Some(NativeMenuEvent::ImportPaletteLospec)
+        } else if *event.id() == export_palette_lospec_id {
+            Some(NativeMenuEvent::ExportPaletteLospec)
+        } else if *event.id() == import_tiled_id {
+            Some(NativeMenuEvent::ImportTiled)
+        } else if *event.id() == export_tiled_id {
+            Some(NativeMenuEvent::ExportTiled)
+        } else if *event.id() == export_png_id {
+            Some(NativeMenuEvent::ExportPng)
+        } else if *event.id() == export_from_workspace_id {
+            Some(NativeMenuEvent::ExportFromWorkspace)
         } else {
             None
         };
