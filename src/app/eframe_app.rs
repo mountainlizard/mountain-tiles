@@ -1,4 +1,4 @@
-use egui::{Key, Modifiers, Ui};
+use egui::Ui;
 
 use crate::{
     app::App,
