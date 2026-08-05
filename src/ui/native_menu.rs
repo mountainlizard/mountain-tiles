@@ -5,7 +5,7 @@ use arboard::Clipboard;
 #[cfg(target_os = "macos")]
 use egui::Context;
 #[cfg(target_os = "macos")]
-use muda::accelerator::CMD_OR_CTRL;
+use muda::accelerator::{CMD_OR_CTRL, Modifiers};
 use muda::{
     Menu, MenuItem, PredefinedMenuItem, Submenu,
     accelerator::{Accelerator, Code},
@@ -113,11 +113,13 @@ pub fn create_for_macos(ctx: Context) -> muda::Result<NativeMenu> {
     );
     let undo_id = undo_item.id().clone();
 
-    // FIXME: work out how to replace with cmd+shift+z as expected on macOS
     let redo_item = MenuItem::new(
         "Redo",
         true,
-        Some(Accelerator::new(Some(CMD_OR_CTRL), Code::KeyY)),
+        Some(Accelerator::new(
+            Some(Modifiers::SHIFT | CMD_OR_CTRL),
+            Code::KeyZ,
+        )),
     );
     let redo_id = redo_item.id().clone();
 
