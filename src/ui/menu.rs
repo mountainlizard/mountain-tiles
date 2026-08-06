@@ -111,6 +111,8 @@ pub fn menu_ui(ui: &mut Ui, app: &mut App) {
         let is_macos = cfg!(target_os = "macos");
 
         if is_macos {
+            // On macos, we can draw the menu over the title bar, we need to leave space for the
+            // macos window buttons
             ui.add_space(80.0);
             unselectable_label(ui, "MountainTiles");
         } else {
