@@ -26,6 +26,7 @@ pub struct NativeMenu {
 /// application code during app update.
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub enum NativeMenuEvent {
+    Settings,
     New,
     Open,
     Save,
@@ -38,6 +39,8 @@ pub enum NativeMenuEvent {
     ExportTiled,
     ExportPng,
     ExportFromWorkspace,
+    ResetZoom,
+    Help,
     Quit,
 }
 
@@ -71,7 +74,17 @@ pub fn create_for_macos(ctx: Context) -> muda::Result<NativeMenu> {
 
     // App menu (first menu with app name)
     let app_menu = Submenu::new("App", true);
+
+    let settings_item = MenuItem::new(
+        "Settings...",
+        true,
+        Some(Accelerator::new(Some(CMD_OR_CTRL), Code::Comma)),
+    );
+    let settings_id = settings_item.id().clone();
+
     app_menu.append(&PredefinedMenuItem::about(None, None))?;
+    app_menu.append(&PredefinedMenuItem::separator())?;
+    app_menu.append(&settings_item)?;
     app_menu.append(&PredefinedMenuItem::separator())?;
     app_menu.append(&PredefinedMenuItem::services(None))?;
     app_menu.append(&PredefinedMenuItem::separator())?;
@@ -224,6 +237,17 @@ pub fn create_for_macos(ctx: Context) -> muda::Result<NativeMenu> {
     edit_menu.append(&select_all_item)?;
     menu.append(&edit_menu)?;
 
+    // View menu
+    let view_menu = Submenu::new("View", true);
+    let reset_zoom_item = MenuItem::new(
+        "Reset Zoom",
+        true,
+        Some(Accelerator::new(Some(CMD_OR_CTRL), Code::KeyR)),
+    );
+    let reset_zoom_id = reset_zoom_item.id().clone();
+    view_menu.append(&reset_zoom_item)?;
+    menu.append(&view_menu)?;
+
     // Window menu
     let window_menu = Submenu::new("Window", true);
     window_menu.append(&PredefinedMenuItem::minimize(None))?;
@@ -231,6 +255,17 @@ pub fn create_for_macos(ctx: Context) -> muda::Result<NativeMenu> {
     window_menu.append(&PredefinedMenuItem::separator())?;
     window_menu.append(&PredefinedMenuItem::fullscreen(None))?;
     menu.append(&window_menu)?;
+
+    // Help menu
+    let help_menu = Submenu::new("Help", true);
+    let help_item = MenuItem::new(
+        "MountainTiles Help",
+        true,
+        Some(Accelerator::new(Some(CMD_OR_CTRL), Code::KeyH)),
+    );
+    let help_id = help_item.id().clone();
+    help_menu.append(&help_item)?;
+    menu.append(&help_menu)?;
 
     // Set up menu event channels
     let (tx, rx) = std::sync::mpsc::channel();
@@ -241,6 +276,8 @@ pub fn create_for_macos(ctx: Context) -> muda::Result<NativeMenu> {
     MenuEvent::set_event_handler(Some(move |event: MenuEvent| {
         let native_menu_event = if *event.id() == quit_id {
             Some(NativeMenuEvent::Quit)
+        } else if *event.id() == settings_id {
+            Some(NativeMenuEvent::Settings)
         } else if *event.id() == new_id {
             Some(NativeMenuEvent::New)
         } else if *event.id() == open_id {
@@ -265,6 +302,10 @@ pub fn create_for_macos(ctx: Context) -> muda::Result<NativeMenu> {
             Some(NativeMenuEvent::ExportPng)
         } else if *event.id() == export_from_workspace_id {
             Some(NativeMenuEvent::ExportFromWorkspace)
+        } else if *event.id() == reset_zoom_id {
+            Some(NativeMenuEvent::ResetZoom)
+        } else if *event.id() == help_id {
+            Some(NativeMenuEvent::Help)
         } else {
             None
         };
