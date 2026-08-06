@@ -1,5 +1,3 @@
-use egui::Ui;
-
 use crate::{
     app::App,
     data::modal::{DataLossOperation, ModalState},
@@ -22,6 +20,7 @@ use crate::{
         tileset::tileset_ui,
     },
 };
+use egui::Ui;
 
 impl eframe::App for App {
     fn raw_input_hook(&mut self, _ctx: &egui::Context, raw_input: &mut egui::RawInput) {
@@ -49,20 +48,17 @@ impl eframe::App for App {
         self.poll_and_handle_all_ipc_messages(ui);
 
         self.poll_and_handle_native_menu_events(ui);
+        let is_macos = cfg!(target_os = "macos");
 
         let menu_frame = DEFAULT_THEME.base_100_frame(2);
 
-        let is_macos = cfg!(target_os = "macos");
+        egui::Panel::top("main_app_top_panel")
+            .frame(menu_frame)
+            .show(ui, |ui| {
+                menu_ui(ui, self);
+            });
 
-        if !is_macos {
-            egui::Panel::top("main_app_top_panel")
-                .frame(menu_frame)
-                .show(ui, |ui| {
-                    menu_ui(ui, self);
-                });
-        }
-
-        let side_frame = DEFAULT_THEME.base_100_frame(12);
+        let side_frame = DEFAULT_THEME.base_100_frame(16);
 
         egui::Panel::left("main_app_left_panel")
             .frame(side_frame)
@@ -75,7 +71,6 @@ impl eframe::App for App {
                     mode_ui(ui, self);
                     separator(ui);
                 }
-
                 maps_ui(ui, self);
 
                 separator(ui);

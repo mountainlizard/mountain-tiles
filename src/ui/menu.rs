@@ -1,6 +1,7 @@
+use crate::ui::{egui_utils::separator, theme::DEFAULT_THEME};
 #[cfg(not(target_arch = "wasm32"))]
 use crate::{app::App, data::mode::Mode, ui::egui_utils::unselectable_label};
-use egui::{Color32, InnerResponse, Stroke, Style, Ui, vec2};
+use egui::{Color32, InnerResponse, RichText, Stroke, Style, Ui, vec2};
 
 fn set_menu_style(style: &mut Style) {
     style.spacing.button_padding = vec2(6.0, 0.0);
@@ -19,7 +20,7 @@ pub fn bar<R>(ui: &mut Ui, add_contents: impl FnOnce(&mut Ui) -> R) -> InnerResp
 
         // Take full width and fixed height:
         // let height = ui.spacing().interact_size.y;
-        ui.set_min_size(vec2(ui.available_width(), 24.0));
+        ui.set_min_size(vec2(ui.available_width(), 28.0));
 
         add_contents(ui)
     })
@@ -107,63 +108,89 @@ fn add_file_menu(_ui: &mut Ui, _app: &mut MainApp) {}
 
 pub fn menu_ui(ui: &mut Ui, app: &mut App) {
     bar(ui, |ui| {
-        ui.add_space(4.0);
+        let is_macos = cfg!(target_os = "macos");
 
-        add_file_menu(ui, app);
+        if is_macos {
+            ui.add_space(80.0);
+            unselectable_label(ui, "MountainTiles");
+        } else {
+            ui.add_space(8.0);
 
-        ui.menu_button("Edit", |ui| {
-            let undo_clicked = ui
-                .add_enabled(app.can_undo(), egui::Button::new("󰕌 Undo"))
-                .clicked();
+            add_file_menu(ui, app);
 
-            let redo_clicked = ui
-                .add_enabled(app.can_redo(), egui::Button::new("󰑎 Redo"))
-                .clicked();
+            ui.menu_button("Edit", |ui| {
+                let undo_clicked = ui
+                    .add_enabled(app.can_undo(), egui::Button::new("󰕌 Undo"))
+                    .clicked();
 
-            if undo_clicked {
-                app.undo();
+                let redo_clicked = ui
+                    .add_enabled(app.can_redo(), egui::Button::new("󰑎 Redo"))
+                    .clicked();
+
+                if undo_clicked {
+                    app.undo();
+                }
+
+                if redo_clicked {
+                    app.redo();
+                }
+
+                if ui.button("󰒓 Application settings...").clicked() {
+                    app.show_application_settings_modal();
+                }
+            });
+
+            ui.menu_button("View", |ui| {
+                if ui.button("󱉶 Reset zoom").clicked() {
+                    app.reset_selected_map_zoom();
+                }
+            });
+
+            if ui.button("Help...").clicked() {
+                app.show_help_modal();
             }
+            separator(ui);
 
-            if redo_clicked {
-                app.redo();
-            }
-
-            if ui.button("󰒓 Application settings...").clicked() {
-                app.show_application_settings_modal();
-            }
-        });
-
-        ui.menu_button("View", |ui| {
-            if ui.button("󱉶 Reset zoom").clicked() {
-                app.reset_selected_map_zoom();
-            }
-        });
-
-        if ui.button("Help...").clicked() {
-            app.show_help_modal();
+            mode_ui(ui, app);
         }
-
-        ui.add_space(16.0);
-        unselectable_label(ui, "Mode:");
-        ui.add_space(4.0);
-        mode_ui(ui, app);
     });
 }
 
 pub fn mode_ui(ui: &mut Ui, app: &mut App) {
-    ui.horizontal_wrapped(|ui| {
+    ui.horizontal(|ui| {
+        unselectable_label(
+            ui,
+            RichText::new("Mode:").color(DEFAULT_THEME.base_subcontent),
+        );
         let mode = app.edit.mode;
-        if ui.selectable_label(mode == Mode::Draw, "󰏫 Draw").clicked() {
+        if ui
+            .selectable_label(
+                mode == Mode::Draw,
+                // main_and_subcontent_layout_job("󰏫 Draw ", "(D)"),
+                "󰏫 Draw",
+            )
+            .clicked()
+        {
             app.draw_mode();
         };
+
         if ui
-            .selectable_label(mode == Mode::Erase, "󰇾 Erase")
+            .selectable_label(
+                mode == Mode::Erase,
+                // main_and_subcontent_layout_job("󰇾 Erase ", " (E)"),
+                "󰇾 Erase",
+            )
             .clicked()
         {
             app.erase_mode();
         };
+
         if ui
-            .selectable_label(mode == Mode::Select, "󰒅 Select")
+            .selectable_label(
+                mode == Mode::Select,
+                // main_and_subcontent_layout_job("󰒅 Select ", "(S)"),
+                "󰒅 Select",
+            )
             .clicked()
         {
             app.select_mode();

@@ -6,8 +6,8 @@ use crate::{
     },
 };
 use egui::{
-    InnerResponse, Layout, Response, RichText, Ui, Vec2, WidgetText,
-    text::{CCursor, CCursorRange},
+    InnerResponse, Layout, Response, RichText, TextFormat, Ui, Vec2, WidgetText,
+    text::{CCursor, CCursorRange, LayoutJob},
 };
 
 pub fn replace_fonts(ctx: &egui::Context) {
@@ -114,4 +114,25 @@ pub fn install_image_loaders(ctx: &egui::Context) {
         ctx.add_image_loader(std::sync::Arc::new(TilesetImageLoader::default()));
         log::trace!("installed TilesetImageLoader");
     }
+}
+
+pub fn main_and_subcontent_layout_job(main: &str, subcontent: &str) -> LayoutJob {
+    let mut job = LayoutJob::default();
+    job.append(
+        main,
+        0.0,
+        TextFormat {
+            color: DEFAULT_THEME.base_content,
+            ..Default::default()
+        },
+    );
+    job.append(
+        subcontent,
+        0.0,
+        TextFormat {
+            color: DEFAULT_THEME.base_subcontent,
+            ..Default::default()
+        },
+    );
+    job
 }
