@@ -52,14 +52,6 @@ fn main() -> eframe::Result {
         Err(e) => log::warn!("Failed to load icon {}", e),
     }
 
-    let is_macos = cfg!(target_os = "macos");
-    if is_macos {
-        viewport = viewport
-            .with_title_shown(false)
-            .with_titlebar_shown(false)
-            .with_fullsize_content_view(true);
-    }
-
     // Disable winit default menu on macOS. The default menu just directly terminates
     // the app on quit menu item (including via cmd+q) giving no chance to prompt to
     // save data.

@@ -107,15 +107,7 @@ fn add_file_menu(_ui: &mut Ui, _app: &mut MainApp) {}
 
 pub fn menu_ui(ui: &mut Ui, app: &mut App) {
     bar(ui, |ui| {
-        let is_macos = cfg!(target_os = "macos");
-
-        // On macos, we can draw the menu over the title bar, we need to leave space for the
-        // macos window buttons
-        if is_macos {
-            ui.add_space(72.0);
-        } else {
-            ui.add_space(16.0);
-        }
+        ui.add_space(8.0);
 
         add_file_menu(ui, app);
 

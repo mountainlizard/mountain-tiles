@@ -52,11 +52,15 @@ impl eframe::App for App {
 
         let menu_frame = DEFAULT_THEME.base_100_frame(2);
 
-        egui::Panel::top("main_app_top_panel")
-            .frame(menu_frame)
-            .show(ui, |ui| {
-                menu_ui(ui, self);
-            });
+        let is_macos = cfg!(target_os = "macos");
+
+        if !is_macos {
+            egui::Panel::top("main_app_top_panel")
+                .frame(menu_frame)
+                .show(ui, |ui| {
+                    menu_ui(ui, self);
+                });
+        }
 
         let side_frame = DEFAULT_THEME.base_100_frame(16);
 
