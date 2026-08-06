@@ -8,7 +8,7 @@ use crate::{
         layers::layers_ui,
         map::map_ui,
         maps::maps_ui,
-        menu::menu_ui,
+        menu::{menu_ui, mode_ui},
         modal::{
             data_loss_modal::data_loss_modal_ui, error_modal::error_modal_ui,
             export_png_modal::export_png_modal_ui, export_tiled_modal::export_tiled_modal_ui,
@@ -62,7 +62,7 @@ impl eframe::App for App {
                 });
         }
 
-        let side_frame = DEFAULT_THEME.base_100_frame(16);
+        let side_frame = DEFAULT_THEME.base_100_frame(12);
 
         egui::Panel::left("main_app_left_panel")
             .frame(side_frame)
@@ -71,6 +71,11 @@ impl eframe::App for App {
             .min_size(275.0)
             .max_size(750.0)
             .show(ui, |ui| {
+                if is_macos {
+                    mode_ui(ui, self);
+                    separator(ui);
+                }
+
                 maps_ui(ui, self);
 
                 separator(ui);

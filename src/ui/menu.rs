@@ -107,7 +107,7 @@ fn add_file_menu(_ui: &mut Ui, _app: &mut MainApp) {}
 
 pub fn menu_ui(ui: &mut Ui, app: &mut App) {
     bar(ui, |ui| {
-        ui.add_space(8.0);
+        ui.add_space(4.0);
 
         add_file_menu(ui, app);
 
@@ -146,6 +146,12 @@ pub fn menu_ui(ui: &mut Ui, app: &mut App) {
         ui.add_space(16.0);
         unselectable_label(ui, "Mode:");
         ui.add_space(4.0);
+        mode_ui(ui, app);
+    });
+}
+
+pub fn mode_ui(ui: &mut Ui, app: &mut App) {
+    ui.horizontal_wrapped(|ui| {
         let mode = app.edit.mode;
         if ui.selectable_label(mode == Mode::Draw, "󰏫 Draw").clicked() {
             app.draw_mode();
