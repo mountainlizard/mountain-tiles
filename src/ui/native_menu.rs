@@ -258,11 +258,7 @@ pub fn create_for_macos(ctx: Context) -> muda::Result<NativeMenu> {
 
     // Help menu
     let help_menu = Submenu::new("Help", true);
-    let help_item = MenuItem::new(
-        "MountainTiles Help",
-        true,
-        Some(Accelerator::new(Some(CMD_OR_CTRL), Code::KeyH)),
-    );
+    let help_item = MenuItem::new("MountainTiles Help", true, None);
     let help_id = help_item.id().clone();
     help_menu.append(&help_item)?;
     menu.append(&help_menu)?;

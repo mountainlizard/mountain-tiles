@@ -47,17 +47,17 @@ fn main() -> eframe::Result {
         .with_app_id("mountain-tiles")
         .with_title("MountainTiles");
 
-    match eframe::icon_data::from_png_bytes(&include_bytes!("../assets/icon-256.png")[..]) {
-        Ok(icon) => viewport = viewport.with_icon(icon),
-        Err(e) => log::warn!("Failed to load icon {}", e),
-    }
-
     let is_macos = cfg!(target_os = "macos");
     if is_macos {
         viewport = viewport
             .with_title_shown(false)
             .with_titlebar_shown(false)
             .with_fullsize_content_view(true);
+    }
+
+    match eframe::icon_data::from_png_bytes(&include_bytes!("../assets/icon-256.png")[..]) {
+        Ok(icon) => viewport = viewport.with_icon(icon),
+        Err(e) => log::warn!("Failed to load icon {}", e),
     }
 
     // Disable winit default menu on macOS. The default menu just directly terminates
