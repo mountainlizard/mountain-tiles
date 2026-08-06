@@ -32,8 +32,7 @@
 - [ ] Direct connection to USB display, e.g. to display live as CRT on a pico, or on a HUB75 panel? Would just send entire tilemap on each edit.
 - [ ] Ratatui? [egui_ratatui](https://github.com/gold-silver-copper/egui_ratatui), [soft_ratatui](https://github.com/gold-silver-copper/soft_ratatui), [mousefood](https://github.com/j-g00da/mousefood) on embedded?
 - [ ] [Taffy](https://github.com/PPakalns/egui_taffy/)?
-- [ ] Extend native menu to more functions - leave problematic undo/redo/cut/copy/paste for now?
-- [ ] Extend native menu to undo/redo/cut/copy/paste.
+- [ ] Add recent files to native menu on macOS.
 - [ ] More platforms for native menu.
 - [ ] Make non-native menu into more of a hamburger type thing? Move modes to top of left side panel?
 
@@ -42,3 +41,5 @@
 - [x] Brief look at how to set up file association on linux - implemented for deb installer, this now creates a mime type corresponding to the one referenced in the desktop file.
 - [x] Layer merge button should only be active when possible (i.e. multiple layers are selected).
 - [x] Fix missing icon and window title on Ubuntu - added app id named to match desktop file (which is named after binary, which is named after crate). This fixes the issue at least on Bazzite using a ubuntu box, although it does require copying the .desktop file to `/var/~/.local/share/applications`, since it looks like boxbuddy/distro-box don't do this for you.
+- [x] Extend native menu to more functions - leave problematic undo/redo/cut/copy/paste for now?
+- [x] Extend native menu to undo/redo/cut/copy/paste.
