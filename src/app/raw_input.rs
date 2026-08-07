@@ -1,7 +1,10 @@
+#[cfg(target_os = "macos")]
 use egui::{Key, Modifiers};
 
+#[cfg(target_os = "macos")]
 use crate::{app::App, ui::native_menu::NativeMenuRawEvent};
 
+#[cfg(target_os = "macos")]
 impl App {
     /// Poll for native menu events that translate into raw input,
     /// for example cut/copy/paste events, and add them to the
@@ -54,6 +57,7 @@ impl App {
     }
 }
 
+#[cfg(target_os = "macos")]
 fn press_and_release(raw_input: &mut egui::RawInput, key: Key, modifiers: Modifiers) {
     // Press then release the key, so tracking of whether keys are held down is
     // correct.

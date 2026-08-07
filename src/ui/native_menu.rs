@@ -1,7 +1,10 @@
+#[cfg(target_os = "macos")]
 use std::sync::mpsc::Receiver;
 
+#[cfg(target_os = "macos")]
 use muda::Menu;
 
+#[cfg(target_os = "macos")]
 pub struct NativeMenu {
     /// Muda menu
     pub menu: Menu,
@@ -15,6 +18,7 @@ pub struct NativeMenu {
 
 /// Events fired by clicking a menu item, and handled by
 /// application code during app update.
+#[cfg(target_os = "macos")]
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub enum NativeMenuEvent {
     Settings,
@@ -37,6 +41,7 @@ pub enum NativeMenuEvent {
 
 /// Events fired by clicking a menu item, and handled by
 /// converting them into raw input events for egui.
+#[cfg(target_os = "macos")]
 #[derive(Debug, Clone, PartialEq)]
 pub enum NativeMenuRawEvent {
     Cut,

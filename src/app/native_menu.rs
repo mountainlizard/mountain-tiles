@@ -1,5 +1,7 @@
+#[cfg(target_os = "macos")]
 use crate::{app::App, ui::native_menu::NativeMenuEvent};
 
+#[cfg(target_os = "macos")]
 impl App {
     pub(super) fn poll_and_handle_native_menu_events(&mut self, ctx: &egui::Context) -> bool {
         let mut handled = false;
