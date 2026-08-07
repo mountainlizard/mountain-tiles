@@ -8,17 +8,14 @@
 )]
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")] // hide console window on Windows in release
 
+use egui::ViewportBuilder;
 use mountain_tiles::instance::instance_startup;
 use std::process::exit;
 
 // When compiling natively:
 #[cfg(not(target_arch = "wasm32"))]
 fn main() -> eframe::Result {
-    use eframe::EventLoopBuilderHook;
-    use mountain_tiles::app::{App, UNIQUE_ID};
-
-    #[cfg(target_os = "macos")]
-    use winit::platform::macos::EventLoopBuilderExtMacOS;
+    use mountain_tiles::app::UNIQUE_ID;
 
     env_logger::init(); // Log to stderr (if you run with `RUST_LOG=debug`).
 
@@ -27,8 +24,6 @@ fn main() -> eframe::Result {
         exit(1);
     }
 
-    // Handle instance startup - if this returns true we should
-    // exit without error
     if instance_startup(UNIQUE_ID) {
         println!("Application is already running - will exit.");
         exit(0);
@@ -47,24 +42,45 @@ fn main() -> eframe::Result {
         .with_app_id("mountain-tiles")
         .with_title("MountainTiles");
 
-    let is_macos = cfg!(target_os = "macos");
-    if is_macos {
-        viewport = viewport
-            .with_title_shown(false)
-            .with_titlebar_shown(false)
-            .with_fullsize_content_view(true);
-    }
-
     match eframe::icon_data::from_png_bytes(&include_bytes!("../assets/icon-256.png")[..]) {
         Ok(icon) => viewport = viewport.with_icon(icon),
         Err(e) => log::warn!("Failed to load icon {}", e),
     }
 
+    run_native(viewport)
+}
+
+#[cfg(not(target_os = "macos"))]
+fn run_native(viewport: ViewportBuilder) -> eframe::Result {
+    use mountain_tiles::app::App;
+
+    let native_options = eframe::NativeOptions {
+        viewport,
+        ..Default::default()
+    };
+    eframe::run_native(
+        // Use the app id for app name, just in case it does end up getting used by wayland,
+        // see `.with_app_id` call above for why we use this value.
+        "mountain-tiles",
+        native_options,
+        Box::new(|cc| Ok(Box::new(App::new(cc)))),
+    )
+}
+
+#[cfg(target_os = "macos")]
+fn run_native(viewport: ViewportBuilder) -> eframe::Result {
+    use mountain_tiles::app::App;
+    use winit::platform::macos::EventLoopBuilderExtMacOS;
+
+    let viewport = viewport
+        .with_title_shown(false)
+        .with_titlebar_shown(false)
+        .with_fullsize_content_view(true);
+
     // Disable winit default menu on macOS. The default menu just directly terminates
     // the app on quit menu item (including via cmd+q) giving no chance to prompt to
     // save data.
     let event_loop_builder: Option<EventLoopBuilderHook> = Some(Box::new(|event_loop_builder| {
-        #[cfg(target_os = "macos")]
         event_loop_builder.with_default_menu(false);
     }));
 
@@ -81,7 +97,6 @@ fn main() -> eframe::Result {
         Box::new(|cc| {
             let mut app = Box::new(App::new(cc));
 
-            #[cfg(target_os = "macos")]
             if app.native_menu.is_none() {
                 use mountain_tiles::ui::native_menu;
                 let ctx = cc.egui_ctx.clone();
