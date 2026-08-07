@@ -20,7 +20,6 @@ mod ipc;
 mod layers;
 pub mod maps;
 mod modals;
-mod native_menu;
 mod notifications;
 mod palette;
 mod png;
@@ -30,6 +29,9 @@ mod stamp;
 mod tiled;
 mod tilesets;
 mod undoredo;
+
+#[cfg(target_os = "macos")]
+mod native_menu;
 
 pub const APP_NAME: &str = "MountainTiles";
 // Set app id for wayland so it matches the desktop file, which is named after
