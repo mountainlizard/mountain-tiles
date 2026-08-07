@@ -60,6 +60,7 @@ fn run_native(viewport: ViewportBuilder) -> eframe::Result {
 
 #[cfg(target_os = "macos")]
 fn run_native(viewport: ViewportBuilder) -> eframe::Result {
+    use eframe::EventLoopBuilderHook;
     use mountain_tiles::app::{APP_NAME, App};
     use winit::platform::macos::EventLoopBuilderExtMacOS;
 
@@ -71,6 +72,9 @@ fn run_native(viewport: ViewportBuilder) -> eframe::Result {
     // Disable winit default menu on macOS. The default menu just directly terminates
     // the app on quit menu item (including via cmd+q) giving no chance to prompt to
     // save data.
+    // Note this might not be necessary since we're setting our own menu, but it can't
+    // do any harm to make sure our menu isn't overwritten. A blank menu is actually better
+    // than the default anyway, since the default allows for accidental data loss using cmd+q.
     let event_loop_builder: Option<EventLoopBuilderHook> = Some(Box::new(|event_loop_builder| {
         event_loop_builder.with_default_menu(false);
     }));
