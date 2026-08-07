@@ -1,10 +1,6 @@
-#[cfg(target_os = "macos")]
+use muda::Menu;
 use std::sync::mpsc::Receiver;
 
-#[cfg(target_os = "macos")]
-use muda::Menu;
-
-#[cfg(target_os = "macos")]
 pub struct NativeMenu {
     /// Muda menu
     pub menu: Menu,
@@ -18,7 +14,6 @@ pub struct NativeMenu {
 
 /// Events fired by clicking a menu item, and handled by
 /// application code during app update.
-#[cfg(target_os = "macos")]
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub enum NativeMenuEvent {
     Settings,
@@ -41,7 +36,6 @@ pub enum NativeMenuEvent {
 
 /// Events fired by clicking a menu item, and handled by
 /// converting them into raw input events for egui.
-#[cfg(target_os = "macos")]
 #[derive(Debug, Clone, PartialEq)]
 pub enum NativeMenuRawEvent {
     Cut,
@@ -52,7 +46,6 @@ pub enum NativeMenuRawEvent {
     SelectAll,
 }
 
-#[cfg(target_os = "macos")]
 pub fn create_for_macos(ctx: egui::Context) -> muda::Result<NativeMenu> {
     use muda::{
         MenuEvent, MenuItem, PredefinedMenuItem, Submenu,
@@ -339,7 +332,6 @@ pub fn create_for_macos(ctx: egui::Context) -> muda::Result<NativeMenu> {
     Ok(NativeMenu { menu, rx, rx_raw })
 }
 
-#[cfg(target_os = "macos")]
 fn get_clipboard_text() -> eyre::Result<String> {
     let mut clipboard = arboard::Clipboard::new()?;
     let text = clipboard.get_text()?;

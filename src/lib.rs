@@ -59,6 +59,7 @@ pub mod ui {
     pub mod maps;
     pub mod menu;
     pub mod modal;
+    #[cfg(target_os = "macos")]
     pub mod native_menu;
     pub mod palette;
     pub mod shortcuts;
