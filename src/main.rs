@@ -15,7 +15,7 @@ use std::process::exit;
 // When compiling natively:
 #[cfg(not(target_arch = "wasm32"))]
 fn main() -> eframe::Result {
-    use mountain_tiles::app::UNIQUE_ID;
+    use mountain_tiles::app::{APP_ID, APP_NAME, UNIQUE_ID};
 
     env_logger::init(); // Log to stderr (if you run with `RUST_LOG=debug`).
 
@@ -32,15 +32,8 @@ fn main() -> eframe::Result {
     let mut viewport = egui::ViewportBuilder::default()
         .with_inner_size([400.0, 300.0])
         .with_min_inner_size([300.0, 220.0])
-        // Set app id for wayland so it matches the desktop file, which is named after
-        // our binary, which is named after our crate.
-        // At some point it would be nice to use `com.mountainlizard.mountain_tiles` since
-        // this follows the freedesktop.org spec, but this would require a change to
-        // cargo-packager, and looks like it might interact with other naming (e.g. in AppImage),
-        // so for now we just assume that `mountain-tiles` is unusual enough that it's
-        // unlikely to be used as the app id of an unrelated application.
-        .with_app_id("mountain-tiles")
-        .with_title("MountainTiles");
+        .with_app_id(APP_ID)
+        .with_title(APP_NAME);
 
     match eframe::icon_data::from_png_bytes(&include_bytes!("../assets/icon-256.png")[..]) {
         Ok(icon) => viewport = viewport.with_icon(icon),
@@ -52,16 +45,14 @@ fn main() -> eframe::Result {
 
 #[cfg(not(target_os = "macos"))]
 fn run_native(viewport: ViewportBuilder) -> eframe::Result {
-    use mountain_tiles::app::App;
+    use mountain_tiles::app::{APP_NAME, App};
 
     let native_options = eframe::NativeOptions {
         viewport,
         ..Default::default()
     };
     eframe::run_native(
-        // Use the app id for app name, just in case it does end up getting used by wayland,
-        // see `.with_app_id` call above for why we use this value.
-        "mountain-tiles",
+        APP_NAME,
         native_options,
         Box::new(|cc| Ok(Box::new(App::new(cc)))),
     )
@@ -69,7 +60,7 @@ fn run_native(viewport: ViewportBuilder) -> eframe::Result {
 
 #[cfg(target_os = "macos")]
 fn run_native(viewport: ViewportBuilder) -> eframe::Result {
-    use mountain_tiles::app::App;
+    use mountain_tiles::app::{APP_NAME, App};
     use winit::platform::macos::EventLoopBuilderExtMacOS;
 
     let viewport = viewport
@@ -90,9 +81,7 @@ fn run_native(viewport: ViewportBuilder) -> eframe::Result {
         ..Default::default()
     };
     eframe::run_native(
-        // Use the app id for app name, just in case it does end up getting used by wayland,
-        // see `.with_app_id` call above for why we use this value.
-        "mountain-tiles",
+        APP_NAME,
         native_options,
         Box::new(|cc| {
             let mut app = Box::new(App::new(cc));
