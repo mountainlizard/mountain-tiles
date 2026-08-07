@@ -33,7 +33,6 @@
 - [ ] Ratatui? [egui_ratatui](https://github.com/gold-silver-copper/egui_ratatui), [soft_ratatui](https://github.com/gold-silver-copper/soft_ratatui), [mousefood](https://github.com/j-g00da/mousefood) on embedded?
 - [ ] [Taffy](https://github.com/PPakalns/egui_taffy/)?
 - [ ] Add recent files to native menu on macOS.
-- [ ] More platforms for native menu.
 - [ ] Make non-native menu into more of a hamburger type thing? Move modes to top of left side panel?
 
 ## Done
