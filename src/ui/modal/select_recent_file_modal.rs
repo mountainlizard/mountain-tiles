@@ -1,13 +1,10 @@
-use egui::{Id, Modal, Ui};
+use egui::{Id, Modal, RichText, Ui};
 use egui_extras::{Column, TableBuilder};
 
 use crate::{
     app::App,
     data::modal::{ModalResult, ModalState},
-    ui::{
-        egui_utils::{unselectable_label, unselectable_label_strong},
-        theme::DEFAULT_THEME,
-    },
+    ui::{egui_utils::unselectable_label, theme::DEFAULT_THEME},
 };
 
 pub fn select_recent_file_modal_ui(ui: &mut Ui, app: &mut App) {
@@ -25,21 +22,18 @@ pub fn select_recent_file_modal_ui(ui: &mut Ui, app: &mut App) {
 
                 ui.add_space(DEFAULT_THEME.modal_spacing);
 
-                let table = TableBuilder::new(ui)
-                    .striped(true)
-                    .cell_layout(egui::Layout::left_to_right(egui::Align::Center))
-                    .column(Column::remainder().clip(true))
-                    .min_scrolled_height(0.0)
-                    .max_scroll_height(99999999.0)
-                    .sense(egui::Sense::click());
+                if app.recent_paths.is_empty() {
+                    unselectable_label(ui, "No recent files");
+                } else {
+                    let table = TableBuilder::new(ui)
+                        .striped(true)
+                        .cell_layout(egui::Layout::left_to_right(egui::Align::Center))
+                        .column(Column::remainder().clip(true))
+                        .min_scrolled_height(0.0)
+                        .max_scroll_height(99999999.0)
+                        .sense(egui::Sense::click());
 
-                table
-                    .header(DEFAULT_THEME.row_height, |mut header| {
-                        header.col(|ui| {
-                            unselectable_label_strong(ui, "File path");
-                        });
-                    })
-                    .body(|mut body| {
+                    table.body(|mut body| {
                         // Display layers reversed so that the layer with the highest index, which is
                         // drawn over all other layers, is on first row of table, i.e. on the "top"
                         for (index, path) in app.recent_paths.iter().enumerate() {
@@ -66,6 +60,14 @@ pub fn select_recent_file_modal_ui(ui: &mut Ui, app: &mut App) {
                             });
                         }
                     });
+
+                    if let Some(path) = app.recent_paths.get(*selected_index) {
+                        ui.add_space(DEFAULT_THEME.modal_spacing);
+                        ui.label(
+                            RichText::new(format!("{}", path)).color(DEFAULT_THEME.base_subcontent),
+                        );
+                    }
+                }
 
                 ui.add_space(DEFAULT_THEME.modal_spacing);
                 ui.separator();
