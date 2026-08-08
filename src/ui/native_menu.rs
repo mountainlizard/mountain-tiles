@@ -19,6 +19,7 @@ pub enum NativeMenuEvent {
     Settings,
     New,
     Open,
+    OpenRecent,
     Save,
     SaveAs,
     ImportPaletteImage,
@@ -114,6 +115,9 @@ pub fn create_for_macos(ctx: egui::Context) -> muda::Result<NativeMenu> {
     );
     let open_id = open_item.id().clone();
 
+    let open_recent_item = MenuItem::new("Open Recent...", true, None);
+    let open_recent_id = open_recent_item.id().clone();
+
     let save_item = MenuItem::new(
         "Save",
         true,
@@ -157,6 +161,7 @@ pub fn create_for_macos(ctx: egui::Context) -> muda::Result<NativeMenu> {
 
     file_menu.append(&new_item)?;
     file_menu.append(&open_item)?;
+    file_menu.append(&open_recent_item)?;
     file_menu.append(&save_item)?;
     file_menu.append(&save_as_item)?;
     file_menu.append(&PredefinedMenuItem::separator())?;
@@ -270,6 +275,8 @@ pub fn create_for_macos(ctx: egui::Context) -> muda::Result<NativeMenu> {
             Some(NativeMenuEvent::New)
         } else if *event.id() == open_id {
             Some(NativeMenuEvent::Open)
+        } else if *event.id() == open_recent_id {
+            Some(NativeMenuEvent::OpenRecent)
         } else if *event.id() == save_id {
             Some(NativeMenuEvent::Save)
         } else if *event.id() == save_as_id {
