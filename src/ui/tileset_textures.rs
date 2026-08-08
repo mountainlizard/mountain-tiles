@@ -153,7 +153,59 @@ impl TilesetTextures {
 
     pub fn uri_for_path(path: &Utf8PathBuf, mode: &TilesetMode) -> String {
         let mode_json = serde_json::to_string(mode).unwrap_or("\"Direct\"".to_string());
-        format!("tileset://{}//file://{}", mode_json, path)
+
+        // We use a somewhat odd "uri" format here - we use a scheme of "tileset://"
+        // to allow us to include the tileset mode as json, then another "//" to separate
+        // this from a final section that is more or less a file uri.
+        //
+        // However note that the file uri will go to the `egui_extras` `FileLoader` loader,
+        // and this doesn't quite parse standard file uris, since it doesn't expect
+        // percent encoding, so we can't use say the `Url` crate. Instead we just tailor
+        // the format for what `FileLoader` expects.
+        //
+        // In egui 0.36 the code is at:
+        // https://github.com/emilk/egui/blob/a4edc4a93241782d5f0c0864ab052c9d1244cd98/crates/egui_extras/src/loaders/file_loader.rs#L32
+        //
+        // The uri must start with "file://", and this will be stripped
+        // by `FileLoader`.
+        //
+        // The rest of the string is parsed as a path, but this is slightly different
+        // on windows and other platforms.
+        //
+        // On non-windows platforms, the rest of the string is used directly as a path,
+        // so we can just include it unaltered. This goes from a path like "/etc/fstab" to
+        // "file:///etc/fstab", which matches what the `Url` crate does, and
+        // is given as an example on wikipedia. Note that if there are spaces, these
+        // are not percent-encoded.
+        //
+        // On windows we need to make it a local file path by
+        // prepending an additional "/" to the file path, this will then be detected
+        // and stripped as a prefix by the windows-specific egui code, so it gets the
+        // original path back. This makes the uri compliant according to wikipedia.
+        // So for example we would go from "c:/WINDOWS/clock.avi" to
+        // "file:///c:/WINDOWS/clock.avi" (note the extra "/"), again matching
+        // an example on wikipedia. Note this is necessary because otherwise we
+        // get "file://c:/WINDOWS/clock.avi", which is specifically called out as invalid
+        // on wikipedia, because the "c:" part now looks like a hostname in the
+        // "file://hostname/path" format. The egui code does indeed attempt to use this
+        // as a UNC network path, and this then fails with OS error 53.
+        //
+        // On windows we also replace the "\" file separators with "/" - this doesn't seem
+        // to be necessary since the path is accepted even with "\", but we might as well be
+        // slightly more URI spec. compliant.
+        //
+        // wikipedia ref: https://en.wikipedia.org/wiki/File_URI_scheme
+        #[cfg(target_os = "windows")]
+        let uri = format!(
+            "tileset://{}//file:///{}",
+            mode_json,
+            path.as_str().replace("\\", "/")
+        );
+
+        #[cfg(not(target_os = "windows"))]
+        let uri = format!("tileset://{}//file://{}", mode_json, path.as_str());
+
+        uri
     }
 
     pub fn path_for_tileset(&self, tileset: &Tileset) -> Option<Utf8PathBuf> {
