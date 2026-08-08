@@ -63,6 +63,13 @@ impl App {
         self.edit.show_modal(ModalState::error(message));
     }
 
+    pub fn show_select_recent_file_modal(&mut self) {
+        self.edit.show_modal(ModalState::SelectRecentFile {
+            selected_index: 0,
+            result: Default::default(),
+        });
+    }
+
     pub fn show_import_tiled_modal(&mut self, tiled: Tiled) {
         self.edit.show_modal(ModalState::tiled(tiled));
     }
@@ -75,7 +82,7 @@ impl App {
         self.edit.show_modal(ModalState::export_png());
     }
 
-    /// Progress the state of a modal, based on it's [`ModalState::result`]:
+    /// Progress the state of a modal, based on its [`ModalState::result`]:
     ///  - [`ModalResult::Init`]: Move the result on to [`ModalResult::Active`],
     ///    return [`None`]
     ///  - [`ModalResult::Active`]: Nothing to do, return [`None`]

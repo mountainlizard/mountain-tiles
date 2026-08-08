@@ -3,6 +3,7 @@ use crate::data::mode::Mode;
 use crate::data::settings::Settings;
 use crate::data::state::State;
 use crate::instance::IpcListener;
+#[cfg(target_os = "macos")]
 use crate::ui::native_menu::NativeMenu;
 use crate::ui::tileset_textures::TilesetTextures;
 use crate::undo::{RevisionIndex, Undo};
@@ -19,7 +20,6 @@ mod ipc;
 mod layers;
 pub mod maps;
 mod modals;
-mod native_menu;
 mod notifications;
 mod palette;
 mod png;
@@ -30,6 +30,18 @@ mod tiled;
 mod tilesets;
 mod undoredo;
 
+#[cfg(target_os = "macos")]
+mod native_menu;
+
+pub const APP_NAME: &str = "MountainTiles";
+// Set app id for wayland so it matches the desktop file, which is named after
+// our binary, which is named after our crate.
+// At some point it would be nice to use `com.mountainlizard.mountain_tiles` since
+// this follows the freedesktop.org spec, but this would require a change to
+// cargo-packager, and looks like it might interact with other naming (e.g. in AppImage),
+// so for now we just assume that `mountain-tiles` is unusual enough that it's
+// unlikely to be used as the app id of an unrelated application.
+pub const APP_ID: &str = "mountain-tiles";
 pub const UNIQUE_ID: &str = "com.mountainlizard.mountain-tiles";
 pub const USE_STORAGE: bool = true;
 
@@ -83,6 +95,7 @@ pub struct App {
     pub toasts: Toasts,
 
     /// Native menu, if available (might not be on all platforms)
+    #[cfg(target_os = "macos")]
     #[serde(skip)]
     pub native_menu: Option<NativeMenu>,
 }

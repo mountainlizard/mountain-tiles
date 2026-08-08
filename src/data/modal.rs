@@ -124,6 +124,10 @@ pub enum ModalState {
         settings: TiledExportSettings,
         result: ModalResult,
     },
+    SelectRecentFile {
+        selected_index: usize,
+        result: ModalResult,
+    },
     Help {
         result: ModalResult,
     },
@@ -143,6 +147,7 @@ impl ModalState {
             ModalState::Settings { result, .. } => Some(result.clone()),
             ModalState::ExportPng { result, .. } => Some(result.clone()),
             ModalState::ExportTiled { result, .. } => Some(result.clone()),
+            ModalState::SelectRecentFile { result, .. } => Some(result.clone()),
             ModalState::Help { result, .. } => Some(result.clone()),
         }
     }
@@ -160,6 +165,7 @@ impl ModalState {
             ModalState::Settings { result, .. } => *result = ModalResult::Active,
             ModalState::ExportPng { result, .. } => *result = ModalResult::Active,
             ModalState::ExportTiled { result, .. } => *result = ModalResult::Active,
+            ModalState::SelectRecentFile { result, .. } => *result = ModalResult::Active,
             ModalState::Help { result, .. } => *result = ModalResult::Active,
         }
     }

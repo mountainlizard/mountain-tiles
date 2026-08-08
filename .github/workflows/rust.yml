@@ -41,7 +41,7 @@ jobs:
             cargo_target
           key: ${{ runner.os }}-${{ runner.arch }}-cargo-test-${{ hashFiles('**/Cargo.lock') }}
 
-      - run: sudo apt-get install libxcb-render0-dev libxcb-shape0-dev libxcb-xfixes0-dev libxkbcommon-dev libssl-dev
+      - run: sudo apt-get install libglib2.0-dev libgtk-3-dev libpango1.0-dev libxcb-render0-dev libxcb-shape0-dev libxcb-xfixes0-dev libxkbcommon-dev libssl-dev
       - run: cargo check --all-features
       - run: cargo test --all-features
       - run: cargo fmt --all -- --check
@@ -96,13 +96,14 @@ jobs:
         if: contains(runner.os, 'Linux')
         uses: mlugg/setup-zig@v2
 
-      - name: Install Rust and cargo-zigbuild on Linux
+      - name: Install Rust, dev packages and cargo-zigbuild on Linux
         if: contains(runner.os, 'Linux')
         run: |
           rustup update --no-self-update stable
           rustup default stable
           rustup target add ${{matrix.RUST_TARGET}}
           cargo install --locked cargo-zigbuild
+          sudo apt-get install libglib2.0-dev libgtk-3-dev libpango1.0-dev libxcb-render0-dev libxcb-shape0-dev libxcb-xfixes0-dev libxkbcommon-dev libssl-dev
 
       - name: Install Rust on non-Linux
         if: contains(runner.os, 'Linux') == false

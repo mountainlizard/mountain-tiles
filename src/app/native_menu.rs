@@ -10,6 +10,7 @@ impl App {
                     NativeMenuEvent::Settings => self.show_application_settings_modal(),
                     NativeMenuEvent::New => self.check_data_loss_then_new_document(),
                     NativeMenuEvent::Open => self.check_data_loss_then_show_open_document_modal(),
+                    NativeMenuEvent::OpenRecent => self.show_select_recent_file_modal(),
                     NativeMenuEvent::Save => self.show_save_document_modal(),
                     NativeMenuEvent::SaveAs => self.show_save_as_document_modal(),
                     NativeMenuEvent::ImportPaletteImage => self.show_import_palette_modal(),

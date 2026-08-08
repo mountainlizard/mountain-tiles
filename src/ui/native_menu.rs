@@ -1,15 +1,5 @@
+use muda::Menu;
 use std::sync::mpsc::Receiver;
-
-#[cfg(target_os = "macos")]
-use arboard::Clipboard;
-#[cfg(target_os = "macos")]
-use egui::Context;
-#[cfg(target_os = "macos")]
-use muda::accelerator::{CMD_OR_CTRL, Modifiers};
-use muda::{
-    Menu, MenuItem, PredefinedMenuItem, Submenu,
-    accelerator::{Accelerator, Code},
-};
 
 pub struct NativeMenu {
     /// Muda menu
@@ -29,6 +19,7 @@ pub enum NativeMenuEvent {
     Settings,
     New,
     Open,
+    OpenRecent,
     Save,
     SaveAs,
     ImportPaletteImage,
@@ -56,9 +47,11 @@ pub enum NativeMenuRawEvent {
     SelectAll,
 }
 
-#[cfg(target_os = "macos")]
-pub fn create_for_macos(ctx: Context) -> muda::Result<NativeMenu> {
-    use muda::MenuEvent;
+pub fn create_for_macos(ctx: egui::Context) -> muda::Result<NativeMenu> {
+    use muda::{
+        MenuEvent, MenuItem, PredefinedMenuItem, Submenu,
+        accelerator::{Accelerator, CMD_OR_CTRL, Code, Modifiers},
+    };
 
     let menu = Menu::new();
 
@@ -122,6 +115,9 @@ pub fn create_for_macos(ctx: Context) -> muda::Result<NativeMenu> {
     );
     let open_id = open_item.id().clone();
 
+    let open_recent_item = MenuItem::new("Open Recent...", true, None);
+    let open_recent_id = open_recent_item.id().clone();
+
     let save_item = MenuItem::new(
         "Save",
         true,
@@ -165,6 +161,7 @@ pub fn create_for_macos(ctx: Context) -> muda::Result<NativeMenu> {
 
     file_menu.append(&new_item)?;
     file_menu.append(&open_item)?;
+    file_menu.append(&open_recent_item)?;
     file_menu.append(&save_item)?;
     file_menu.append(&save_as_item)?;
     file_menu.append(&PredefinedMenuItem::separator())?;
@@ -278,6 +275,8 @@ pub fn create_for_macos(ctx: Context) -> muda::Result<NativeMenu> {
             Some(NativeMenuEvent::New)
         } else if *event.id() == open_id {
             Some(NativeMenuEvent::Open)
+        } else if *event.id() == open_recent_id {
+            Some(NativeMenuEvent::OpenRecent)
         } else if *event.id() == save_id {
             Some(NativeMenuEvent::Save)
         } else if *event.id() == save_as_id {
@@ -340,9 +339,8 @@ pub fn create_for_macos(ctx: Context) -> muda::Result<NativeMenu> {
     Ok(NativeMenu { menu, rx, rx_raw })
 }
 
-#[cfg(target_os = "macos")]
 fn get_clipboard_text() -> eyre::Result<String> {
-    let mut clipboard = Clipboard::new()?;
+    let mut clipboard = arboard::Clipboard::new()?;
     let text = clipboard.get_text()?;
     Ok(text)
 }

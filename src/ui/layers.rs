@@ -36,7 +36,7 @@ pub fn layers_ui(ui: &mut Ui, app: &mut App) {
                 .column(Column::remainder().clip(true))
                 .column(Column::exact(40.0))
                 .column(Column::exact(24.0))
-                .column(Column::exact(40.0))
+                .column(Column::exact(36.0))
                 .min_scrolled_height(0.0)
                 .max_scroll_height(99999999.0)
                 .sense(egui::Sense::click());
@@ -56,7 +56,7 @@ pub fn layers_ui(ui: &mut Ui, app: &mut App) {
                         unselectable_label_strong(ui, "");
                     });
                     header.col(|ui| {
-                        unselectable_label_strong(ui, "Visible");
+                        unselectable_label_strong(ui, "Show");
                     });
                 })
                 .body(|mut body| {

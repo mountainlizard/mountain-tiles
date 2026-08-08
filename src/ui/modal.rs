@@ -7,5 +7,6 @@ pub mod import_tiled_modal;
 pub mod layer_modal;
 pub mod map_modal;
 pub mod palette_modal;
+pub mod select_recent_file_modal;
 pub mod settings_modal;
 pub mod tileset_modal;

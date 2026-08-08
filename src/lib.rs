@@ -59,7 +59,6 @@ pub mod ui {
     pub mod maps;
     pub mod menu;
     pub mod modal;
-    pub mod native_menu;
     pub mod palette;
     pub mod shortcuts;
     pub mod theme;
@@ -69,4 +68,7 @@ pub mod ui {
     pub mod tileset_image_loader;
     pub mod tileset_textures;
     pub mod utils;
+
+    #[cfg(target_os = "macos")]
+    pub mod native_menu;
 }

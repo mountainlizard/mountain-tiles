@@ -12,6 +12,7 @@ use crate::{
             export_png_modal::export_png_modal_ui, export_tiled_modal::export_tiled_modal_ui,
             help_modal::help_modal_ui, import_tiled_modal::import_tiled_modal_ui,
             layer_modal::layer_modal_ui, map_modal::map_modal_ui, palette_modal::palette_modal_ui,
+            select_recent_file_modal::select_recent_file_modal_ui,
             settings_modal::settings_modal_ui, tileset_modal::tileset_modal_ui,
         },
         palette::palette_ui,
@@ -23,6 +24,7 @@ use crate::{
 use egui::Ui;
 
 impl eframe::App for App {
+    #[cfg(target_os = "macos")]
     fn raw_input_hook(&mut self, _ctx: &egui::Context, raw_input: &mut egui::RawInput) {
         self.poll_and_handle_native_menu_raw_events(raw_input);
     }
@@ -47,6 +49,7 @@ impl eframe::App for App {
 
         self.poll_and_handle_all_ipc_messages(ui);
 
+        #[cfg(target_os = "macos")]
         self.poll_and_handle_native_menu_events(ui);
         let is_macos = cfg!(target_os = "macos");
 
@@ -105,6 +108,7 @@ impl eframe::App for App {
                     ModalState::Settings { .. } => settings_modal_ui(ui, self),
                     ModalState::ExportPng { .. } => export_png_modal_ui(ui, self),
                     ModalState::ExportTiled { .. } => export_tiled_modal_ui(ui, self),
+                    ModalState::SelectRecentFile { .. } => select_recent_file_modal_ui(ui, self),
                     ModalState::Help { .. } => help_modal_ui(ui, self),
                 }
             });
