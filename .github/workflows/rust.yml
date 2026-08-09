@@ -121,7 +121,7 @@ jobs:
 
       - name: Get Metadata from Cargo.toml
         id: metadata
-        uses: nicolaiunrein/cargo-get@v1
+        uses: nicolaiunrein/cargo-get@v1.4.0
 
       # This requires that the certificate p12 file contains an ID matching `signing-identity` in `Cargo.toml`
       - name: Install the Apple certificate and provisioning profile
