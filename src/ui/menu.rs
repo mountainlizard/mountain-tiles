@@ -30,23 +30,23 @@ pub fn bar<R>(ui: &mut Ui, add_contents: impl FnOnce(&mut Ui) -> R) -> InnerResp
 fn add_file_menu(ui: &mut Ui, app: &mut App) {
     ui.menu_button("File", |ui| {
         {
-            if ui.button("󰈔 New...").clicked() {
+            if ui.button("New...").clicked() {
                 app.check_data_loss_then_new_document();
             }
 
-            if ui.button("󰝰 Open...").clicked() {
+            if ui.button("Open...").clicked() {
                 app.check_data_loss_then_show_open_document_modal();
             }
 
-            if ui.button("󰆓 Save").clicked() {
+            if ui.button("Save").clicked() {
                 app.show_save_document_modal();
             }
 
-            if ui.button("󰳻 Save as...").clicked() {
+            if ui.button("Save as...").clicked() {
                 app.show_save_as_document_modal();
             }
 
-            ui.menu_button("󱋡 Recent files...", |ui| {
+            ui.menu_button("Recent files...", |ui| {
                 let mut path_to_open = None;
                 for (index, path) in app.recent_paths.iter().enumerate() {
                     let name = format!(
@@ -63,40 +63,40 @@ fn add_file_menu(ui: &mut Ui, app: &mut App) {
                 }
             });
 
-            if ui.button("󰋺 Import Palette (image)...").clicked() {
+            if ui.button("Import Palette (image)...").clicked() {
                 app.show_import_palette_modal();
             }
 
-            if ui.button("󰈇 Export Palette (image)...").clicked() {
+            if ui.button("Export Palette (image)...").clicked() {
                 app.show_export_palette_modal();
             }
 
-            if ui.button("󰋺 Import Palette (lospec JSON)...").clicked() {
+            if ui.button("Import Palette (lospec JSON)...").clicked() {
                 app.show_import_palette_lospec_modal();
             }
 
-            if ui.button("󰈇 Export Palette (lospec JSON)...").clicked() {
+            if ui.button("Export Palette (lospec JSON)...").clicked() {
                 app.show_export_palette_lospec_modal();
             }
 
-            if ui.button("󰋺 Import Tiled...").clicked() {
+            if ui.button("Import Tiled...").clicked() {
                 app.pick_tiled_file_to_import();
             }
 
-            if ui.button("󰈇 Export Tiled...").clicked() {
+            if ui.button("Export Tiled...").clicked() {
                 app.show_export_tiled_modal();
             }
 
-            if ui.button("󰈇 Export PNG...").clicked() {
+            if ui.button("Export PNG...").clicked() {
                 app.show_export_png_modal();
             }
 
-            if ui.button("󰈇 Export from workspace...").clicked() {
+            if ui.button("Export from workspace...").clicked() {
                 app.export_from_workspace();
             }
         }
 
-        if ui.button("󰩈 Quit").clicked() {
+        if ui.button("Quit").clicked() {
             app.check_data_loss_then_quit(ui.ctx());
         }
     });
@@ -122,11 +122,11 @@ pub fn menu_ui(ui: &mut Ui, app: &mut App) {
 
             ui.menu_button("Edit", |ui| {
                 let undo_clicked = ui
-                    .add_enabled(app.can_undo(), egui::Button::new("󰕌 Undo"))
+                    .add_enabled(app.can_undo(), egui::Button::new("Undo"))
                     .clicked();
 
                 let redo_clicked = ui
-                    .add_enabled(app.can_redo(), egui::Button::new("󰑎 Redo"))
+                    .add_enabled(app.can_redo(), egui::Button::new("Redo"))
                     .clicked();
 
                 if undo_clicked {
@@ -137,13 +137,13 @@ pub fn menu_ui(ui: &mut Ui, app: &mut App) {
                     app.redo();
                 }
 
-                if ui.button("󰒓 Application settings...").clicked() {
+                if ui.button("Application settings...").clicked() {
                     app.show_application_settings_modal();
                 }
             });
 
             ui.menu_button("View", |ui| {
-                if ui.button("󱉶 Reset zoom").clicked() {
+                if ui.button("Reset zoom").clicked() {
                     app.reset_selected_map_zoom();
                 }
             });
