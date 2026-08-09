@@ -93,7 +93,9 @@ jobs:
         # for better compatibility
         # See https://hansott.codes/blog/cross-compiling-rust-with-zig-for-older-glibc-47
         # Note that we use a specific commit id to get a PR that updates to nodev24 to
-        # avoid a warning from github actions. See this issue for discussion:
+        # avoid a warning from github actions. This page covers the warning:
+        # https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+        # This is the PR to update setup-zig:
         # https://codeberg.org/mlugg/setup-zig/pulls/55
         # If this is merged, e.g. as v3, then replace the commit id below with v3 to
         # go back to tracking updates of the action.
