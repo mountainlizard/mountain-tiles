@@ -73,15 +73,15 @@ If you can't see the tiles in a map, check you also downloaded the `.png` files 
 
 There are much more mature alternative map editors that have a much deeper feature set, particularly for use with games. At least for now each one is missing some of the features of Mountain Tiles, so that they don't allow for tiles to be rotated, mirrored and tinted using a palette:
 
-1. [Tiled](http://www.mapeditor.org) is an excellent, full-featured map editor, however it doesn't seem to have an easy workflow for tinting individual tiles using a palette. The closest workflow I could find was to have one layer per color, and move tiles around between layers to change color. This is also the approach Mountain Tiles uses to export to Tiled format - each combination of a layer and color in Mountain Tiles is exported as its own tinted layer in Tiled.
+1. [Tiled](http://www.mapeditor.org) is an excellent, full-featured map editor, however it doesn't seem to have an easy workflow for tinting individual tiles using a palette. The closest workflow I could find was to have one layer per color, and move tiles around between layers to change color. When MountainTiles exports to Tiled format it uses this approach; each combination of a layer and color in Mountain Tiles is exported as its own tinted layer in Tiled.
 
 2. [`LDtk`](https://ldtk.io) is another great editor, however it doesn't support rotating tiles (although there is an [issue to support this](https://github.com/deepnight/ldtk/issues/207)).
 
 3. [`REXPaint`](https://www.gridsagegames.com/rexpaint/) is a really beautiful editor, but only supports Windows natively, and doesn't support tile rotation or mirroring.
 
-4. [Sprite Fusion](https://www.spritefusion.com) supports tile rotation and mirroring, but doesn't seem to support setting individual tile colors using a palette.
+4. [Sprite Fusion](https://www.spritefusion.com) looks very good, and supports tile rotation and mirroring (as well as a web version), but doesn't seem to support setting individual tile colors using a palette.
 
-If you know of a cross-platform editor that supports tile rotation, mirroring and tinting with a palette, please let me know!
+If you know of a cross-platform editor that supports tile rotation, mirroring and tinting with a palette (or one of the options above adds these features), please let me know!
 
 ## Additional Information
 
