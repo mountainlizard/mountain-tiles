@@ -10,6 +10,29 @@ Note that this project is developed on [Codeberg](https://codeberg.org/mountainl
 
 Please see [`CONTRIBUTING.md`](CONTRIBUTING.md) if you wish to contribute to the project, there are also notes on the [development](development.md) process.
 
+## Features
+
+Mountain Tiles was created to quickly and easily edit maps where each tile can be tinted using a palette, and rotated/mirrored. This is particularly useful for lower res and 1-bit tiles, but it's possible to use high res tiles in color with alpha.
+
+- Support for macOS, Linux and Windows.
+- Multiple maps per project, sharing the same tilesets and palette.
+- Multiple layers per map.
+- Each tile has a tint color chosen from the palette (using white leaves tile untinted).
+- Copy and paste between layers and maps.
+- Support for tilesets with alpha, or with a transparent color (can be configured on import).
+- Support for arbitrary-sized palette, with optional alpha values.
+- Select and draw with one or more tiles from the tileset, or copied from the map.
+- Rotate and mirror tiles.
+- Import/export maps in [Tiled](http://www.mapeditor.org) format.
+- Import/export palettes in [`lospec`](https://lospec.com) JSON format, and as PNG images.
+- Export maps as PNG images with/without transparent background.
+
+You can press "h" or click the "Help…" menu item to show common shortcuts and actions in the app - this will show something like the following:
+
+<!-- markdownlint-disable MD033 -->
+<img src="instructions.png" alt="Mountain Tiles instructions" width="1280"/>
+<!-- markdownlint-enable MD033 -->
+
 ## Downloads
 
 Installers are available on the [GitHub releases page](https://github.com/mountainlizard/mountain-tiles/releases).
@@ -45,29 +68,6 @@ Check the [example-data](https://codeberg.org/mountainlizard/mountain-tiles/src/
 3. `mountain-tiles-workspace.toml` contains workspace settings (these are optional, and configure how to export maps and other data).
 
 If you can't see the tiles in a map, check you also downloaded the `.png` files to the same directory as the `.mnp` file. You can also edit the tileset and use the "Browse..." button to reload a tileset image if it has moved. Note that in general, tilesets don't need to be in the same directory as the map, this is just how the examples are set up.
-
-## Features
-
-Mountain Tiles was created to quickly and easily edit maps where each tile can be tinted using a palette, and rotated/mirrored. This is particularly useful for lower res and 1-bit tiles, but it's possible to use high res tiles in color with alpha.
-
-- Support for macOS, Linux and Windows.
-- Multiple maps per project, sharing the same tilesets and palette.
-- Multiple layers per map.
-- Each tile has a tint color chosen from the palette (using white leaves tile untinted).
-- Copy and paste between layers and maps.
-- Support for tilesets with alpha, or with a transparent color (can be configured on import).
-- Support for arbitrary-sized palette, with optional alpha values.
-- Select and draw with one or more tiles from the tileset, or copied from the map.
-- Rotate and mirror tiles.
-- Import/export maps in [Tiled](http://www.mapeditor.org) format.
-- Import/export palettes in [`lospec`](https://lospec.com) JSON format, and as PNG images.
-- Export maps as PNG images with/without transparent background.
-
-You can press "h" or click the "Help…" menu item to show common shortcuts and actions in the app - this will show something like the following:
-
-<!-- markdownlint-disable MD033 -->
-<img src="instructions.png" alt="Mountain Tiles instructions" width="1280"/>
-<!-- markdownlint-enable MD033 -->
 
 ## Alternatives
 
