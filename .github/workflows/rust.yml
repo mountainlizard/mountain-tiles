@@ -17,7 +17,7 @@ jobs:
     name: cargo check, test, fmt, clippy
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: clippy, rustfmt
@@ -32,7 +32,7 @@ jobs:
       # and https://docs.github.com/en/actions/reference/workflows-and-actions/dependency-caching#example-using-the-cache-action
       # Note this doesn't install cargo-packager, so we use a separate cache with "cargo-test"
       - name: Cache cargo and target
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: |
             ~/.cargo/registry
@@ -110,7 +110,7 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
 
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Get Metadata from Cargo.toml
         id: metadata
@@ -166,7 +166,7 @@ jobs:
       # See https://docs.github.com/en/actions/tutorials/build-and-test-code/rust#caching-dependencies
       # and https://docs.github.com/en/actions/reference/workflows-and-actions/dependency-caching#example-using-the-cache-action
       - name: Cache cargo and target
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: |
             ~/.cargo/registry
@@ -205,7 +205,7 @@ jobs:
 
       - name: Archive NSIS installer
         if: contains(runner.os, 'Windows')
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: nsis-installer-windows-${{ runner.arch }}
           path: |
@@ -219,7 +219,7 @@ jobs:
 
       - name: Archive exe
         if: contains(runner.os, 'Windows')
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: exe-windows-${{ runner.arch }}
           path: cargo_target/release/${{steps.metadata.outputs.package_name}}_${{ steps.metadata.outputs.package_version}}_${{ runner.arch }}.exe
@@ -227,7 +227,7 @@ jobs:
 
       - name: Archive macOS .dmg
         if: contains(runner.os, 'macOS')
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: dmg-installer-macos-${{ runner.arch }}
           path: |
@@ -236,7 +236,7 @@ jobs:
 
       - name: Archive linux .deb
         if: contains(runner.os, 'Linux')
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: deb-installer-linux-${{ runner.arch }}
           path: |
@@ -245,7 +245,7 @@ jobs:
 
       - name: Archive linux .AppImage
         if: contains(runner.os, 'Linux')
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: appimage-linux-${{ runner.arch }}
           path: |
@@ -254,7 +254,7 @@ jobs:
 
       - name: Archive linux .tar.gz
         if: contains(runner.os, 'Linux')
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: tar-gz-linux-${{ runner.arch }}
           path: |
