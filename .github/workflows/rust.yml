@@ -119,6 +119,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v7
 
+      # We don't want to use @master, so we use a commit id.
+      # If this issue is done we can use @v1 instead:
+      # https://github.com/nicolaiunrein/cargo-get/issues/113
       - name: Get Metadata from Cargo.toml
         id: metadata
         uses: nicolaiunrein/cargo-get@597a0a7ed638a120eadba0bbcc418b54a4ab3672
