@@ -3,7 +3,7 @@
 A tile-based map/image editor using [`egui`](https://www.egui.rs), coded by humans without AI.
 
 <!-- markdownlint-disable MD033 -->
-<img src="screenshot.png" alt="Mountain Tiles editor showing the example map" width="1145"/>
+<img src="screenshot.png" alt="Mountain Tiles editor showing the example map" width="1142"/>
 <!-- markdownlint-enable MD033 -->
 
 Note that this project is developed on [Codeberg](https://codeberg.org/mountainlizard/mountain-tiles), please use this project for issues, pull requests etc. There is a mirror on GitHub but this is only used for [building releases](https://github.com/mountainlizard/mountain-tiles/releases).
