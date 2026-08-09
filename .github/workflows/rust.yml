@@ -94,7 +94,7 @@ jobs:
         # See https://hansott.codes/blog/cross-compiling-rust-with-zig-for-older-glibc-47
       - name: Install Zig
         if: contains(runner.os, 'Linux')
-        uses: mlugg/setup-zig@v2
+        uses: mlugg/setup-zig@272b55e6c4fcef353f6d923050ff32f018636378
 
       - name: Install Rust, dev packages and cargo-zigbuild on Linux
         if: contains(runner.os, 'Linux')
