@@ -3,10 +3,10 @@
 A tile-based map/image editor using [`egui`](https://www.egui.rs), coded by humans without AI.
 
 <!-- markdownlint-disable MD033 -->
-<img src="screenshot.png" alt="Mountain Tiles editor showing the example map" width="1293"/>
+<img src="screenshot.png" alt="Mountain Tiles editor showing the example map" width="1145"/>
 <!-- markdownlint-enable MD033 -->
 
-Note that this project is developed on [Codeberg](https://codeberg.org/mountainlizard/mountain-tiles) and mirrored to [GitHub](https://github.com/mountainlizard/mountain-tiles). Please use the [Codeberg repo](https://codeberg.org/mountainlizard/mountain-tiles) for [issues](https://codeberg.org/mountainlizard/mountain-tiles/issues), [pull requests](https://codeberg.org/mountainlizard/mountain-tiles/pulls) etc. since the GitHub repo is just a mirror.
+Note that this project is developed on [Codeberg](https://codeberg.org/mountainlizard/mountain-tiles), please use this project for issues, pull requests etc. There is a mirror on GitHub but this is only used for [building releases](https://github.com/mountainlizard/mountain-tiles/releases).
 
 Please see [`CONTRIBUTING.md`](CONTRIBUTING.md) if you wish to contribute to the project, there are also notes on the [development](development.md) process.
 
@@ -38,7 +38,13 @@ Note that in theory other Unixes may work, however this might require disabling 
 
 ## Example Files
 
-Check the example-data folder in this repo for example files, including the map shown in the screenshot above, and the instructions for the software as a map!
+Check the [example-data](https://codeberg.org/mountainlizard/mountain-tiles/src/branch/main/example-data) in this repo for example files.
+
+1. The `.mnp` files are maps
+2. The `.png` files for tilesets and palettes
+3. `mountain-tiles-workspace.toml` contains workspace settings (these are optional, and configure how to export maps and other data).
+
+If you can't see the tiles in a map, check you also downloaded the `.png` files to the same directory as the `.mnp` file. You can also edit the tileset and use the "Browse..." button to reload a tileset image if it has moved. Note that in general, tilesets don't need to be in the same directory as the map, this is just how the examples are set up.
 
 ## Features
 
