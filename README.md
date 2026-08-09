@@ -26,6 +26,8 @@ Mountain Tiles was created to quickly and easily edit maps where each tile can b
 - Import/export maps in [Tiled](http://www.mapeditor.org) format.
 - Import/export palettes in [`lospec`](https://lospec.com) JSON format, and as PNG images.
 - Export maps as PNG images with/without transparent background.
+- Uses a simple file layout - one `.mnp` file contains a project with multiple maps. This links to image files for tilesets, using absolute or relative paths. An optional `.toml` file can be used to allow exporting maps and other data with customized settings and targets.
+- A small, self-contained application that starts and runs quickly even on low-end hardware, e.g. Raspberry Pi. (`egui` renders using accelerated graphics, without needing Electron or a web-view).
 
 You can press "h" or click the "Help…" menu item to show common shortcuts and actions in the app - this will show something like the following:
 
