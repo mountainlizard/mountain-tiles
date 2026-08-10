@@ -59,31 +59,39 @@ jobs:
           - os: ubuntu-latest
             RUST_TARGET: x86_64-unknown-linux-gnu
             ZIG_TARGET: x86_64-unknown-linux-gnu.2.17
+            PLATFORM_NAME: linux-x64
 
           # This is arm64 (public repo only)
           - os: ubuntu-24.04-arm
             RUST_TARGET: aarch64-unknown-linux-gnu
             ZIG_TARGET: aarch64-unknown-linux-gnu.2.17
+            PLATFORM_NAME: linux-arm64
 
           # This is intel
           - os: macos-15-intel
             RUST_TARGET: default
             ZIG_TARGET: default
+            PLATFORM_NAME: macos-intel
 
           # This is arm64
           - os: macos-15
             RUST_TARGET: default
             ZIG_TARGET: default
+            PLATFORM_NAME: macos-apple-silicon
 
           # This is x64
           - os: windows-latest
             RUST_TARGET: default
             ZIG_TARGET: default
+            PLATFORM_NAME: windows-x64
+            SETUP_ARCH_NAME: x64
 
           # This is arm64 (public repo only)
           - os: windows-11-arm
             RUST_TARGET: default
             ZIG_TARGET: default
+            PLATFORM_NAME: windows-arm64
+            SETUP_ARCH_NAME: arm64
 
     steps:
       - name: Building ${{ matrix.os }}
@@ -213,6 +221,11 @@ jobs:
         run: |
           cargo packager --release
 
+      - name: Rename NSIS installer
+        if: contains(runner.os, 'Windows')
+        run: |
+          mv cargo_target/release/${{steps.metadata.outputs.package_name}}_${{ steps.metadata.outputs.package_version}}_${{matrix.SETUP_ARCH_NAME}}-setup.exe cargo_target/release/${{steps.metadata.outputs.package_name}}-${{steps.metadata.outputs.package_version}}-${{matrix.PLATFORM_NAME}}-setup.exe
+      
       - name: Archive NSIS installer
         if: contains(runner.os, 'Windows')
         uses: actions/upload-artifact@v7
