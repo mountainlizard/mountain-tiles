@@ -48,6 +48,8 @@ impl App {
                 }
                 self.draw_mode();
                 self.tileset_selected_tiles_from_stamp();
+            } else {
+                self.info("Map is empty in selected area and layers");
             }
         }
     }

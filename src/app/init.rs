@@ -8,7 +8,7 @@ use crate::{
     ui::theme::{self, DEFAULT_THEME},
 };
 use camino::Utf8PathBuf;
-use egui::{Align2, Pos2, ThemePreference};
+use egui::{Align2, Order, Pos2, ThemePreference};
 use std::env;
 
 impl App {
@@ -56,7 +56,8 @@ impl App {
         // Customise toasts
         data.toasts = data
             .toasts
-            .anchor(Align2::RIGHT_BOTTOM, Pos2::new(-24.0, -24.0));
+            .anchor(Align2::RIGHT_BOTTOM, Pos2::new(-24.0, -24.0))
+            .order(Order::Tooltip);
 
         data.update_texture_base_dir_from_file_path(data.save_path.clone());
 

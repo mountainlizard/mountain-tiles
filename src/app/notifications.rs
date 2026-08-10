@@ -12,4 +12,13 @@ impl App {
                 .options(ToastOptions::default().duration_in_seconds(2.0)),
         );
     }
+
+    pub fn info(&mut self, caption: impl Into<WidgetText>) {
+        self.toasts.add(
+            Toast::default()
+                .kind(ToastKind::Info)
+                .text(caption)
+                .options(ToastOptions::default().duration_in_seconds(4.0)),
+        );
+    }
 }
