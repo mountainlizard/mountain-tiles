@@ -59,15 +59,15 @@ jobs:
             example-data
 
       - name: Zip example data
-        run: |
-          zip -r example-data.zip $GITHUB_WORKSPACE/example-data
-              
+        working-directory: ${{github.workspace}}
+        run:  zip -r example-data.zip example-data
+
       - name: Upload example data
         uses: actions/upload-artifact@v7
         with:
           name: example-data
           path: |
-            example-data.zip
+            ${{github.workspace}}/example-data.zip
           if-no-files-found: error
   
 
