@@ -60,7 +60,7 @@ jobs:
 
       - name: Zip example data
         run: |
-          zip -r example-data.zip ${{GITHUB_WORKSPACE}}/example-data
+          zip -r example-data.zip $GITHUB_WORKSPACE/example-data
               
       - name: Upload example data
         uses: actions/upload-artifact@v7
