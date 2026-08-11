@@ -49,6 +49,28 @@ jobs:
       # For check target wasm32 - currently fails, needs work
       # - run: cargo check --all-features --lib --target wasm32-unknown-unknown
 
+  example-data:
+    name: Zip and upload example data
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          sparse-checkout: |
+            example-data
+
+      - name: Zip example data
+        run: |
+          zip -r example-data.zip ${{GITHUB_WORKSPACE}}/example-data
+              
+      - name: Upload example data
+        uses: actions/upload-artifact@v7
+        with:
+          name: example-data
+          path: |
+            example-data.zip
+          if-no-files-found: error
+  
+
   build-matrix:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -315,7 +337,7 @@ jobs:
   release:
     name: Release with artifacts
     if: startsWith(github.ref, 'refs/tags/v') && github.event_name == 'push'
-    needs: [test, build-matrix]
+    needs: [test, example-data, build-matrix]
     runs-on: ubuntu-latest
     steps:
       - name: Download all artifacts
