@@ -72,12 +72,14 @@ jobs:
             RUST_TARGET: default
             ZIG_TARGET: default
             PLATFORM_NAME: macos-intel
+            DMG_ARCH_NAME: x64
 
           # This is arm64
           - os: macos-15
             RUST_TARGET: default
             ZIG_TARGET: default
             PLATFORM_NAME: macos-apple-silicon
+            DMG_ARCH_NAME: aarch64
 
           # This is x64
           - os: windows-latest
@@ -238,17 +240,22 @@ jobs:
       - name: Rename windows exe
         if: contains(runner.os, 'Windows')
         run: |
-          cp cargo_target/release/${{steps.metadata.outputs.package_name}}.exe cargo_target/release/${{steps.metadata.outputs.package_name}}_${{ steps.metadata.outputs.package_version}}_${{ runner.arch }}.exe
+          mv cargo_target/release/${{steps.metadata.outputs.package_name}}.exe cargo_target/release/${{steps.metadata.outputs.package_name}}-${{ steps.metadata.outputs.package_version}}-${{matrix.PLATFORM_NAME}}.exe
 
       - name: Archive exe
         if: contains(runner.os, 'Windows')
         uses: actions/upload-artifact@v7
         with:
           name: exe-windows-${{ runner.arch }}
-          path: cargo_target/release/${{steps.metadata.outputs.package_name}}_${{ steps.metadata.outputs.package_version}}_${{ runner.arch }}.exe
+          path: cargo_target/release/${{steps.metadata.outputs.package_name}}-${{ steps.metadata.outputs.package_version}}-${{matrix.PLATFORM_NAME}}.exe
           if-no-files-found: error
 
-      - name: Archive macOS .dmg
+      - name: Rename macOS dmg
+        if: contains(runner.os, 'macOS')
+        run: |
+          mv cargo_target/release/MountainTiles_${{ steps.metadata.outputs.package_version}}_${{matrix.DMG_ARCH_NAME}}.dmg cargo_target/release/${{steps.metadata.outputs.package_name}}-${{steps.metadata.outputs.package_version}}-${{matrix.PLATFORM_NAME}}.dmg
+
+      - name: Archive macOS dmg
         if: contains(runner.os, 'macOS')
         uses: actions/upload-artifact@v7
         with:
@@ -257,7 +264,7 @@ jobs:
             cargo_target/release/*.dmg
           if-no-files-found: error
 
-      - name: Archive linux .deb
+      - name: Archive linux deb
         if: contains(runner.os, 'Linux')
         uses: actions/upload-artifact@v7
         with:
@@ -266,7 +273,7 @@ jobs:
             cargo_target/release/*.deb
           if-no-files-found: error
 
-      - name: Archive linux .AppImage
+      - name: Archive linux AppImage
         if: contains(runner.os, 'Linux')
         uses: actions/upload-artifact@v7
         with:
@@ -275,7 +282,7 @@ jobs:
             cargo_target/release/*.AppImage
           if-no-files-found: error
 
-      - name: Archive linux .tar.gz
+      - name: Archive linux tar.gz
         if: contains(runner.os, 'Linux')
         uses: actions/upload-artifact@v7
         with:
