@@ -41,7 +41,7 @@ You can press "h" or click the "Help…" menu item to show common shortcuts and 
 
 ## Downloads
 
-Installers are available on the [GitHub releases page](https://github.com/mountainlizard/mountain-tiles/releases), as well as `example-data.zip` with some [Example Files](<README#Example Files>).
+Installers are available on the [GitHub releases page](https://github.com/mountainlizard/mountain-tiles/releases), as well as `example-data.zip` with some [Example Files](#example-files).
 
 The following platforms are supported (see notes for support level):
 
@@ -62,7 +62,7 @@ The following platforms are supported (see notes for support level):
 
 ### macOS
 
-The macOS builds are signed and notarized so should run without additional permissions/settings. Currently double-clicking files will not open them in the application - see [Known Issues](<README#Known Issues>) for details.
+The macOS builds are signed and notarized so should run without additional permissions/settings. Currently double-clicking files will not open them in the application - see [Known Issues](#known-issues) for details.
 
 ### Linux
 
