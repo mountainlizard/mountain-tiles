@@ -41,7 +41,7 @@ You can press "h" or click the "Help…" menu item to show common shortcuts and 
 
 ## Downloads
 
-Installers are available on the [GitHub releases page](https://github.com/mountainlizard/mountain-tiles/releases).
+Installers are available on the [GitHub releases page](https://github.com/mountainlizard/mountain-tiles/releases), as well as `example-data.zip` with some [Example Files](<README#Example Files>).
 
 The following platforms are supported (see notes for support level):
 
