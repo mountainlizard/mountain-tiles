@@ -37,7 +37,7 @@ You can press "h" or click the "Help…" menu item to show common shortcuts and 
 
 ## Known Issues
 
-1. MountainTiles on macOS doesn't yet support double-clicking files to open them (in an open copy of the application). This is waiting on support from `winit` and `egui` for receiving "file opened" events from macOS. Other platforms support double-clicking to open files (as long as your desktop environment is set up properly).
+1. MountainTiles on macOS doesn't yet support double-clicking files to open them. The application should launch, but you'll see an error message about the document format not being supported. This is waiting on support from `winit` and `egui` for receiving "file opened" events from macOS. Other platforms support double-clicking to open files (as long as your desktop environment is set up properly).
 
 ## Downloads
 
