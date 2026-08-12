@@ -37,37 +37,46 @@ You can press "h" or click the "Help…" menu item to show common shortcuts and 
 
 ## Known Issues
 
-1. MountainTiles on macOS doesn't yet support double-clicking files to open them (in an open copy of the application). This is waiting on support from `winit` and `egui` for receiving "file opened" events from macOS. Other platforms support double-clicking to open files (as long as your desktop environment is set up properly).
+1. MountainTiles on macOS doesn't yet support double-clicking files to open them. The application should launch, but you'll see an error message about the document format not being supported. This is waiting on support from `winit` and `egui` for receiving "file opened" events from macOS. Other platforms support double-clicking to open files (as long as your desktop environment is set up properly).
 
 ## Downloads
 
-Installers are available on the [GitHub releases page](https://github.com/mountainlizard/mountain-tiles/releases).
-The macOS builds are signed and notarized so should run without additional permissions/settings.
+Installers are available on the [GitHub releases page](https://github.com/mountainlizard/mountain-tiles/releases), as well as `example-data.zip` with some [Example Files](#example-files).
 
-The following platforms are supported (see notes for support level) - the last part of the filename indicates the platform:
+The following platforms are supported (see notes for support level):
 
-| Platform                           | File ends with:    | Notes                      |
-| ---------------------------------- | ------------------ | -------------------------- |
-| macOS - Apple Silicon              | `aarch64.dmg`      | Tested                     |
-| macOS - Intel                      | `x64.dmg`          | Tested (on M1 via Rosetta) |
-| Linux - Intel/AMD (`.deb` package) | `amd64.deb`        | Tested                     |
-| Linux - ARM 64 (`.deb` package)    | `arm64.deb`        | Tested                     |
-| Linux - Intel/AMD (AppImage)       | `x86_64.AppImage`  | Tested                     |
-| Linux - ARM 64 (AppImage)          | `aarch64.AppImage` | Tested                     |
-| Linux - Intel/AMD (archive)        | `x86_64.tar.gz`    | Tested                     |
-| Linux - ARM 64 (archive)           | `aarch64.tar.gz`   | Tested                     |
-| Windows - Intel (Installer)        | `x64-setup.exe`    | Tested                     |
-| Windows - ARM 64 (Installer)       | `arm64-setup.exe`  | Untested                   |
-| Windows - Intel (Executable)       | `X64.exe`          | Tested                     |
-| Windows - ARM 64 (Executable)      | `ARM64.exe`        | Untested                   |
+| Platform                           | File ends with:     | Notes                      |
+| ---------------------------------- | ------------------- | -------------------------- |
+| macOS - Apple Silicon              | `apple-silicon.dmg` | Tested                     |
+| macOS - Intel                      | `intel.dmg`         | Tested (on M1 via Rosetta) |
+| Linux - Intel/AMD (`.deb` package) | `x64.deb`           | Tested                     |
+| Linux - ARM 64 (`.deb` package)    | `arm64.deb`         | Tested                     |
+| Linux - Intel/AMD (AppImage)       | `x64.AppImage`      | Tested                     |
+| Linux - ARM 64 (AppImage)          | `arm64.AppImage`    | Tested                     |
+| Linux - Intel/AMD (archive)        | `x64.tar.gz`        | Tested                     |
+| Linux - ARM 64 (archive)           | `arm64.tar.gz`      | Tested                     |
+| Windows - Intel (Installer)        | `x64-setup.exe`     | Tested                     |
+| Windows - ARM 64 (Installer)       | `arm64-setup.exe`   | Untested                   |
+| Windows - Intel (Executable)       | `x64.exe`           | Tested                     |
+| Windows - ARM 64 (Executable)      | `arm64.exe`         | Untested                   |
+
+### macOS
+
+The macOS builds are signed and notarized so should run without additional permissions/settings. Currently double-clicking files will not open them in the application - see [Known Issues](#known-issues) for details.
+
+### Linux
+
+Linux releases are tested on Debian and will likely work on Ubuntu or other Debian-based distros. The AppImage version should run on other distros, just make it executable and double-click. In theory other Unixes may work, however this might require disabling the logic for running a single instance of the application only. In addition, the `interprocess` crate will use file-type sockets on this platform, and warns about possible issues with stale files. It may be possible to mitigate this issue by allowing for deleting stale files, but this would require more investigation. If anyone tries, please let me know how it goes.
+
+### Windows
+
+Note that on Windows there are plain exes that can be run directly, and `setup.exe` files that will install the application with an entry in the Start menu, file associations etc.
 
 Let me know if you try it out on Windows ARM64 - I'd be interested to know if it works, I don't have a device to test on.
 
-Note that in theory other Unixes may work, however this might require disabling the logic for running a single instance of the application only. In addition, the `interprocess` crate will use file-type sockets on this platform, and warns about possible issues with stale files. It may be possible to mitigate this issue by allowing for deleting stale files, but this would require more investigation. If anyone tries, please let me know how it goes.
-
 ## Example Files
 
-Check the [example-data](https://codeberg.org/mountainlizard/mountain-tiles/src/branch/main/example-data) in this repo for example files.
+Check the [example-data](https://codeberg.org/mountainlizard/mountain-tiles/src/branch/main/example-data) in this repo for example files, this is also available as `exampel-data.zip` from the [GitHub releases page](https://github.com/mountainlizard/mountain-tiles/releases).
 
 1. The `.mnp` files are maps
 2. The `.png` files for tilesets and palettes

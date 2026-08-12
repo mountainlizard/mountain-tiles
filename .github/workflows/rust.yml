@@ -49,6 +49,28 @@ jobs:
       # For check target wasm32 - currently fails, needs work
       # - run: cargo check --all-features --lib --target wasm32-unknown-unknown
 
+  example-data:
+    name: Zip and upload example data
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          sparse-checkout: |
+            example-data
+
+      - name: Zip example data
+        working-directory: ${{github.workspace}}
+        run:  zip -r example-data.zip example-data
+
+      - name: Upload example data
+        uses: actions/upload-artifact@v7
+        with:
+          name: example-data
+          path: |
+            ${{github.workspace}}/example-data.zip
+          if-no-files-found: error
+  
+
   build-matrix:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -232,7 +254,7 @@ jobs:
       - name: Rename NSIS installer
         if: contains(runner.os, 'Windows')
         run: |
-          mv cargo_target/release/${{steps.metadata.outputs.package_name}}_${{ steps.metadata.outputs.package_version}}_${{matrix.SETUP_ARCH_NAME}}-setup.exe cargo_target/release/${{steps.metadata.outputs.package_name}}-${{steps.metadata.outputs.package_version}}-${{matrix.PLATFORM_NAME}}-setup.exe
+          mv cargo_target/release/${{steps.metadata.outputs.package_name}}_${{ steps.metadata.outputs.package_version}}_${{matrix.SETUP_ARCH_NAME}}-setup.exe ${{steps.metadata.outputs.package_name}}-${{steps.metadata.outputs.package_version}}-${{matrix.PLATFORM_NAME}}-setup.exe
       
       - name: Archive NSIS installer
         if: contains(runner.os, 'Windows')
@@ -240,26 +262,26 @@ jobs:
         with:
           name: nsis-installer-windows-${{ runner.arch }}
           path: |
-            cargo_target/release/*setup.exe
+            *setup.exe
           if-no-files-found: error
 
       - name: Rename windows exe
         if: contains(runner.os, 'Windows')
         run: |
-          mv cargo_target/release/${{steps.metadata.outputs.package_name}}.exe cargo_target/release/${{steps.metadata.outputs.package_name}}-${{ steps.metadata.outputs.package_version}}-${{matrix.PLATFORM_NAME}}.exe
+          mv cargo_target/release/${{steps.metadata.outputs.package_name}}.exe ${{steps.metadata.outputs.package_name}}-${{ steps.metadata.outputs.package_version}}-${{matrix.PLATFORM_NAME}}.exe
 
       - name: Archive exe
         if: contains(runner.os, 'Windows')
         uses: actions/upload-artifact@v7
         with:
           name: exe-windows-${{ runner.arch }}
-          path: cargo_target/release/${{steps.metadata.outputs.package_name}}-${{ steps.metadata.outputs.package_version}}-${{matrix.PLATFORM_NAME}}.exe
+          path: ${{steps.metadata.outputs.package_name}}-${{ steps.metadata.outputs.package_version}}-${{matrix.PLATFORM_NAME}}.exe
           if-no-files-found: error
 
       - name: Rename macOS dmg
         if: contains(runner.os, 'macOS')
         run: |
-          mv cargo_target/release/MountainTiles_${{ steps.metadata.outputs.package_version}}_${{matrix.DMG_ARCH_NAME}}.dmg cargo_target/release/${{steps.metadata.outputs.package_name}}-${{steps.metadata.outputs.package_version}}-${{matrix.PLATFORM_NAME}}.dmg
+          mv cargo_target/release/MountainTiles_${{ steps.metadata.outputs.package_version}}_${{matrix.DMG_ARCH_NAME}}.dmg ${{steps.metadata.outputs.package_name}}-${{steps.metadata.outputs.package_version}}-${{matrix.PLATFORM_NAME}}.dmg
 
       - name: Archive macOS dmg
         if: contains(runner.os, 'macOS')
@@ -267,13 +289,13 @@ jobs:
         with:
           name: dmg-installer-macos-${{ runner.arch }}
           path: |
-            cargo_target/release/*.dmg
+            *.dmg
           if-no-files-found: error
 
       - name: Rename Linux deb
         if: contains(runner.os, 'Linux')
         run: |
-          mv cargo_target/release/${{steps.metadata.outputs.package_name}}_${{ steps.metadata.outputs.package_version}}_${{matrix.DEB_ARCH_NAME}}.deb cargo_target/release/${{steps.metadata.outputs.package_name}}-${{steps.metadata.outputs.package_version}}-${{matrix.PLATFORM_NAME}}.deb
+          mv cargo_target/release/${{steps.metadata.outputs.package_name}}_${{ steps.metadata.outputs.package_version}}_${{matrix.DEB_ARCH_NAME}}.deb ${{steps.metadata.outputs.package_name}}-${{steps.metadata.outputs.package_version}}-${{matrix.PLATFORM_NAME}}.deb
 
       - name: Archive Linux deb
         if: contains(runner.os, 'Linux')
@@ -281,13 +303,13 @@ jobs:
         with:
           name: deb-installer-linux-${{ runner.arch }}
           path: |
-            cargo_target/release/*.deb
+            *.deb
           if-no-files-found: error
 
       - name: Rename Linux AppImage
         if: contains(runner.os, 'Linux')
         run: |
-          mv cargo_target/release/${{steps.metadata.outputs.package_name}}_${{ steps.metadata.outputs.package_version}}_${{matrix.APPIMAGE_ARCH_NAME}}.AppImage cargo_target/release/${{steps.metadata.outputs.package_name}}-${{steps.metadata.outputs.package_version}}-${{matrix.PLATFORM_NAME}}.AppImage
+          mv cargo_target/release/${{steps.metadata.outputs.package_name}}_${{ steps.metadata.outputs.package_version}}_${{matrix.APPIMAGE_ARCH_NAME}}.AppImage ${{steps.metadata.outputs.package_name}}-${{steps.metadata.outputs.package_version}}-${{matrix.PLATFORM_NAME}}.AppImage
 
       - name: Archive Linux AppImage
         if: contains(runner.os, 'Linux')
@@ -295,13 +317,13 @@ jobs:
         with:
           name: appimage-linux-${{ runner.arch }}
           path: |
-            cargo_target/release/*.AppImage
+            *.AppImage
           if-no-files-found: error
 
       - name: Rename Linux tar.gz
         if: contains(runner.os, 'Linux')
         run: |
-          mv cargo_target/release/${{steps.metadata.outputs.package_name}}_${{ steps.metadata.outputs.package_version}}_${{matrix.TARGZ_ARCH_NAME}}.tar.gz cargo_target/release/${{steps.metadata.outputs.package_name}}-${{steps.metadata.outputs.package_version}}-${{matrix.PLATFORM_NAME}}.tar.gz
+          mv cargo_target/release/${{steps.metadata.outputs.package_name}}_${{ steps.metadata.outputs.package_version}}_${{matrix.TARGZ_ARCH_NAME}}.tar.gz ${{steps.metadata.outputs.package_name}}-${{steps.metadata.outputs.package_version}}-${{matrix.PLATFORM_NAME}}.tar.gz
 
       - name: Archive Linux tar.gz
         if: contains(runner.os, 'Linux')
@@ -309,13 +331,13 @@ jobs:
         with:
           name: tar-gz-linux-${{ runner.arch }}
           path: |
-            cargo_target/release/*.tar.gz
+            *.tar.gz
           if-no-files-found: error
 
   release:
     name: Release with artifacts
     if: startsWith(github.ref, 'refs/tags/v') && github.event_name == 'push'
-    needs: [test, build-matrix]
+    needs: [test, example-data, build-matrix]
     runs-on: ubuntu-latest
     steps:
       - name: Download all artifacts
