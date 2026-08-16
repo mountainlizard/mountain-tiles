@@ -20,7 +20,7 @@ pub fn bar<R>(ui: &mut Ui, add_contents: impl FnOnce(&mut Ui) -> R) -> InnerResp
 
         // Take full width and fixed height:
         // let height = ui.spacing().interact_size.y;
-        ui.set_min_size(vec2(ui.available_width(), 28.0));
+        ui.set_min_size(vec2(ui.available_width(), 24.0));
 
         add_contents(ui)
     })
